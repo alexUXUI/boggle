@@ -9,6 +9,9 @@ interface Props {
 }
 
 export const Controls = component$(({ state, answersLength }: Props) => {
+  const resetBoard = $(() => {
+    state.board = generateRandomBoard(state.boardSize).split("");
+  });
   return (
     <form
       class="flex flex-wrap justify-center"
@@ -55,10 +58,7 @@ export const Controls = component$(({ state, answersLength }: Props) => {
       </fieldset>
       <button
         class="text-[18px] my-2 ml-2 border-2 bg-white h-[32px] border-blue-800 hover:bg-blue-200 rounded-md p-2 flex justify-center items-center "
-        onClick$={(e: any) => {
-          e.preventDefault();
-          state.board = generateRandomBoard(state.boardSize).split("");
-        }}
+        onClick$={resetBoard}
       >
         Reset Board
       </button>
