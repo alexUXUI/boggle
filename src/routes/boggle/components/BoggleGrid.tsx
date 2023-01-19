@@ -235,8 +235,6 @@ export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
                     style={{
                       width: `${screenState.squareWidth}px`,
                       height: `${screenState.squareWidth}px`,
-                      minHeight: `19%`,
-                      minWidth: `19%`,
                     }}
                   >
                     <button
