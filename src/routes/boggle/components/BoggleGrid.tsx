@@ -135,27 +135,78 @@ export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
                 return (
                   <td
                     class={`${bgColor} border-[1px] border-blue-800 hover:cursor-pointer m-[1px] text-[40px] flex justify-center items-center rounded-sm`}
-                    onTouchMove$={(e) => {
-                      // add the .stop-scrolling class to the body
-                      document.body.classList.add("stop-scrolling");
-                      const element = document.elementFromPoint(
-                        e.targetTouches[0].clientX,
-                        e.targetTouches[0].clientY
-                      );
-                      const childButtonElement = element?.children[0];
-                      if (childButtonElement) {
-                        const buttonText = childButtonElement.textContent;
-                        console.log(buttonText);
-                        // get the data-cell-index from the button
-                        const cellIndex = Number.parseInt(
-                          childButtonElement.getAttribute("data-cell-index")!
+                    style={{
+                      width: `${screenState.squareWidth}px`,
+                      height: `${screenState.squareWidth}px`,
+                    }}
+                  >
+                    <button
+                      data-cell-index={currentIndex}
+                      data-cell-char={board[i * boardSize + j]}
+                      data-cell-is-in-path={isInSelectedPath}
+                      class="h-[40px] leading-[40px] p-0 m-0 "
+                      onTouchMove$={(e) => {
+                        // add the .stop-scrolling class to the body
+                        document.body.classList.add("stop-scrolling");
+                        const element = document.elementFromPoint(
+                          e.targetTouches[0].clientX,
+                          e.targetTouches[0].clientY
                         );
-                        const cellChar =
-                          childButtonElement.getAttribute("data-cell-char");
-                        const cellIsInPath = childButtonElement.getAttribute(
-                          "data-cell-is-in-path"
-                        );
+                        if (element) {
+                          const buttonText = element.textContent;
+                          console.log(buttonText);
+                          // get the data-cell-index from the button
+                          const cellIndex = Number.parseInt(
+                            element.getAttribute("data-cell-index")!
+                          );
+                          const cellChar =
+                            element.getAttribute("data-cell-char");
+                          const cellIsInPath = element.getAttribute(
+                            "data-cell-is-in-path"
+                          );
 
+                          // const currently selected path
+                          const selectedPath = state.selectedPath;
+                          const lastNodeInPath =
+                            selectedPath[selectedPath.length - 1];
+
+                          // neighors of the last node in the path
+                          const neighbors = [
+                            lastNodeInPath?.index - boardSize - 1,
+                            lastNodeInPath?.index - boardSize,
+                            lastNodeInPath?.index - boardSize + 1,
+                            lastNodeInPath?.index - 1,
+                            lastNodeInPath?.index + 1,
+                            lastNodeInPath?.index + boardSize - 1,
+                            lastNodeInPath?.index + boardSize,
+                            lastNodeInPath?.index + boardSize + 1,
+                          ];
+
+                          // if the current node is not in the path, and it is a neighbor of the last node in the path
+                          // add it to the path
+                          if (cellIsInPath) {
+                            // deselect the node and all the nodes after it
+                            const index = selectedPath.findIndex(
+                              (element) => element.index === cellIndex
+                            );
+                            state.selectedPath = selectedPath.slice(0, index);
+
+                            return;
+                          } else if (
+                            !lastNodeInPath ||
+                            (lastNodeInPath && neighbors.includes(cellIndex))
+                          ) {
+                            state.selectedPath = [
+                              ...state.selectedPath,
+                              {
+                                index: cellIndex,
+                                char: cellChar!,
+                              },
+                            ];
+                          }
+                        }
+                      }}
+                      onClick$={() => {
                         // const currently selected path
                         const selectedPath = state.selectedPath;
                         const lastNodeInPath =
@@ -175,73 +226,21 @@ export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
 
                         // if the current node is not in the path, and it is a neighbor of the last node in the path
                         // add it to the path
-                        if (cellIsInPath) {
+                        if (isInSelectedPath) {
                           // deselect the node and all the nodes after it
                           const index = selectedPath.findIndex(
-                            (element) => element.index === cellIndex
+                            (element) => element.index === currentIndex
                           );
                           state.selectedPath = selectedPath.slice(0, index);
 
                           return;
                         } else if (
                           !lastNodeInPath ||
-                          (lastNodeInPath && neighbors.includes(cellIndex))
+                          (lastNodeInPath && neighbors.includes(currentIndex))
                         ) {
-                          state.selectedPath = [
-                            ...state.selectedPath,
-                            {
-                              index: cellIndex,
-                              char: cellChar!,
-                            },
-                          ];
+                          addToFoundList();
                         }
-                      }
-                    }}
-                    onClick$={() => {
-                      // const currently selected path
-                      const selectedPath = state.selectedPath;
-                      const lastNodeInPath =
-                        selectedPath[selectedPath.length - 1];
-
-                      // neighors of the last node in the path
-                      const neighbors = [
-                        lastNodeInPath?.index - boardSize - 1,
-                        lastNodeInPath?.index - boardSize,
-                        lastNodeInPath?.index - boardSize + 1,
-                        lastNodeInPath?.index - 1,
-                        lastNodeInPath?.index + 1,
-                        lastNodeInPath?.index + boardSize - 1,
-                        lastNodeInPath?.index + boardSize,
-                        lastNodeInPath?.index + boardSize + 1,
-                      ];
-
-                      // if the current node is not in the path, and it is a neighbor of the last node in the path
-                      // add it to the path
-                      if (isInSelectedPath) {
-                        // deselect the node and all the nodes after it
-                        const index = selectedPath.findIndex(
-                          (element) => element.index === currentIndex
-                        );
-                        state.selectedPath = selectedPath.slice(0, index);
-
-                        return;
-                      } else if (
-                        !lastNodeInPath ||
-                        (lastNodeInPath && neighbors.includes(currentIndex))
-                      ) {
-                        addToFoundList();
-                      }
-                    }}
-                    style={{
-                      width: `${screenState.squareWidth}px`,
-                      height: `${screenState.squareWidth}px`,
-                    }}
-                  >
-                    <button
-                      data-cell-index={currentIndex}
-                      data-cell-char={board[i * boardSize + j]}
-                      data-cell-is-in-path={isInSelectedPath}
-                      class="h-[40px] leading-[40px] p-0 m-0 "
+                      }}
                     >
                       {state.isLoaded
                         ? board[i * boardSize + j].toLocaleUpperCase()
