@@ -248,7 +248,7 @@ export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
                         // add the .stop-scrolling class to the body
                         document.body.classList.remove("stop-scrolling");
                         // deselect the node and all the nodes after it
-                        state.selectedPath = [];
+                        // state.selectedPath = [];
                       }}
                     >
                       {state.isLoaded
