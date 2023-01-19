@@ -244,6 +244,12 @@ export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
                           addToFoundList();
                         }
                       }}
+                      onTouchEnd$={() => {
+                        // add the .stop-scrolling class to the body
+                        document.body.classList.remove("stop-scrolling");
+                        // deselect the node and all the nodes after it
+                        state.selectedPath = [];
+                      }}
                     >
                       {state.isLoaded
                         ? board[i * boardSize + j].toLocaleUpperCase()
