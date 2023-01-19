@@ -156,17 +156,9 @@ export default component$(() => {
             fire(0.25, {
               spread: 46,
               startVelocity: 55,
-              origin: { x: 0.5, y: 0.9 },
+              origin: { x: 0.5, y: 1 },
               // angle: 30,
-              decay: 0.92,
-              scalar: 1.2,
-            });
-            fire(0.25, {
-              spread: 46,
-              startVelocity: 55,
-              origin: { x: 0.5, y: 0.9 },
-              // angle: 150,
-              decay: 0.92,
+              decay: 0.87,
               scalar: 1.2,
             });
           });
