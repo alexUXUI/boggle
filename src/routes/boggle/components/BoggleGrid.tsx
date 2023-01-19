@@ -149,62 +149,6 @@ export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
                         width: "99.5%",
                         height: "99.5%",
                       }}
-                      onTouchMove$={(e) => {
-                        // // add the .stop-scrolling class to the body
-                        // document.body.classList.add("stop-scrolling");
-                        // const element = document.elementFromPoint(
-                        //   e.targetTouches[0].clientX,
-                        //   e.targetTouches[0].clientY
-                        // );
-                        // if (element) {
-                        //   // get the data-cell-index from the button
-                        //   const cellIndex =
-                        //     element.getAttribute("data-cell-index")!;
-                        //   const cellChar =
-                        //     element.getAttribute("data-cell-char");
-                        //   const cellIsInPath = element.getAttribute(
-                        //     "data-cell-is-in-path"
-                        //   );
-                        //   // const currently selected path
-                        //   const selectedPath = state.selectedPath;
-                        //   const lastNodeInPath =
-                        //     selectedPath[selectedPath.length - 1];
-                        //   // neighors of the last node in the path
-                        //   const neighbors = [
-                        //     lastNodeInPath?.index - boardSize - 1,
-                        //     lastNodeInPath?.index - boardSize,
-                        //     lastNodeInPath?.index - boardSize + 1,
-                        //     lastNodeInPath?.index - 1,
-                        //     lastNodeInPath?.index + 1,
-                        //     lastNodeInPath?.index + boardSize - 1,
-                        //     lastNodeInPath?.index + boardSize,
-                        //     lastNodeInPath?.index + boardSize + 1,
-                        //   ];
-                        //   // if the current node is not in the path, and it is a neighbor of the last node in the path
-                        //   // add it to the path
-                        //   if (cellIsInPath && cellIndex) {
-                        //     // deselect the node and all the nodes after it
-                        //     const index = selectedPath.findIndex(
-                        //       (element) =>
-                        //         element.index === Number.parseInt(cellIndex)
-                        //     );
-                        //     state.selectedPath = selectedPath.slice(0, index);
-                        //     return;
-                        //   } else if (
-                        //     !lastNodeInPath ||
-                        //     (lastNodeInPath &&
-                        //       neighbors.includes(Number.parseInt(cellIndex)))
-                        //   ) {
-                        //     state.selectedPath = [
-                        //       ...state.selectedPath,
-                        //       {
-                        //         index: Number.parseInt(cellIndex)!,
-                        //         char: cellChar!,
-                        //       },
-                        //     ];
-                        //   }
-                        // }
-                      }}
                       onClick$={() => {
                         // const currently selected path
                         const selectedPath = state.selectedPath;
