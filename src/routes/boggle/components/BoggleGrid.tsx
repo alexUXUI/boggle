@@ -134,7 +134,7 @@ export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
 
                 return (
                   <td
-                    class={` border-[1px]bg-blue-800 border-blue-800 hover:cursor-pointer m-[1px] text-[30px] flex justify-center items-center rounded-sm`}
+                    class={`relative border-[1px]bg-blue-800 border-blue-800 hover:cursor-pointer m-[1px] flex justify-center items-center rounded-sm`}
                     style={{
                       width: `${screenState.squareWidth}px`,
                       height: `${screenState.squareWidth}px`,
@@ -144,7 +144,11 @@ export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
                       data-cell-index={currentIndex}
                       data-cell-char={board[i * boardSize + j]}
                       data-cell-is-in-path={isInSelectedPath}
-                      class={`w-[90%] ${bgColor} h-[90%] leading-[30px] p-0 m-0 rounded-md`}
+                      class={`relative ${bgColor} leading-[30px] p-0 m-0 rounded-md`}
+                      style={{
+                        width: "90%",
+                        height: "90%",
+                      }}
                       onTouchMove$={(e) => {
                         // add the .stop-scrolling class to the body
                         document.body.classList.add("stop-scrolling");
