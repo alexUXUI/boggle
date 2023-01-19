@@ -144,10 +144,10 @@ export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
                       data-cell-index={currentIndex}
                       data-cell-char={board[i * boardSize + j]}
                       data-cell-is-in-path={isInSelectedPath}
-                      class={`relative ${bgColor} leading-[30px] p-0 m-0 rounded-md`}
+                      class={`text-[30px] relative ${bgColor} leading-[40px] p-0 m-0 rounded-sm`}
                       style={{
-                        width: "90%",
-                        height: "90%",
+                        width: "99.5%",
+                        height: "99.5%",
                       }}
                       onTouchMove$={(e) => {
                         // add the .stop-scrolling class to the body
