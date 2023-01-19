@@ -157,7 +157,7 @@ export default component$(() => {
               spread: 46,
               startVelocity: 55,
               origin: { x: 0.5, y: 0.9 },
-              angle: 30,
+              // angle: 30,
               decay: 0.92,
               scalar: 1.2,
             });
@@ -165,7 +165,7 @@ export default component$(() => {
               spread: 46,
               startVelocity: 55,
               origin: { x: 0.5, y: 0.9 },
-              angle: 150,
+              // angle: 150,
               decay: 0.92,
               scalar: 1.2,
             });
@@ -213,7 +213,7 @@ export default component$(() => {
         boardSize={state.boardSize}
         state={state}
       />
-      <main class="m-auto w-[600px] mb-[50px]">
+      <main class="m-auto w-[98%] mb-[50px]">
         <FoundWords
           words={foundWords.words}
           minWordLength={state.minWordLength}
