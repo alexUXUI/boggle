@@ -12,7 +12,7 @@ import { Controls } from "./components/Controls";
 import { FoundWords } from "./components/FoundWords";
 import { importWordsFromPublicDir } from "./logic/api";
 import { solve } from "./logic/boggle";
-export const Boggle = import("../../../boggle/pkg");
+export const Boggle = import("../../boggle/pkg/boggle");
 export const confetti = import("canvas-confetti");
 
 export interface State {
