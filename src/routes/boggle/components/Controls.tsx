@@ -1,4 +1,4 @@
-import { component$, $ } from "@builder.io/qwik";
+import { component$ } from "@builder.io/qwik";
 import type { State } from "..";
 import { generateRandomBoard } from "../logic/generateBoard";
 
@@ -9,11 +9,8 @@ interface Props {
 }
 
 export const Controls = component$(({ state, answersLength }: Props) => {
-  const resetBoard = $(() => {
-    state.board = generateRandomBoard(state.boardSize).split("");
-  });
   return (
-    <form
+    <div
       class="flex flex-wrap justify-center"
       onSubmit$={(e) => e.preventDefault()}
     >
@@ -58,10 +55,12 @@ export const Controls = component$(({ state, answersLength }: Props) => {
       </fieldset>
       <button
         class="text-[18px] my-2 ml-2 border-2 bg-white h-[32px] border-blue-800 hover:bg-blue-200 rounded-md p-2 flex justify-center items-center "
-        onClick$={resetBoard}
+        onClick$={() => {
+          state.board = generateRandomBoard(state.boardSize).split("");
+        }}
       >
         Reset Board
       </button>
-    </form>
+    </div>
   );
 });
