@@ -134,7 +134,7 @@ export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
 
                 return (
                   <td
-                    class={`relative border-[1px]bg-blue-800 border-blue-800 hover:cursor-pointer m-[1px] flex justify-center items-center rounded-sm`}
+                    class={`border-[1px]bg-blue-800 border-blue-800 hover:cursor-pointer m-[1px] flex justify-center items-center rounded-sm`}
                     style={{
                       width: `${screenState.squareWidth}px`,
                       height: `${screenState.squareWidth}px`,
@@ -144,7 +144,7 @@ export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
                       data-cell-index={currentIndex}
                       data-cell-char={board[i * boardSize + j]}
                       data-cell-is-in-path={isInSelectedPath}
-                      class={`text-[30px] relative ${bgColor} leading-[40px] p-0 m-0 rounded-sm`}
+                      class={`text-[30px] ${bgColor} leading-[40px] p-0 m-0 rounded-sm`}
                       style={{
                         width: "99.5%",
                         height: "99.5%",
@@ -156,14 +156,10 @@ export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
                           e.targetTouches[0].clientX,
                           e.targetTouches[0].clientY
                         );
-                        console.log(element);
                         if (element) {
-                          const buttonText = element.textContent;
-                          console.log(buttonText);
                           // get the data-cell-index from the button
                           const cellIndex =
                             element.getAttribute("data-cell-index")!;
-                          console.log(cellIndex);
                           const cellChar =
                             element.getAttribute("data-cell-char");
                           const cellIsInPath = element.getAttribute(
