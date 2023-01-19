@@ -152,13 +152,14 @@ export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
                           e.targetTouches[0].clientX,
                           e.targetTouches[0].clientY
                         );
+                        console.log(element);
                         if (element) {
                           const buttonText = element.textContent;
                           console.log(buttonText);
                           // get the data-cell-index from the button
-                          const cellIndex = Number.parseInt(
-                            element.getAttribute("data-cell-index")!
-                          );
+                          const cellIndex =
+                            element.getAttribute("data-cell-index")!;
+                          console.log(cellIndex);
                           const cellChar =
                             element.getAttribute("data-cell-char");
                           const cellIsInPath = element.getAttribute(
@@ -184,22 +185,24 @@ export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
 
                           // if the current node is not in the path, and it is a neighbor of the last node in the path
                           // add it to the path
-                          if (cellIsInPath) {
+                          if (cellIsInPath && cellIndex) {
                             // deselect the node and all the nodes after it
                             const index = selectedPath.findIndex(
-                              (element) => element.index === cellIndex
+                              (element) =>
+                                element.index === Number.parseInt(cellIndex)
                             );
                             state.selectedPath = selectedPath.slice(0, index);
 
                             return;
                           } else if (
                             !lastNodeInPath ||
-                            (lastNodeInPath && neighbors.includes(cellIndex))
+                            (lastNodeInPath &&
+                              neighbors.includes(Number.parseInt(cellIndex)))
                           ) {
                             state.selectedPath = [
                               ...state.selectedPath,
                               {
-                                index: cellIndex,
+                                index: Number.parseInt(cellIndex)!,
                                 char: cellChar!,
                               },
                             ];
