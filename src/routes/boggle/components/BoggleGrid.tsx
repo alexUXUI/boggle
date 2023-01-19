@@ -96,85 +96,6 @@ export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
   // grid.addEventListener("touchcancel", process_touchcancel, false);
   // grid.addEventListener("touchend", process_touchend, false);
 
-  // useOnWindow(
-  //   "touchstart",
-  //   $((e: any) => {
-  //     // console.log(e.target);
-  //     const x = e.targetTouches.length;
-  //     console.log("touchstart", x);
-  //   })
-  // );
-
-  useOnWindow(
-    "touchstart",
-    $((e: any) => {
-      const element = document.elementFromPoint(
-        e.targetTouches[0].clientX,
-        e.targetTouches[0].clientY
-      );
-      console.log(element);
-    })
-  );
-
-  const touchMove = $((e: any) => {
-    const element = document.elementFromPoint(
-      e.targetTouches[0].clientX,
-      e.targetTouches[0].clientY
-    );
-    const childButtonElement = element?.children[0];
-    if (childButtonElement) {
-      const buttonText = childButtonElement.textContent;
-      console.log(buttonText);
-      // get the data-cell-index from the button
-      const cellIndex = Number.parseInt(
-        childButtonElement.getAttribute("data-cell-index")!
-      );
-      const cellChar = childButtonElement.getAttribute("data-cell-char");
-      const cellIsInPath = childButtonElement.getAttribute(
-        "data-cell-is-in-path"
-      );
-
-      // const currently selected path
-      const selectedPath = state.selectedPath;
-      const lastNodeInPath = selectedPath[selectedPath.length - 1];
-
-      // neighors of the last node in the path
-      const neighbors = [
-        lastNodeInPath?.index - boardSize - 1,
-        lastNodeInPath?.index - boardSize,
-        lastNodeInPath?.index - boardSize + 1,
-        lastNodeInPath?.index - 1,
-        lastNodeInPath?.index + 1,
-        lastNodeInPath?.index + boardSize - 1,
-        lastNodeInPath?.index + boardSize,
-        lastNodeInPath?.index + boardSize + 1,
-      ];
-
-      // if the current node is not in the path, and it is a neighbor of the last node in the path
-      // add it to the path
-      if (cellIsInPath) {
-        // deselect the node and all the nodes after it
-        const index = selectedPath.findIndex(
-          (element) => element.index === cellIndex
-        );
-        state.selectedPath = selectedPath.slice(0, index);
-
-        return;
-      } else if (
-        !lastNodeInPath ||
-        (lastNodeInPath && neighbors.includes(cellIndex))
-      ) {
-        state.selectedPath = [
-          ...state.selectedPath,
-          {
-            index: cellIndex,
-            char: cellChar!,
-          },
-        ];
-      }
-    }
-  });
-
   return (
     <div class="w-full flex flex-col justify-center items-center mt-[20px] mb-[20px]">
       <main class="">
@@ -207,7 +128,66 @@ export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
                 return (
                   <td
                     class={`${bgColor} border-[1px] border-blue-800 hover:cursor-pointer m-[1px] text-[40px] flex justify-center items-center rounded-sm`}
-                    onTouchMove$={touchMove}
+                    onTouchMove$={(e) => {
+                      const element = document.elementFromPoint(
+                        e.targetTouches[0].clientX,
+                        e.targetTouches[0].clientY
+                      );
+                      const childButtonElement = element?.children[0];
+                      if (childButtonElement) {
+                        const buttonText = childButtonElement.textContent;
+                        console.log(buttonText);
+                        // get the data-cell-index from the button
+                        const cellIndex = Number.parseInt(
+                          childButtonElement.getAttribute("data-cell-index")!
+                        );
+                        const cellChar =
+                          childButtonElement.getAttribute("data-cell-char");
+                        const cellIsInPath = childButtonElement.getAttribute(
+                          "data-cell-is-in-path"
+                        );
+
+                        // const currently selected path
+                        const selectedPath = state.selectedPath;
+                        const lastNodeInPath =
+                          selectedPath[selectedPath.length - 1];
+
+                        // neighors of the last node in the path
+                        const neighbors = [
+                          lastNodeInPath?.index - boardSize - 1,
+                          lastNodeInPath?.index - boardSize,
+                          lastNodeInPath?.index - boardSize + 1,
+                          lastNodeInPath?.index - 1,
+                          lastNodeInPath?.index + 1,
+                          lastNodeInPath?.index + boardSize - 1,
+                          lastNodeInPath?.index + boardSize,
+                          lastNodeInPath?.index + boardSize + 1,
+                        ];
+
+                        // if the current node is not in the path, and it is a neighbor of the last node in the path
+                        // add it to the path
+                        if (cellIsInPath) {
+                          // deselect the node and all the nodes after it
+                          const index = selectedPath.findIndex(
+                            (element) => element.index === cellIndex
+                          );
+                          state.selectedPath = selectedPath.slice(0, index);
+
+                          return;
+                        } else if (
+                          !lastNodeInPath ||
+                          (lastNodeInPath && neighbors.includes(cellIndex))
+                        ) {
+                          state.selectedPath = [
+                            ...state.selectedPath,
+                            {
+                              index: cellIndex,
+                              char: cellChar!,
+                            },
+                          ];
+                        }
+                      }
+                    }}
                     onClick$={() => {
                       // const currently selected path
                       const selectedPath = state.selectedPath;
