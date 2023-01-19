@@ -81,6 +81,13 @@ export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
     })
   );
 
+  // const grid = document.getElementById("board");
+
+  // grid.addEventListener("touchstart", process_touchstart, false);
+  // grid.addEventListener("touchmove", process_touchmove, false);
+  // grid.addEventListener("touchcancel", process_touchcancel, false);
+  // grid.addEventListener("touchend", process_touchend, false);
+
   return (
     <div class="w-full flex flex-col justify-center items-center mt-[20px] mb-[20px]">
       <main class="">
@@ -134,6 +141,12 @@ export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
                       // if the current node is not in the path, and it is a neighbor of the last node in the path
                       // add it to the path
                       if (isInSelectedPath) {
+                        // deselect the node and all the nodes after it
+                        const index = selectedPath.findIndex(
+                          (element) => element.index === currentIndex
+                        );
+                        state.selectedPath = selectedPath.slice(0, index);
+
                         return;
                       } else if (
                         !lastNodeInPath ||

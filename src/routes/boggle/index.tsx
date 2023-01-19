@@ -249,7 +249,7 @@ export default component$(() => {
         boardSize={state.boardSize}
         state={state}
       />
-      <main class="m-auto w-[98%] mb-[50px]">
+      <main class="max-w-[600px] m-auto w-[98%] mb-[50px]">
         <FoundWords
           words={foundWords.words}
           minWordLength={state.minWordLength}
