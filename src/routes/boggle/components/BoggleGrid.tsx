@@ -4,6 +4,7 @@ import {
   $,
   useStore,
   useOnWindow,
+  useTask$,
 } from "@builder.io/qwik";
 import type { State } from "../index";
 
@@ -12,16 +13,6 @@ interface Props {
   boardSize: number;
   state: State;
 }
-
-export const throttle = $((fn: any, wait: number) => {
-  let time = Date.now();
-  return function () {
-    if (time + wait - Date.now() < 0) {
-      fn();
-      time = Date.now();
-    }
-  };
-});
 
 export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
   useClientEffect$(({ cleanup }) => {
@@ -91,10 +82,18 @@ export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
     })
   );
 
-  // grid.addEventListener("touchstart", process_touchstart, false);
-  // grid.addEventListener("touchmove", process_touchmove, false);
-  // grid.addEventListener("touchcancel", process_touchcancel, false);
-  // grid.addEventListener("touchend", process_touchend, false);
+  useTask$(({ track }) => {
+    track(() => state.boardSize);
+    if (typeof window !== "undefined") {
+      screenState.width = window.innerWidth - 20;
+      screenState.squareWidth = Math.floor(screenState.width / boardSize);
+
+      if (screenState.width > maxWidth) {
+        screenState.width = maxWidth;
+        screenState.squareWidth = Math.floor(screenState.width / boardSize);
+      }
+    }
+  });
 
   return (
     <div class="w-full flex flex-col justify-center items-center mt-[20px] mb-[20px]">
