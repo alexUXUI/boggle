@@ -157,7 +157,6 @@ export default component$(() => {
               spread: 46,
               startVelocity: 55,
               origin: { x: 0.5, y: 1 },
-              // angle: 30,
               decay: 0.87,
               scalar: 1.2,
             });
@@ -177,9 +176,54 @@ export default component$(() => {
     console.log(foundWordsLength, answersLength);
 
     if (foundWordsLength && foundWordsLength === answersLength) {
-      // setTimeout(() => {
-      //   alert("You won!");
-      // }, 100);
+      setTimeout(() => {
+        const duration = 15 * 1000;
+        const animationEnd = Date.now() + duration;
+        const defaults = {
+          startVelocity: 30,
+          spread: 360,
+          ticks: 60,
+          zIndex: 0,
+        };
+
+        confetti.then((module) => {
+          function randomInRange(min: number, max: number) {
+            return Math.random() * (max - min) + min;
+          }
+
+          const interval: ReturnType<typeof setTimeout> = setInterval(
+            function () {
+              const timeLeft = animationEnd - Date.now();
+
+              if (timeLeft <= 0) {
+                return clearInterval(interval);
+              }
+
+              const particleCount = 50 * (timeLeft / duration);
+              // since particles fall down, start a bit higher than random
+              module.default(
+                Object.assign({}, defaults, {
+                  particleCount,
+                  origin: {
+                    x: randomInRange(0.1, 0.3),
+                    y: Math.random() - 0.2,
+                  },
+                })
+              );
+              module.default(
+                Object.assign({}, defaults, {
+                  particleCount,
+                  origin: {
+                    x: randomInRange(0.7, 0.9),
+                    y: Math.random() - 0.2,
+                  },
+                })
+              );
+            },
+            250
+          );
+        });
+      }, 100);
     }
   });
 
