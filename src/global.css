@@ -112,3 +112,8 @@ a.mindblow:hover {
   margin-bottom: 4px;
   transform: translateY(4px);
 }
+
+.stop-scrolling {
+  height: 100%;
+  overflow: hidden;
+}

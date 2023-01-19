@@ -124,10 +124,20 @@ export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
                   ];
                 });
 
+                // on touch end, remove the .stop-scrolling class from the body
+                useOnWindow(
+                  "touchend",
+                  $(() => {
+                    document.body.classList.remove("stop-scrolling");
+                  })
+                );
+
                 return (
                   <td
                     class={`${bgColor} border-[1px] border-blue-800 hover:cursor-pointer m-[1px] text-[40px] flex justify-center items-center rounded-sm`}
                     onTouchMove$={(e) => {
+                      // add the .stop-scrolling class to the body
+                      document.body.classList.add("stop-scrolling");
                       const element = document.elementFromPoint(
                         e.targetTouches[0].clientX,
                         e.targetTouches[0].clientY
