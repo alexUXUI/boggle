@@ -20,7 +20,7 @@ export const Answers = component$(
         <ul class="pt-4 flex flex-wrap w-full">
           {filtered.map((answer) => (
             <li
-              class={`text-[20px] w-[25%] ${
+              class={`text-[20px] w-[32%] ${
                 foundWords.includes(answer) ? "line-through" : ""
               }`}
             >
