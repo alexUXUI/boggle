@@ -6,7 +6,7 @@
   },
   "private": true,
   "scripts": {
-    "wasm": "wasm-pack build ./boggle --target web",
+    "wasm": "wasm-pack build ./src/boggle --target web",
     "build": "yarn wasm && qwik build",
     "build.client": "vite build",
     "build.preview": "vite build --ssr src/entry.preview.tsx",

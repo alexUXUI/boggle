@@ -6,7 +6,12 @@ import wasmPack from "vite-plugin-wasm-pack";
 
 export default defineConfig(() => {
   return {
-    plugins: [qwikCity(), qwikVite(), tsconfigPaths(), wasmPack("./boggle")],
+    plugins: [
+      qwikCity(),
+      qwikVite(),
+      tsconfigPaths(),
+      wasmPack("./src/boggle"),
+    ],
     preview: {
       headers: {
         "Cache-Control": "public, max-age=600",
