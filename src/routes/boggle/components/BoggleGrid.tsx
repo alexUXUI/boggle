@@ -59,7 +59,7 @@ export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
   const maxWidth = 500;
 
   useClientEffect$(() => {
-    screenState.width = window.innerWidth - 10;
+    screenState.width = window.innerWidth - 20;
     screenState.squareWidth = Math.floor(screenState.width / boardSize);
 
     if (screenState.width > maxWidth) {
@@ -71,7 +71,7 @@ export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
   useOnWindow(
     "resize",
     $(() => {
-      screenState.width = window.innerWidth - 10;
+      screenState.width = window.innerWidth - 20;
       screenState.squareWidth = Math.floor(screenState.width / boardSize);
 
       if (screenState.width > maxWidth) {
