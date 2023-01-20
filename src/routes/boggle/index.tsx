@@ -3,6 +3,7 @@ import {
   useStore,
   useTask$,
   useClientEffect$,
+  $,
 } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { Answers } from "./components/Answers";
@@ -11,8 +12,8 @@ import { Controls } from "./components/Controls";
 import { FoundWords } from "./components/FoundWords";
 import { importWordsFromPublicDir } from "./logic/api";
 import { solve } from "./logic/boggle";
+import { fireWorks, foundWordCelebration } from "./logic/celebrations";
 export const Boggle = import("../../boggle/pkg/boggle");
-export const confetti = import("canvas-confetti");
 
 export interface State {
   boardSize: number;
@@ -45,6 +46,10 @@ export default component$(() => {
     dictionary: [""],
   });
 
+  const filterByMinLength = $((word: string) => {
+    return word.length >= state.minWordLength;
+  });
+
   // use client effect to import the wasm module in the top level directory in the boggle directory
   useClientEffect$(() => {
     Boggle.then(async (module) => {
@@ -56,8 +61,6 @@ export default component$(() => {
 
       const boardString = module.gerenate_board_string();
       state.board = boardString.split("");
-
-      console.log("board string", boardString);
     });
   });
 
@@ -67,26 +70,18 @@ export default component$(() => {
       importWordsFromPublicDir().then((data) => {
         dictionaryState.dictionary = data;
 
-        const foundAnswers = solve(data, state.board).filter(
-          (value: string) => {
-            return value.length >= state.minWordLength;
-          }
-        );
+        const foundAnswers = solve(data, state.board).filter(filterByMinLength);
 
         answers.data = foundAnswers;
-
         state.isLoaded = true;
       });
     } else {
       const foundAnswers = solve(
         dictionaryState.dictionary,
         state.board
-      ).filter((value: string) => {
-        return value.length >= state.minWordLength;
-      });
+      ).filter(filterByMinLength);
 
       answers.data = foundAnswers;
-
       state.isLoaded = true;
     }
   });
@@ -108,9 +103,7 @@ export default component$(() => {
   useTask$(({ track }) => {
     track(() => state.board);
     const foundAnswers = solve(dictionaryState.dictionary, state.board).filter(
-      (value: string) => {
-        return value.length >= state.minWordLength;
-      }
+      filterByMinLength
     );
 
     answers.data = foundAnswers;
@@ -124,9 +117,7 @@ export default component$(() => {
   useTask$(({ track }) => {
     track(() => state.minWordLength);
     answers.data = solve(dictionaryState.dictionary, state.board).filter(
-      (value: string) => {
-        return value.length >= state.minWordLength;
-      }
+      filterByMinLength
     );
 
     state.selectedPath = [];
@@ -154,103 +145,26 @@ export default component$(() => {
 
         setTimeout(() => {
           foundWords.words = [...foundWords.words, word];
+          foundWordCelebration();
           state.selectedPath = [];
           state.wordFound = false;
-          confetti.then((module) => {
-            const count = 200;
-            const defaults = {};
-
-            function fire(particleRatio: number, opts: any) {
-              module.default(
-                Object.assign({}, defaults, opts, {
-                  particleCount: Math.floor(count * particleRatio) * 2,
-                  colors: [
-                    "#0000af",
-                    "#05b5eb",
-                    "#0051ba",
-                    "#230ee2",
-                    "#1f3bc6",
-                  ],
-                })
-              );
-            }
-
-            fire(0.25, {
-              spread: 46,
-              startVelocity: 55,
-              origin: { x: 0.5, y: 1 },
-              decay: 0.87,
-              scalar: 1.2,
-            });
-          });
         }, 100);
       }
     }
   });
 
+  /**
+   * Celebrate when all the words have been found
+   */
   useTask$(({ track }) => {
     track(() => foundWords.words);
     track(() => answers.data);
-
     const answersLength = answers.data.length;
     const foundWordsLength = foundWords.words.length - 1;
-
-    console.log(foundWordsLength, answersLength);
-
     if (foundWordsLength && foundWordsLength === answersLength) {
-      setTimeout(() => {
-        const duration = 15 * 1000;
-        const animationEnd = Date.now() + duration;
-        const defaults = {
-          startVelocity: 30,
-          spread: 360,
-          ticks: 60,
-          zIndex: 0,
-        };
-
-        confetti.then((module) => {
-          function randomInRange(min: number, max: number) {
-            return Math.random() * (max - min) + min;
-          }
-
-          const interval: ReturnType<typeof setTimeout> = setInterval(
-            function () {
-              const timeLeft = animationEnd - Date.now();
-
-              if (timeLeft <= 0) {
-                return clearInterval(interval);
-              }
-
-              const particleCount = 50 * (timeLeft / duration);
-              // since particles fall down, start a bit higher than random
-              module.default(
-                Object.assign({}, defaults, {
-                  particleCount,
-                  origin: {
-                    x: randomInRange(0.1, 0.3),
-                    y: Math.random() - 0.2,
-                  },
-                })
-              );
-              module.default(
-                Object.assign({}, defaults, {
-                  particleCount,
-                  origin: {
-                    x: randomInRange(0.7, 0.9),
-                    y: Math.random() - 0.2,
-                  },
-                })
-              );
-            },
-            250
-          );
-        });
-      }, 100);
+      fireWorks();
     }
   });
-
-  const answersLength = answers.data.length;
-  const foundWordsLength = foundWords.words.length - 1;
 
   return (
     <div class=" flex justify-center flex-col">
@@ -262,8 +176,8 @@ export default component$(() => {
       <main class="flex max-w-[500px] m-auto items-center justify-center mt-4 bg-white z-10">
         <Controls
           state={state}
-          answersLength={answersLength}
-          foundWordsLength={foundWordsLength}
+          answersLength={answers.data.length}
+          foundWordsLength={foundWords.words.length - 1}
         />
       </main>
       <BoggleGrid
