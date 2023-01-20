@@ -9,7 +9,7 @@ import { Answers } from "./components/Answers";
 import { BoggleGrid } from "./components/BoggleGrid";
 import { Controls } from "./components/Controls";
 import { FoundWords } from "./components/FoundWords";
-import { importWordsFromPublicDir } from "./logic/api";
+// import { importWordsFromPublicDir } from "./logic/api";
 import { solve } from "./logic/boggle";
 import { fireWorks, foundWordCelebration } from "./logic/celebrations";
 export const Boggle = import("../../boggle/pkg/boggle");
@@ -25,9 +25,9 @@ export interface State {
 
 export default component$(() => {
   const state = useStore<State>({
-    boardSize: 5, // default board length and width dimension
+    boardSize: 2, // default board length and width dimension
     board: [], // random default board
-    minWordLength: 5, // minimum word length
+    minWordLength: 1, // minimum word length
     selectedPath: [], // selected path on the board
     wordFound: false, // whether a word was found, used for animation
     isLoaded: false, // whether the dictionary has been loaded
@@ -38,59 +38,58 @@ export default component$(() => {
   });
 
   const foundWords = useStore({
-    words: [""],
+    data: [""],
   });
 
   const dictionaryState = useStore({
-    dictionary: [""],
+    data: [""],
   });
 
   // use client effect to import the wasm module in the top level directory in the boggle directory
   useClientEffect$(() => {
-    Boggle.then(async (module) => {
-      await module.default();
+    if (dictionaryState.data.length <= 1) {
+      Boggle.then(async (module) => {
+        await module.default();
+        module.get_dictionary().then((dict) => {
+          console.log("is tree populated, board is built");
 
-      const boardString = module.gerenate_board_string();
-      state.board = boardString.split("");
+          const minLength = dict.filter((value: string) => {
+            return value.length >= 20;
+          });
 
-      module.run_the_world().then((solvedAnswers) => {
-        console.log("is tree populated, board is built");
-        const greaterThanMinLength = solvedAnswers.filter((value: string) => {
-          return value.length >= state.minWordLength;
+          dictionaryState.data = minLength;
         });
-        answers.data = greaterThanMinLength;
-        state.isLoaded = true;
       });
-    });
+    }
   });
 
   // when the component mounts, fetch the dictionary
-  useClientEffect$(() => {
-    if (dictionaryState.dictionary.length <= 1) {
-      importWordsFromPublicDir().then((data) => {
-        dictionaryState.dictionary = data;
+  // useClientEffect$(() => {
+  //   if (dictionaryState.dictionary.length <= 1) {
+  //     importWordsFromPublicDir().then((data) => {
+  //       dictionaryState.dictionary = data;
 
-        const foundAnswers = solve(data, state.board).filter(
-          (value: string) => {
-            return value.length >= state.minWordLength;
-          }
-        );
+  //       const foundAnswers = solve(data, state.board).filter(
+  //         (value: string) => {
+  //           return value.length >= state.minWordLength;
+  //         }
+  //       );
 
-        answers.data = foundAnswers;
-        state.isLoaded = true;
-      });
-    } else {
-      const foundAnswers = solve(
-        dictionaryState.dictionary,
-        state.board
-      ).filter((value: string) => {
-        return value.length >= state.minWordLength;
-      });
+  //       answers.data = foundAnswers;
+  //       state.isLoaded = true;
+  //     });
+  //   } else {
+  //     const foundAnswers = solve(
+  //       dictionaryState.dictionary,
+  //       state.board
+  //     ).filter((value: string) => {
+  //       return value.length >= state.minWordLength;
+  //     });
 
-      answers.data = foundAnswers;
-      state.isLoaded = true;
-    }
-  });
+  //     answers.data = foundAnswers;
+  //     state.isLoaded = true;
+  //   }
+  // });
 
   /**
    * When the board size updates:
@@ -103,12 +102,12 @@ export default component$(() => {
     track(() => state.board);
 
     state.selectedPath = [];
-    foundWords.words = [""];
+    foundWords.data = [""];
   });
 
   useTask$(({ track }) => {
     track(() => state.board);
-    const foundAnswers = solve(dictionaryState.dictionary, state.board).filter(
+    const foundAnswers = solve(dictionaryState.data, state.board).filter(
       (value: string) => {
         return value.length >= state.minWordLength;
       }
@@ -124,7 +123,7 @@ export default component$(() => {
    */
   useTask$(({ track }) => {
     track(() => state.minWordLength);
-    answers.data = solve(dictionaryState.dictionary, state.board).filter(
+    answers.data = solve(dictionaryState.data, state.board).filter(
       (value: string) => {
         return value.length >= state.minWordLength;
       }
@@ -147,14 +146,14 @@ export default component$(() => {
         .map((element: { index: number; char: string }) => element.char)
         .join("");
 
-      const wordExists = dictionaryState.dictionary.includes(word);
-      const wordNotFound = !foundWords.words.includes(word);
+      const wordExists = dictionaryState.data.includes(word);
+      const wordNotFound = !foundWords.data.includes(word);
       const longEnough = word.length >= state.minWordLength;
       if (longEnough && wordExists && wordNotFound) {
         state.wordFound = true;
 
         setTimeout(() => {
-          foundWords.words = [...foundWords.words, word];
+          foundWords.data = [...foundWords.data, word];
           foundWordCelebration();
           state.selectedPath = [];
           state.wordFound = false;
@@ -167,10 +166,10 @@ export default component$(() => {
    * Celebrate when all the words have been found
    */
   useTask$(({ track }) => {
-    track(() => foundWords.words);
+    track(() => foundWords.data);
     track(() => answers.data);
     const answersLength = answers.data.length;
-    const foundWordsLength = foundWords.words.length - 1;
+    const foundWordsLength = foundWords.data.length - 1;
     if (foundWordsLength && foundWordsLength === answersLength) {
       fireWorks();
     }
@@ -187,7 +186,7 @@ export default component$(() => {
         <Controls
           state={state}
           answersLength={answers.data.length}
-          foundWordsLength={foundWords.words.length - 1}
+          foundWordsLength={foundWords.data.length - 1}
         />
       </div>
       <BoggleGrid
@@ -197,11 +196,11 @@ export default component$(() => {
       />
       <div class="max-w-[600px] m-auto w-[98%] mb-[50px]">
         <FoundWords
-          words={foundWords.words}
+          words={foundWords.data}
           minWordLength={state.minWordLength}
         />
         <Answers
-          foundWords={foundWords.words}
+          foundWords={foundWords.data}
           answers={answers.data}
           minWordLength={state.minWordLength}
         />

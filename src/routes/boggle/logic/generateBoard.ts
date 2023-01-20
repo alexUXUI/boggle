@@ -1,4 +1,5 @@
 export const generateRandomBoard = (length: number): string => {
+  console.log(`AWW YEAH HEAR ME ROAR !!!!!!!`);
   const lengthSquared = length * length;
 
   const vowels = ["e", "e", "e", "e", "e", "a", "a", "a", "i", "i", "s", "s"];

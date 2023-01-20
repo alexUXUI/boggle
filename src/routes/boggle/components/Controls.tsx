@@ -1,6 +1,7 @@
 import { component$ } from "@builder.io/qwik";
 import type { State } from "..";
 import { generateRandomBoard } from "../logic/generateBoard";
+export const Boggle = import("../../../boggle/pkg/boggle");
 
 interface Props {
   state: State;
@@ -56,7 +57,12 @@ export const Controls = component$(({ state, answersLength }: Props) => {
       <button
         class="text-[18px] my-2 ml-2 border-2 bg-white h-[32px] border-blue-800 hover:bg-blue-200 rounded-md p-2 flex justify-center items-center "
         onClick$={() => {
-          state.board = generateRandomBoard(state.boardSize).split("");
+          Boggle.then(async (module) => {
+            await module.default();
+            const boardString = module.gerenate_board_string();
+            console.log(boardString);
+            state.board = boardString.split("");
+          });
         }}
       >
         Reset Board

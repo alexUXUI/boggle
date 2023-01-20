@@ -54,6 +54,39 @@ pub async fn get_data() -> Result<js_sys::Array, JsValue> {
     Ok(array)
 }
 
+// create a struct to hold the dictionary data
+struct Dictionary {
+    data: Vec<String>,
+}
+
+const DICTIONARY: Dictionary = Dictionary { data: Vec::new() };
+
+// create a method to update the dictionary data
+impl Dictionary {
+    fn update(&mut self, data: Vec<String>) {
+        self.data = data;
+    }
+
+    fn get(&self) -> &Vec<String> {
+        &self.data
+    }
+}
+
+#[wasm_bindgen]
+pub async fn get_dictionary() -> js_sys::Array {
+    // Get dictionary data over HTTP
+    let data = get_data().await.unwrap();
+
+    // transform the data into a js array
+    let array = js_sys::Array::new();
+
+    for word in data.iter() {
+        array.push(&JsValue::from(word));
+    }
+
+    array
+}
+
 #[wasm_bindgen]
 pub async fn run_the_world() -> js_sys::Array {
     // Get dictionary data over HTTP
@@ -123,10 +156,12 @@ pub fn solve_board_helper(
     trie: &mut TrieStruct,
     words: &mut Vec<String>,
 ) {
-    if row < 0 || row >= board.len() || col < 0 || col >= board[row].len() {
+    // if no cell return
+    if row >= board.len() || col >= board[row].len() {
         return;
     }
 
+    // if cell is visited return
     if visited[row][col] {
         return;
     }

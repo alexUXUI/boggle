@@ -73,7 +73,9 @@ pub fn gerenate_board_string() -> String {
     }
 
     // make the string lowercase
-    new_board_string = new_board_string.to_lowercase();
+    // new_board_string = new_board_string.to_lowercase();
+
+    new_board_string = "CART".to_string();
 
     new_board_string
 }

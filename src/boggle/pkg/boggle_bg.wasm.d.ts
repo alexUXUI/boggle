@@ -1,6 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export const memory: WebAssembly.Memory;
+export function get_dictionary(): number;
 export function run_the_world(): number;
 export function test_trie(): void;
 export function greet(a: number, b: number): void;

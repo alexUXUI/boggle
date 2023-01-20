@@ -3,6 +3,10 @@
 /**
 * @returns {Promise<Array<any>>}
 */
+export function get_dictionary(): Promise<Array<any>>;
+/**
+* @returns {Promise<Array<any>>}
+*/
 export function run_the_world(): Promise<Array<any>>;
 /**
 */
@@ -20,6 +24,7 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
+  readonly get_dictionary: () => number;
   readonly run_the_world: () => number;
   readonly test_trie: () => void;
   readonly greet: (a: number, b: number) => void;
