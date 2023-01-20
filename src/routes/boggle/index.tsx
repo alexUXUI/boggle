@@ -6,7 +6,6 @@ import {
 } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { Answers } from "./components/Answers";
-import { generateRandomBoard } from "./logic/generateBoard";
 import { BoggleGrid } from "./components/BoggleGrid";
 import { Controls } from "./components/Controls";
 import { FoundWords } from "./components/FoundWords";
@@ -27,7 +26,7 @@ export interface State {
 export default component$(() => {
   const state = useStore<State>({
     boardSize: 5, // default board length and width dimension
-    board: generateRandomBoard(5).split(""), // random default board
+    board: [], // random default board
     minWordLength: 5, // minimum word length
     selectedPath: [], // selected path on the board
     wordFound: false, // whether a word was found, used for animation
@@ -50,7 +49,15 @@ export default component$(() => {
   useClientEffect$(() => {
     Boggle.then(async (module) => {
       await module.default();
-      module.greet("OMGGGGG");
+
+      module.run_the_world().then((board) => {
+        console.log("is tree populated, board is built", board);
+      });
+
+      const boardString = module.gerenate_board_string();
+      state.board = boardString.split("");
+
+      console.log("board string", boardString);
     });
   });
 
@@ -59,18 +66,27 @@ export default component$(() => {
     if (dictionaryState.dictionary.length <= 1) {
       importWordsFromPublicDir().then((data) => {
         dictionaryState.dictionary = data;
-        answers.data = solve(data, state.board).filter((value: string) => {
-          return value.length >= state.minWordLength;
-        });
+
+        const foundAnswers = solve(data, state.board).filter(
+          (value: string) => {
+            return value.length >= state.minWordLength;
+          }
+        );
+
+        answers.data = foundAnswers;
+
         state.isLoaded = true;
       });
     } else {
-      const filtered = solve(dictionaryState.dictionary, state.board).filter(
-        (value: string) => {
-          return value.length >= state.minWordLength;
-        }
-      );
-      answers.data = filtered;
+      const foundAnswers = solve(
+        dictionaryState.dictionary,
+        state.board
+      ).filter((value: string) => {
+        return value.length >= state.minWordLength;
+      });
+
+      answers.data = foundAnswers;
+
       state.isLoaded = true;
     }
   });
@@ -84,14 +100,20 @@ export default component$(() => {
   useTask$(({ track }) => {
     track(() => state.boardSize);
     track(() => state.board);
-    answers.data = solve(dictionaryState.dictionary, state.board).filter(
+
+    state.selectedPath = [];
+    foundWords.words = [""];
+  });
+
+  useTask$(({ track }) => {
+    track(() => state.board);
+    const foundAnswers = solve(dictionaryState.dictionary, state.board).filter(
       (value: string) => {
         return value.length >= state.minWordLength;
       }
     );
 
-    state.selectedPath = [];
-    foundWords.words = [""];
+    answers.data = foundAnswers;
   });
 
   /**

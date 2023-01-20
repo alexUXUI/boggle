@@ -1,5 +1,95 @@
+mod generate_board;
+mod trie;
 
 use wasm_bindgen::prelude::*;
+use wasm_bindgen::JsCast;
+use wasm_bindgen_futures::JsFuture;
+use web_sys::{Request, RequestInit, RequestMode, Response};
+
+use generate_board::gerenate_board_string;
+use trie::TrieStruct;
+
+pub async fn get_data() -> Result<js_sys::Array, JsValue> {
+    let mut opts = RequestInit::new();
+    opts.method("GET");
+    opts.mode(RequestMode::Cors);
+
+    let url = format!("https://boggle.pages.dev/engmix.txt");
+
+    let request = Request::new_with_str_and_init(&url, &opts)?;
+
+    request.headers().set("Accept", "text/plain")?;
+
+    let window = web_sys::window().unwrap();
+    let resp_value = JsFuture::from(window.fetch_with_request(&request)).await?;
+
+    // `resp_value` is a `Response` object.
+    let text: Response = resp_value.dyn_into().unwrap();
+
+    // Convert this other `Promise` into a rust `Future`.
+    let text_promise = JsFuture::from(text.text().unwrap());
+
+    // Wait for the response of the fetch.
+    let text_value = text_promise.await?;
+
+    // Convert to a `String`.
+    let text_string = text_value.as_string().unwrap();
+
+    // remove all the new lines and split the string into an array
+    let cleaned_data = text_string
+        .replace("\r", "")
+        .replace("\n", " ")
+        .split(" ")
+        .map(|s| s.to_string())
+        .collect::<Vec<String>>();
+
+    // create new js array
+    let array = js_sys::Array::new();
+
+    // push each word into the array
+    for word in cleaned_data {
+        array.push(&JsValue::from(word));
+    }
+
+    Ok(array)
+}
+
+#[wasm_bindgen]
+pub async fn run_the_world() -> String {
+    let data = get_data();
+
+    // await the data
+    let clean_data = data.await.unwrap();
+
+    // create trie
+    let mut trie_test = TrieStruct::create();
+
+    // add data to trie by iterating through the array of data
+    for word in clean_data.iter() {
+        trie_test.insert(word.as_string().unwrap());
+    }
+
+    let is_test_in_trie = trie_test.find("esteem".to_string());
+
+    assert!(is_test_in_trie);
+
+    let board_string = gerenate_board_string();
+
+    board_string
+}
+
+#[wasm_bindgen]
+pub fn test_trie() {
+    // Create Trie
+    let mut trie_test = TrieStruct::create();
+
+    // Insert Stuff
+    trie_test.insert("Test".to_string());
+    trie_test.insert("Tea".to_string());
+    trie_test.insert("Background".to_string());
+    trie_test.insert("Back".to_string());
+    trie_test.insert("Brown".to_string());
+}
 
 #[wasm_bindgen]
 extern "C" {
@@ -8,5 +98,5 @@ extern "C" {
 
 #[wasm_bindgen]
 pub fn greet(name: &str) {
-    // alert(&format!("Hello, {}!", name));
+    alert(&format!("Hello, {}!", name));
 }
