@@ -55,27 +55,175 @@ pub async fn get_data() -> Result<js_sys::Array, JsValue> {
 }
 
 #[wasm_bindgen]
-pub async fn run_the_world() -> String {
-    let data = get_data();
+pub async fn run_the_world() -> js_sys::Array {
+    // Get dictionary data over HTTP
+    let data = get_data().await.unwrap();
 
-    // await the data
-    let clean_data = data.await.unwrap();
-
-    // create trie
+    // Create Trie to hold the dictionary data
     let mut trie_test = TrieStruct::create();
 
-    // add data to trie by iterating through the array of data
-    for word in clean_data.iter() {
+    // Add data to trie by iterating through the array of data
+    for word in data.iter() {
         trie_test.insert(word.as_string().unwrap());
     }
 
-    let is_test_in_trie = trie_test.find("esteem".to_string());
-
-    assert!(is_test_in_trie);
-
+    // Generate a random board
     let board_string = gerenate_board_string();
 
-    board_string
+    // convert the board string into a 5x5 matrix
+    let board_matrix = board_string
+        .chars()
+        .collect::<Vec<char>>()
+        .chunks(5)
+        .map(|s| s.to_vec())
+        .collect::<Vec<Vec<char>>>();
+
+    // solve the board
+    let words = solve_board(board_matrix, &mut trie_test);
+
+    // return the words as a js array
+    let array = js_sys::Array::new();
+
+    for word in words {
+        array.push(&JsValue::from(word));
+    }
+
+    array
+}
+
+pub fn solve_board(board: Vec<Vec<char>>, trie: &mut TrieStruct) -> Vec<String> {
+    let mut words = Vec::new();
+
+    for row in 0..board.len() {
+        for col in 0..board[row].len() {
+            let mut visited = vec![vec![false; board[row].len()]; board.len()];
+            let mut word = String::new();
+
+            solve_board_helper(
+                board.clone(),
+                row,
+                col,
+                visited,
+                &mut word,
+                trie,
+                &mut words,
+            );
+        }
+    }
+
+    words
+}
+
+pub fn solve_board_helper(
+    board: Vec<Vec<char>>,
+    row: usize,
+    col: usize,
+    mut visited: Vec<Vec<bool>>,
+    word: &mut String,
+    trie: &mut TrieStruct,
+    words: &mut Vec<String>,
+) {
+    if row < 0 || row >= board.len() || col < 0 || col >= board[row].len() {
+        return;
+    }
+
+    if visited[row][col] {
+        return;
+    }
+
+    word.push(board[row][col]);
+
+    if !trie.is_prefix(word) {
+        word.pop();
+        return;
+    }
+
+    if trie.is_word(word) {
+        words.push(word.clone());
+    }
+
+    visited[row][col] = true;
+
+    solve_board_helper(
+        board.clone(),
+        row + 1,
+        col,
+        visited.clone(),
+        word,
+        trie,
+        words,
+    );
+    solve_board_helper(
+        board.clone(),
+        row - 1,
+        col,
+        visited.clone(),
+        word,
+        trie,
+        words,
+    );
+    solve_board_helper(
+        board.clone(),
+        row,
+        col + 1,
+        visited.clone(),
+        word,
+        trie,
+        words,
+    );
+    solve_board_helper(
+        board.clone(),
+        row,
+        col - 1,
+        visited.clone(),
+        word,
+        trie,
+        words,
+    );
+
+    // handle the diagonals
+    solve_board_helper(
+        board.clone(),
+        row + 1,
+        col + 1,
+        visited.clone(),
+        word,
+        trie,
+        words,
+    );
+
+    solve_board_helper(
+        board.clone(),
+        row + 1,
+        col - 1,
+        visited.clone(),
+        word,
+        trie,
+        words,
+    );
+
+    solve_board_helper(
+        board.clone(),
+        row - 1,
+        col + 1,
+        visited.clone(),
+        word,
+        trie,
+        words,
+    );
+
+    solve_board_helper(
+        board.clone(),
+        row - 1,
+        col - 1,
+        visited.clone(),
+        word,
+        trie,
+        words,
+    );
+
+    word.pop();
+    visited[row][col] = false;
 }
 
 #[wasm_bindgen]

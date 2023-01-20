@@ -1,9 +1,9 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
-* @returns {Promise<string>}
+* @returns {Promise<Array<any>>}
 */
-export function run_the_world(): Promise<string>;
+export function run_the_world(): Promise<Array<any>>;
 /**
 */
 export function test_trie(): void;

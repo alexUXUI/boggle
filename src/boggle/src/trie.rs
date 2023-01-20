@@ -48,6 +48,40 @@ impl TrieStruct {
         }
     }
 
+    pub fn is_prefix(&mut self, string_val: &mut String) -> bool {
+        let mut current_node = &mut self.root_node;
+        let char_list: Vec<char> = string_val.chars().collect();
+
+        for counter in 0..char_list.len() {
+            if !current_node.child_nodes.contains_key(&char_list[counter]) {
+                return false;
+            } else {
+                current_node = current_node
+                    .child_nodes
+                    .get_mut(&char_list[counter])
+                    .unwrap();
+            }
+        }
+        return true;
+    }
+
+    pub fn is_word(&mut self, string_val: &mut String) -> bool {
+        let mut current_node = &mut self.root_node;
+        let char_list: Vec<char> = string_val.chars().collect();
+
+        for counter in 0..char_list.len() {
+            if !current_node.child_nodes.contains_key(&char_list[counter]) {
+                return false;
+            } else {
+                current_node = current_node
+                    .child_nodes
+                    .get_mut(&char_list[counter])
+                    .unwrap();
+            }
+        }
+        return current_node.is_final;
+    }
+
     // Insert a string
     pub fn insert(&mut self, string_val: String) {
         let mut current_node = &mut self.root_node;

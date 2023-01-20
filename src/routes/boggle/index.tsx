@@ -50,12 +50,17 @@ export default component$(() => {
     Boggle.then(async (module) => {
       await module.default();
 
-      module.run_the_world().then((board) => {
-        console.log("is tree populated, board is built", board);
-      });
-
       const boardString = module.gerenate_board_string();
       state.board = boardString.split("");
+
+      module.run_the_world().then((solvedAnswers) => {
+        console.log("is tree populated, board is built");
+        const greaterThanMinLength = solvedAnswers.filter((value: string) => {
+          return value.length >= state.minWordLength;
+        });
+        answers.data = greaterThanMinLength;
+        state.isLoaded = true;
+      });
     });
   });
 
