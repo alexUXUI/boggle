@@ -108,11 +108,6 @@ impl TrieStruct {
             current_node.is_final = true;
         } else {
             for new_counter in last_match..char_list.len() {
-                println!(
-                    "Inserting {} into {}",
-                    char_list[new_counter],
-                    current_node.value.unwrap_or_default()
-                );
                 current_node.insert_value(char_list[new_counter], false);
                 current_node = current_node
                     .child_nodes

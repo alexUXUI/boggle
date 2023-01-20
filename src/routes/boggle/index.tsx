@@ -1,16 +1,17 @@
+import type { NoSerialize } from "@builder.io/qwik";
 import {
   component$,
   useStore,
   useTask$,
   useClientEffect$,
+  noSerialize,
 } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { Answers } from "./components/Answers";
 import { BoggleGrid } from "./components/BoggleGrid";
 import { Controls } from "./components/Controls";
 import { FoundWords } from "./components/FoundWords";
-// import { importWordsFromPublicDir } from "./logic/api";
-import { solve } from "./logic/boggle";
+// import { solve } from "./logic/boggle";
 import { fireWorks, foundWordCelebration } from "./logic/celebrations";
 export const Boggle = import("../../boggle/pkg/boggle");
 
@@ -23,14 +24,33 @@ export interface State {
   isLoaded: boolean;
 }
 
+interface IBoggle {
+  generate_board: (size: number) => string[][];
+  generate_board_string: () => string;
+  get_dictionary: () => Promise<string[]>;
+  get_board_string: (matrix: string[][]) => string;
+  run_game: () => Promise<string[]>;
+}
+
+interface Wasm {
+  module: NoSerialize<
+    | IBoggle
+    | typeof import("/Users/alexbennett/Desktop/boggle/src/boggle/pkg/boggle")
+  > | null;
+}
+
 export default component$(() => {
   const state = useStore<State>({
-    boardSize: 2, // default board length and width dimension
+    boardSize: 5, // default board length and width dimension
     board: [], // random default board
-    minWordLength: 1, // minimum word length
+    minWordLength: 3, // minimum word length
     selectedPath: [], // selected path on the board
     wordFound: false, // whether a word was found, used for animation
     isLoaded: false, // whether the dictionary has been loaded
+  });
+
+  const boggle = useStore<Wasm>({
+    module: null,
   });
 
   const answers = useStore({
@@ -47,20 +67,34 @@ export default component$(() => {
 
   // use client effect to import the wasm module in the top level directory in the boggle directory
   useClientEffect$(() => {
-    if (dictionaryState.data.length <= 1) {
-      Boggle.then(async (module) => {
-        await module.default();
-        module.get_dictionary().then((dict) => {
-          console.log("is tree populated, board is built");
+    Boggle.then(async (module) => {
+      // await the module
+      await module.default();
 
-          const minLength = dict.filter((value: string) => {
-            return value.length >= 20;
-          });
+      // set the module innon-serializable  state
+      boggle.module = noSerialize(module);
 
-          dictionaryState.data = minLength;
-        });
+      // const matrix = module.generate_board(state.boardSize);
+      // const boardString = module.get_board_string(matrix);
+      // state.board = boardString.split("");
+
+      // console.log("boardString", boardString);
+
+      // get the dictionary over HTTP
+      // module.get_dictionary().then((dict) => {
+      //   const minLength = dict.filter((value: string) => {
+      //     return value.length >= state.minWordLength;
+      //   });
+
+      //   // set the dictionary in state
+      //   dictionaryState.data = minLength;
+      //   state.isLoaded = true;
+      // });
+
+      module.run_game().then((dict) => {
+        console.log("ANSWERS", dict);
       });
-    }
+    });
   });
 
   // when the component mounts, fetch the dictionary
@@ -92,7 +126,7 @@ export default component$(() => {
   // });
 
   /**
-   * When the board size updates:
+   * When the board chars or grid size updates:
    * 1. generate a new board
    * 2. solve the board
    * 3. update the answers
@@ -100,20 +134,29 @@ export default component$(() => {
   useTask$(({ track }) => {
     track(() => state.boardSize);
     track(() => state.board);
-
+    console.log("board size", state.boardSize);
+    if (typeof window !== "undefined" && boggle.module !== null) {
+      // console.log("boggle module");
+      // const matrix = boggle.module!.generate_board(state.boardSize);
+      // console.log("matrix", matrix);
+      boggle.module!.run_game().then((ans) => {
+        console.log("answers", ans);
+        answers.data = ans;
+      });
+    }
     state.selectedPath = [];
     foundWords.data = [""];
   });
 
   useTask$(({ track }) => {
     track(() => state.board);
-    const foundAnswers = solve(dictionaryState.data, state.board).filter(
-      (value: string) => {
-        return value.length >= state.minWordLength;
-      }
-    );
+    // const foundAnswers = solve(dictionaryState.data, state.board).filter(
+    //   (value: string) => {
+    //     return value.length >= state.minWordLength;
+    //   }
+    // );
 
-    answers.data = foundAnswers;
+    // answers.data = foundAnswers;
   });
 
   /**
@@ -123,13 +166,12 @@ export default component$(() => {
    */
   useTask$(({ track }) => {
     track(() => state.minWordLength);
-    answers.data = solve(dictionaryState.data, state.board).filter(
-      (value: string) => {
-        return value.length >= state.minWordLength;
-      }
-    );
-
-    state.selectedPath = [];
+    // answers.data = solve(dictionaryState.data, state.board).filter(
+    //   (value: string) => {
+    //     return value.length >= state.minWordLength;
+    //   }
+    // );
+    // state.selectedPath = [];
   });
 
   /**

@@ -24,7 +24,7 @@ export const Controls = component$(({ state, answersLength }: Props) => {
             state.board = generateRandomBoard(e.target.valueAsNumber).split("");
           }}
           value={state.boardSize}
-          class=" rounded-md p-2 w-[50px] ml-2 h-[30px]"
+          class="border-[1px] border-slate-200 rounded-md p-2 w-[50px] ml-2 h-[30px]"
         />
       </fieldset>
       <fieldset class="flex my-2 ml-2 h-[30px] justify-center items-center">
@@ -35,7 +35,7 @@ export const Controls = component$(({ state, answersLength }: Props) => {
             state.minWordLength = e.target.valueAsNumber;
           }}
           value={state.minWordLength}
-          class=" rounded-md p-2 w-[50px] ml-2 h-[30px]"
+          class="border-[1px] border-slate-200 rounded-md p-2 w-[50px] ml-2 h-[30px]"
         />
         <div class="ml-4 text-[18px]">Answers: {answersLength}</div>
       </fieldset>
@@ -46,7 +46,7 @@ export const Controls = component$(({ state, answersLength }: Props) => {
         <input
           id="customize"
           type="text"
-          class="w-[25ch] tracking-wide ml-2 h-[30px] rounded-md text-center "
+          class="w-[25ch] tracking-wide ml-2 h-[30px] rounded-md text-center border-[1px] border-slate-200"
           placeholder="customize board"
           value={state.board.join("")}
           onChange$={(event) => {

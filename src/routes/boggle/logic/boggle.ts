@@ -124,15 +124,18 @@ export const getWords = (board: string[][], trie: any): string[] => {
 
 export const solve = (words: string[], board: string[]): string[] => {
   let results: string[] = [];
-
   try {
     // build a trie from the dictionary
-    words.forEach((word: string) => trie.add(word));
+    words.forEach((word: string) => trie.add(word.toLocaleLowerCase()));
+
     // convert the board string to a 2D matrix
-    const stringToMatrix = convertStringToMatrix(board.join(""));
+    const stringToMatrix = convertStringToMatrix(
+      board.join("").toLocaleLowerCase()
+    );
+
     // get the words from the board
     const foundWords = getWords(stringToMatrix, trie);
-    // sort the words
+
     results = Array.from(foundWords).sort();
   } catch (error) {
     console.log(error);

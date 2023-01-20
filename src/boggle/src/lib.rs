@@ -1,285 +1,85 @@
-mod generate_board;
+mod board;
+mod dictionary;
+mod solver;
 mod trie;
+
+use board::generate_board_from_string;
+use board::generate_fixed_board;
+use board::gerenate_board_string;
+use dictionary::get_dictionary;
+use solver::solve_board;
+use trie::TrieStruct;
 
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
-use wasm_bindgen_futures::JsFuture;
-use web_sys::{Request, RequestInit, RequestMode, Response};
 
-use generate_board::gerenate_board_string;
-use trie::TrieStruct;
-
-pub async fn get_data() -> Result<js_sys::Array, JsValue> {
-    let mut opts = RequestInit::new();
-    opts.method("GET");
-    opts.mode(RequestMode::Cors);
-
-    let url = format!("https://boggle.pages.dev/engmix.txt");
-
-    let request = Request::new_with_str_and_init(&url, &opts)?;
-
-    request.headers().set("Accept", "text/plain")?;
-
-    let window = web_sys::window().unwrap();
-    let resp_value = JsFuture::from(window.fetch_with_request(&request)).await?;
-
-    // `resp_value` is a `Response` object.
-    let text: Response = resp_value.dyn_into().unwrap();
-
-    // Convert this other `Promise` into a rust `Future`.
-    let text_promise = JsFuture::from(text.text().unwrap());
-
-    // Wait for the response of the fetch.
-    let text_value = text_promise.await?;
-
-    // Convert to a `String`.
-    let text_string = text_value.as_string().unwrap();
-
-    // remove all the new lines and split the string into an array
-    let cleaned_data = text_string
-        .replace("\r", "")
-        .replace("\n", " ")
-        .split(" ")
-        .map(|s| s.to_string())
-        .collect::<Vec<String>>();
-
-    // create new js array
+pub fn matrix_to_js_array(vec: Vec<Vec<char>>) -> js_sys::Array {
     let array = js_sys::Array::new();
 
-    // push each word into the array
-    for word in cleaned_data {
-        array.push(&JsValue::from(word));
-    }
+    for row in vec {
+        let row_array = js_sys::Array::new();
 
-    Ok(array)
-}
+        for letter in row {
+            let letter_string = letter.to_string();
+            row_array.push(&JsValue::from(letter_string));
+        }
 
-// create a struct to hold the dictionary data
-struct Dictionary {
-    data: Vec<String>,
-}
-
-const DICTIONARY: Dictionary = Dictionary { data: Vec::new() };
-
-// create a method to update the dictionary data
-impl Dictionary {
-    fn update(&mut self, data: Vec<String>) {
-        self.data = data;
-    }
-
-    fn get(&self) -> &Vec<String> {
-        &self.data
-    }
-}
-
-#[wasm_bindgen]
-pub async fn get_dictionary() -> js_sys::Array {
-    // Get dictionary data over HTTP
-    let data = get_data().await.unwrap();
-
-    // transform the data into a js array
-    let array = js_sys::Array::new();
-
-    for word in data.iter() {
-        array.push(&JsValue::from(word));
+        array.push(&row_array);
     }
 
     array
 }
 
-#[wasm_bindgen]
-pub async fn run_the_world() -> js_sys::Array {
-    // Get dictionary data over HTTP
-    let data = get_data().await.unwrap();
+pub fn matrix_to_string(board: js_sys::Array) -> String {
+    let mut board_string = String::new();
 
-    // Create Trie to hold the dictionary data
-    let mut trie_test = TrieStruct::create();
-
-    // Add data to trie by iterating through the array of data
-    for word in data.iter() {
-        trie_test.insert(word.as_string().unwrap());
-    }
-
-    // Generate a random board
-    let board_string = gerenate_board_string();
-
-    // convert the board string into a 5x5 matrix
-    let board_matrix = board_string
-        .chars()
-        .collect::<Vec<char>>()
-        .chunks(5)
-        .map(|s| s.to_vec())
-        .collect::<Vec<Vec<char>>>();
-
-    // solve the board
-    let words = solve_board(board_matrix, &mut trie_test);
-
-    // return the words as a js array
-    let array = js_sys::Array::new();
-
-    for word in words {
-        array.push(&JsValue::from(word));
-    }
-
-    array
-}
-
-pub fn solve_board(board: Vec<Vec<char>>, trie: &mut TrieStruct) -> Vec<String> {
-    let mut words = Vec::new();
-
-    for row in 0..board.len() {
-        for col in 0..board[row].len() {
-            let mut visited = vec![vec![false; board[row].len()]; board.len()];
-            let mut word = String::new();
-
-            solve_board_helper(
-                board.clone(),
-                row,
-                col,
-                visited,
-                &mut word,
-                trie,
-                &mut words,
-            );
+    for i in 0..board.length() {
+        let row = board.get(i).dyn_into::<js_sys::Array>().unwrap();
+        for j in 0..row.length() {
+            board_string.push_str(row.get(j).as_string().unwrap().as_str());
         }
     }
 
-    words
-}
-
-pub fn solve_board_helper(
-    board: Vec<Vec<char>>,
-    row: usize,
-    col: usize,
-    mut visited: Vec<Vec<bool>>,
-    word: &mut String,
-    trie: &mut TrieStruct,
-    words: &mut Vec<String>,
-) {
-    // if no cell return
-    if row >= board.len() || col >= board[row].len() {
-        return;
-    }
-
-    // if cell is visited return
-    if visited[row][col] {
-        return;
-    }
-
-    word.push(board[row][col]);
-
-    if !trie.is_prefix(word) {
-        word.pop();
-        return;
-    }
-
-    if trie.is_word(word) {
-        words.push(word.clone());
-    }
-
-    visited[row][col] = true;
-
-    solve_board_helper(
-        board.clone(),
-        row + 1,
-        col,
-        visited.clone(),
-        word,
-        trie,
-        words,
-    );
-    solve_board_helper(
-        board.clone(),
-        row - 1,
-        col,
-        visited.clone(),
-        word,
-        trie,
-        words,
-    );
-    solve_board_helper(
-        board.clone(),
-        row,
-        col + 1,
-        visited.clone(),
-        word,
-        trie,
-        words,
-    );
-    solve_board_helper(
-        board.clone(),
-        row,
-        col - 1,
-        visited.clone(),
-        word,
-        trie,
-        words,
-    );
-
-    // handle the diagonals
-    solve_board_helper(
-        board.clone(),
-        row + 1,
-        col + 1,
-        visited.clone(),
-        word,
-        trie,
-        words,
-    );
-
-    solve_board_helper(
-        board.clone(),
-        row + 1,
-        col - 1,
-        visited.clone(),
-        word,
-        trie,
-        words,
-    );
-
-    solve_board_helper(
-        board.clone(),
-        row - 1,
-        col + 1,
-        visited.clone(),
-        word,
-        trie,
-        words,
-    );
-
-    solve_board_helper(
-        board.clone(),
-        row - 1,
-        col - 1,
-        visited.clone(),
-        word,
-        trie,
-        words,
-    );
-
-    word.pop();
-    visited[row][col] = false;
+    board_string
 }
 
 #[wasm_bindgen]
-pub fn test_trie() {
-    // Create Trie
-    let mut trie_test = TrieStruct::create();
+pub fn get_board_string(board: js_sys::Array) -> String {
+    matrix_to_string(board)
+}
 
-    // Insert Stuff
-    trie_test.insert("Test".to_string());
-    trie_test.insert("Tea".to_string());
-    trie_test.insert("Background".to_string());
-    trie_test.insert("Back".to_string());
-    trie_test.insert("Brown".to_string());
+#[wasm_bindgen]
+pub async fn run_game() -> js_sys::Array {
+    // Dictionary
+    let words = get_dictionary().await.unwrap();
+
+    // Trie
+    let mut trie = TrieStruct::create();
+
+    for i in 0..words.length() {
+        trie.insert(words.get(i).as_string().unwrap());
+    }
+
+    // Board
+    let board_string = gerenate_board_string();
+    let board = generate_board_from_string(board_string);
+
+    let js_array = matrix_to_js_array(board.clone());
+
+    // given the board and the trie, solve the board
+    let answers = solve_board(board, &mut trie);
+
+    // convert the answers into a js array
+    let array = js_sys::Array::new();
+
+    for answer in answers {
+        array.push(&JsValue::from(answer));
+    }
+
+    array
 }
 
 #[wasm_bindgen]
 extern "C" {
     fn alert(s: &str);
-}
-
-#[wasm_bindgen]
-pub fn greet(name: &str) {
-    alert(&format!("Hello, {}!", name));
 }
