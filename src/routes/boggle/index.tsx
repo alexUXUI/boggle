@@ -3,7 +3,6 @@ import {
   useStore,
   useTask$,
   useClientEffect$,
-  $,
 } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { Answers } from "./components/Answers";
@@ -46,10 +45,6 @@ export default component$(() => {
     dictionary: [""],
   });
 
-  const filterByMinLength = $((word: string) => {
-    return word.length >= state.minWordLength;
-  });
-
   // use client effect to import the wasm module in the top level directory in the boggle directory
   useClientEffect$(() => {
     Boggle.then(async (module) => {
@@ -70,7 +65,11 @@ export default component$(() => {
       importWordsFromPublicDir().then((data) => {
         dictionaryState.dictionary = data;
 
-        const foundAnswers = solve(data, state.board).filter(filterByMinLength);
+        const foundAnswers = solve(data, state.board).filter(
+          (value: string) => {
+            return value.length >= state.minWordLength;
+          }
+        );
 
         answers.data = foundAnswers;
         state.isLoaded = true;
@@ -79,7 +78,9 @@ export default component$(() => {
       const foundAnswers = solve(
         dictionaryState.dictionary,
         state.board
-      ).filter(filterByMinLength);
+      ).filter((value: string) => {
+        return value.length >= state.minWordLength;
+      });
 
       answers.data = foundAnswers;
       state.isLoaded = true;
@@ -103,7 +104,9 @@ export default component$(() => {
   useTask$(({ track }) => {
     track(() => state.board);
     const foundAnswers = solve(dictionaryState.dictionary, state.board).filter(
-      filterByMinLength
+      (value: string) => {
+        return value.length >= state.minWordLength;
+      }
     );
 
     answers.data = foundAnswers;
@@ -117,7 +120,9 @@ export default component$(() => {
   useTask$(({ track }) => {
     track(() => state.minWordLength);
     answers.data = solve(dictionaryState.dictionary, state.board).filter(
-      filterByMinLength
+      (value: string) => {
+        return value.length >= state.minWordLength;
+      }
     );
 
     state.selectedPath = [];
@@ -173,19 +178,19 @@ export default component$(() => {
           Boggle
         </h1>
       </div>
-      <main class="flex max-w-[500px] m-auto items-center justify-center mt-4 bg-white z-10">
+      <div class="flex max-w-[500px] m-auto items-center justify-center mt-4 bg-white z-10">
         <Controls
           state={state}
           answersLength={answers.data.length}
           foundWordsLength={foundWords.words.length - 1}
         />
-      </main>
+      </div>
       <BoggleGrid
         board={state.board}
         boardSize={state.boardSize}
         state={state}
       />
-      <main class="max-w-[600px] m-auto w-[98%] mb-[50px]">
+      <div class="max-w-[600px] m-auto w-[98%] mb-[50px]">
         <FoundWords
           words={foundWords.words}
           minWordLength={state.minWordLength}
@@ -195,7 +200,7 @@ export default component$(() => {
           answers={answers.data}
           minWordLength={state.minWordLength}
         />
-      </main>
+      </div>
     </div>
   );
 });

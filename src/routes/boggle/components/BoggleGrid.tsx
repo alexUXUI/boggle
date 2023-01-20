@@ -97,7 +97,7 @@ export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
 
   return (
     <div class="w-full flex flex-col justify-center items-center mt-[20px] mb-[20px]">
-      <main class="">
+      <div class="main">
         <table
           id="board"
           class={`m-auto border-[1px] border-blue-800 bg-blue-800`}
@@ -201,7 +201,7 @@ export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
             </tr>
           ))}
         </table>
-      </main>
+      </div>
     </div>
   );
 });

@@ -20,7 +20,7 @@ export const FoundWords = component$(({ words, minWordLength }: Props) => {
       </summary>
       <ul class="pt-4 flex flex-wrap">
         {filtered.map((answer) => (
-          <li class="text-[20px] w-[120px]">{answer}</li>
+          <li class="text-[20px] w-[32%]">{answer}</li>
         ))}
       </ul>
     </details>
