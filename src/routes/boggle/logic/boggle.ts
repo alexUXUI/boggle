@@ -1,4 +1,4 @@
-import { trie } from "./trie";
+import { trie } from './trie';
 
 export const convertStringToMatrix = (letters: string) => {
   const stringLength = letters.length;
@@ -6,7 +6,7 @@ export const convertStringToMatrix = (letters: string) => {
   const matrix = [];
 
   for (let i = 0; i < squareRoot; i++) {
-    const row = letters.substr(i * squareRoot, squareRoot).split("");
+    const row = letters.substr(i * squareRoot, squareRoot).split('');
     matrix.push(row);
   }
 
@@ -96,26 +96,26 @@ export const getWords = (board: string[][], trie: any): string[] => {
     neighbors.forEach((neighbor) => {
       const [neighborRow, neighborCol] = neighbor;
 
-      if (visited.has(neighborRow + "-" + neighborCol)) {
+      if (visited.has(neighborRow + '-' + neighborCol)) {
         return;
       }
 
-      visited.add(neighborRow + "-" + neighborCol);
-      visited.add(row + "-" + col);
+      visited.add(neighborRow + '-' + neighborCol);
+      visited.add(row + '-' + col);
 
       // wind up the search stack
       search(neighborRow, neighborCol, newPrefix, visited as Set<string>);
 
       // unwind the stack by clearing the visited set
-      visited.delete(neighborRow + "-" + neighborCol);
-      visited.delete(row + "-" + col);
+      visited.delete(neighborRow + '-' + neighborCol);
+      visited.delete(row + '-' + col);
     });
   };
 
   // for each cell in the board search for words
   for (let row = 0; row < board.length; row++) {
     for (let col = 0; col < board[0].length; col++) {
-      search(row, col, "", visited as Set<string>);
+      search(row, col, '', visited as Set<string>);
     }
   }
 
@@ -129,7 +129,7 @@ export const solve = (words: string[], board: string[]): string[] => {
     // build a trie from the dictionary
     words.forEach((word: string) => trie.add(word));
     // convert the board string to a 2D matrix
-    const stringToMatrix = convertStringToMatrix(board.join(""));
+    const stringToMatrix = convertStringToMatrix(board.join(''));
     // get the words from the board
     const foundWords = getWords(stringToMatrix, trie);
     // sort the words
@@ -139,4 +139,23 @@ export const solve = (words: string[], board: string[]): string[] => {
   }
 
   return results;
+};
+
+export const isInPath = (
+  currentIndex: number,
+  selectedPath: { index: number; char: string }[],
+  board: string[]
+) => {
+  return selectedPath.reduce(
+    (acc: boolean, element: { index: number; char: string }) => {
+      if (
+        element.index === currentIndex &&
+        element.char === board[currentIndex]
+      ) {
+        return true;
+      }
+      return acc;
+    },
+    false
+  );
 };

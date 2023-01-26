@@ -5,8 +5,10 @@ import {
   useStore,
   useOnWindow,
   useTask$,
-} from "@builder.io/qwik";
-import type { State } from "../index";
+} from '@builder.io/qwik';
+import type { State } from '../index';
+import { isInPath } from '../logic/boggle';
+import { bgColor, handleBoardResize } from '../logic/generateBoard';
 
 interface Props {
   board: string[];
@@ -14,90 +16,106 @@ interface Props {
   state: State;
 }
 
+export interface ScreenState {
+  width: number;
+  squareWidth: number;
+}
+
 export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
+  // unset the selected path when the user clicks outside the board or presses backspace or escape
   useClientEffect$(({ cleanup }) => {
     const clickHandler = (e: MouseEvent) => {
-      if (!document.getElementById("board")?.contains(e.target as Node)) {
+      if (!document.getElementById('board')?.contains(e.target as Node)) {
         state.selectedPath = [];
       }
     };
 
     const handleKeydown = (e: KeyboardEvent) => {
-      if (e.key === "Backspace" || e.key === "Escape") {
+      if (e.key === 'Backspace' || e.key === 'Escape') {
         state.selectedPath = [];
       }
     };
 
-    document.addEventListener("click", clickHandler);
-    document.addEventListener("keydown", handleKeydown);
+    document.addEventListener('click', clickHandler);
+    document.addEventListener('keydown', handleKeydown);
 
     cleanup(() => {
-      document.removeEventListener("click", clickHandler);
-      document.removeEventListener("keydown", handleKeydown);
+      document.removeEventListener('click', clickHandler);
+      document.removeEventListener('keydown', handleKeydown);
     });
   });
 
-  const isInPath = (currentIndex: number) => {
-    return state.selectedPath.reduce(
-      (acc: boolean, element: { index: number; char: string }) => {
-        if (
-          element.index === currentIndex &&
-          element.char === board[currentIndex]
-        ) {
-          return true;
-        }
-        return acc;
-      },
-      false
-    );
-  };
-
-  const screenState = useStore({
+  const screenState = useStore<ScreenState>({
     width: 0,
     squareWidth: 0,
   });
 
-  const maxWidth = 500;
-
-  useClientEffect$(() => {
-    screenState.width = window.innerWidth - 20;
-    screenState.squareWidth = Math.floor(screenState.width / boardSize);
-
-    if (screenState.width > maxWidth) {
-      screenState.width = maxWidth;
-      screenState.squareWidth = Math.floor(screenState.width / boardSize);
-    }
-  });
+  useClientEffect$(() => handleBoardResize(screenState, boardSize));
 
   useOnWindow(
-    "resize",
-    $(() => {
-      screenState.width = window.innerWidth - 20;
-      screenState.squareWidth = Math.floor(screenState.width / boardSize);
-
-      if (screenState.width > maxWidth) {
-        screenState.width = maxWidth;
-        screenState.squareWidth = Math.floor(screenState.width / boardSize);
-      }
-    })
+    'resize',
+    $(() => handleBoardResize(screenState, boardSize))
   );
 
   useTask$(({ track }) => {
     track(() => state.boardSize);
-    if (typeof window !== "undefined") {
-      screenState.width = window.innerWidth - 20;
-      screenState.squareWidth = Math.floor(screenState.width / boardSize);
+    handleBoardResize(screenState, boardSize);
+  });
 
-      if (screenState.width > maxWidth) {
-        screenState.width = maxWidth;
-        screenState.squareWidth = Math.floor(screenState.width / boardSize);
+  const addToFoundList = $((i: number, j: number) => {
+    state.selectedPath = [
+      ...state.selectedPath,
+      {
+        index: i * boardSize + j,
+        char: board[i * boardSize + j],
+      },
+    ];
+  });
+
+  const handleCellClick = $(
+    (isInSelectedPath: boolean, currentIndex: number, i: number, j: number) => {
+      const selectedPath = state.selectedPath;
+      const lastNodeInPath = selectedPath[selectedPath.length - 1];
+
+      // neighors of the last node in the path
+      const neighbors = [
+        lastNodeInPath?.index - boardSize - 1,
+        lastNodeInPath?.index - boardSize,
+        lastNodeInPath?.index - boardSize + 1,
+        lastNodeInPath?.index - 1,
+        lastNodeInPath?.index + 1,
+        lastNodeInPath?.index + boardSize - 1,
+        lastNodeInPath?.index + boardSize,
+        lastNodeInPath?.index + boardSize + 1,
+      ];
+
+      const isFirstChar = selectedPath.length === 0;
+      const isValidNeighbor =
+        lastNodeInPath && neighbors.includes(currentIndex);
+      const isNotAlreadySelected = !isInSelectedPath;
+      /**
+       * Add to path if the selected char is:
+       * 1. Not in the selected path
+       * 2. A neighbor of the last node in the path
+       */
+
+      if (isFirstChar || (isValidNeighbor && isNotAlreadySelected)) {
+        addToFoundList(i, j);
+      } else if (isInSelectedPath) {
+        // deselect the node and all the nodes after it
+        const index = selectedPath.findIndex(
+          (element) => element.index === currentIndex
+        );
+        state.selectedPath = selectedPath.slice(0, index);
+
+        return;
       }
     }
-  });
+  );
 
   return (
     <div class="w-full flex flex-col justify-center items-center mt-[20px] mb-[20px]">
-      <main class="">
+      <div class="">
         <table
           id="board"
           class={`m-auto border-[1px] border-blue-800 bg-blue-800`}
@@ -106,32 +124,12 @@ export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
             <tr class={`flex w-full`}>
               {Array.from({ length: boardSize }, (jdx, j) => {
                 const currentIndex = i * boardSize + j;
-                const isInSelectedPath = isInPath(currentIndex);
-                const bgColor =
-                  isInSelectedPath && state.wordFound
-                    ? "bg-green-200"
-                    : isInSelectedPath
-                    ? "bg-blue-200"
-                    : "bg-white";
-
-                const addToFoundList = $(() => {
-                  state.selectedPath = [
-                    ...state.selectedPath,
-                    {
-                      index: i * boardSize + j,
-                      char: board[i * boardSize + j],
-                    },
-                  ];
-                });
-
-                // on touch end, remove the .stop-scrolling class from the body
-                useOnWindow(
-                  "touchend",
-                  $(() => {
-                    document.body.classList.remove("stop-scrolling");
-                  })
+                const isInSelectedPath = isInPath(
+                  currentIndex,
+                  state.selectedPath,
+                  board
                 );
-
+                const cellBgColor = bgColor(isInSelectedPath, state.wordFound);
                 return (
                   <td
                     class={`border-[1px]bg-blue-800 border-blue-800 hover:cursor-pointer m-[1px] flex justify-center items-center rounded-sm`}
@@ -141,59 +139,18 @@ export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
                     }}
                   >
                     <button
-                      data-cell-index={currentIndex}
-                      data-cell-char={board[i * boardSize + j]}
-                      data-cell-is-in-path={isInSelectedPath}
-                      class={`text-[30px] ${bgColor} leading-[40px] p-0 m-0 rounded-sm`}
+                      class={`text-[30px] ${cellBgColor} leading-[40px] p-0 m-0 rounded-sm`}
                       style={{
-                        width: "99.5%",
-                        height: "99.5%",
+                        width: '99.5%',
+                        height: '99.5%',
                       }}
                       onClick$={() => {
-                        // const currently selected path
-                        const selectedPath = state.selectedPath;
-                        const lastNodeInPath =
-                          selectedPath[selectedPath.length - 1];
-
-                        // neighors of the last node in the path
-                        const neighbors = [
-                          lastNodeInPath?.index - boardSize - 1,
-                          lastNodeInPath?.index - boardSize,
-                          lastNodeInPath?.index - boardSize + 1,
-                          lastNodeInPath?.index - 1,
-                          lastNodeInPath?.index + 1,
-                          lastNodeInPath?.index + boardSize - 1,
-                          lastNodeInPath?.index + boardSize,
-                          lastNodeInPath?.index + boardSize + 1,
-                        ];
-
-                        // if the current node is not in the path, and it is a neighbor of the last node in the path
-                        // add it to the path
-                        if (isInSelectedPath) {
-                          // deselect the node and all the nodes after it
-                          const index = selectedPath.findIndex(
-                            (element) => element.index === currentIndex
-                          );
-                          state.selectedPath = selectedPath.slice(0, index);
-
-                          return;
-                        } else if (
-                          !lastNodeInPath ||
-                          (lastNodeInPath && neighbors.includes(currentIndex))
-                        ) {
-                          addToFoundList();
-                        }
-                      }}
-                      onTouchEnd$={() => {
-                        // add the .stop-scrolling class to the body
-                        document.body.classList.remove("stop-scrolling");
-                        // deselect the node and all the nodes after it
-                        // state.selectedPath = [];
+                        handleCellClick(isInSelectedPath, currentIndex, i, j);
                       }}
                     >
                       {state.isLoaded
                         ? board[i * boardSize + j].toLocaleUpperCase()
-                        : "x"}
+                        : ''}
                     </button>
                   </td>
                 );
@@ -201,7 +158,7 @@ export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
             </tr>
           ))}
         </table>
-      </main>
+      </div>
     </div>
   );
 });
