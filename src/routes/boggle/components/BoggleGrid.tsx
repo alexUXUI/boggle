@@ -93,12 +93,12 @@ export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
       const isValidNeighbor =
         lastNodeInPath && neighbors.includes(currentIndex);
       const isNotAlreadySelected = !isInSelectedPath;
+
       /**
        * Add to path if the selected char is:
        * 1. Not in the selected path
        * 2. A neighbor of the last node in the path
        */
-
       if (isFirstChar || (isValidNeighbor && isNotAlreadySelected)) {
         addToFoundList(i, j);
       } else if (isInSelectedPath) {
@@ -132,25 +132,22 @@ export const BoggleGrid = component$(({ board, boardSize, state }: Props) => {
                 const cellBgColor = bgColor(isInSelectedPath, state.wordFound);
                 return (
                   <td
-                    class={`border-[1px]bg-blue-800 border-blue-800 hover:cursor-pointer m-[1px] flex justify-center items-center rounded-sm`}
                     style={{
                       width: `${screenState.squareWidth}px`,
                       height: `${screenState.squareWidth}px`,
                     }}
+                    class={`cell border-[1px]bg-blue-800 border-blue-800 hover:cursor-pointer m-[1px] flex justify-center items-center rounded-sm`}
+                    id={`data-cell-${i}-${j}`}
                   >
                     <button
                       class={`text-[30px] ${cellBgColor} leading-[40px] p-0 m-0 rounded-sm`}
-                      style={{
-                        width: '99.5%',
-                        height: '99.5%',
-                      }}
                       onClick$={() => {
                         handleCellClick(isInSelectedPath, currentIndex, i, j);
                       }}
                     >
                       {state.isLoaded
                         ? board[i * boardSize + j].toLocaleUpperCase()
-                        : ''}
+                        : 'x'}
                     </button>
                   </td>
                 );

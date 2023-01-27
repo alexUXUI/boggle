@@ -70,14 +70,14 @@ export default component$(() => {
   });
 
   /**
-   * When the board size updates:
-   * 1. generate a new board
-   * 2. solve the board
-   * 3. update the answers
+   * When the board or boardsize updates:
+   * 1. Unset the selected path and found words
+   * 2. Solve the new board and update the answers
    */
   useTask$(({ track }) => {
     track(() => state.boardSize);
     track(() => state.board);
+
     answers.data = solve(dictionary.data, state.board).filter(
       (value: string) => {
         return value.length >= state.minWordLength;
@@ -90,12 +90,13 @@ export default component$(() => {
 
   /**
    * When the minimum word length updates:
-   * 1. solve the board
-   * 2. update the answers
+   * 1. Solve the board
+   * 2. Filter answers by the minimum word length
    * 3. Reset the selected path
    */
   useTask$(({ track }) => {
     track(() => state.minWordLength);
+
     answers.data = solve(dictionary.data, state.board).filter(
       (value: string) => {
         return value.length >= state.minWordLength;
