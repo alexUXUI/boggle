@@ -49,7 +49,6 @@ export const confettiCelebration = $(() => {
         }
 
         const particleCount = 50 * (timeLeft / duration);
-        // since particles fall down, start a bit higher than random
         module.default(
           Object.assign({}, defaults, {
             particleCount,

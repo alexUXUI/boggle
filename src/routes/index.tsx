@@ -1,4 +1,10 @@
-import { component$, useStore, useTask$, Resource } from '@builder.io/qwik';
+import {
+  component$,
+  useStore,
+  useTask$,
+  Resource,
+  useClientEffect$,
+} from '@builder.io/qwik';
 import type { DocumentHead, RequestHandler } from '@builder.io/qwik-city';
 import { useEndpoint } from '@builder.io/qwik-city';
 import { Answers } from '../features/boggle/components/Answers';
@@ -8,7 +14,7 @@ import {
   confettiCelebration,
   fireWorks,
 } from '../features/boggle/logic/animations';
-import { BoggleGrid } from '~/features/boggle/components/BoggleGrid';
+import { BoggleBoard } from '~/features/boggle/components/BoggleBoard';
 import { Controls } from '~/features/boggle/components/Controls';
 import { FoundWords } from '~/features/boggle/components/FoundWords';
 import { solve } from '~/features/boggle/logic/boggle';
@@ -95,18 +101,16 @@ export default component$(() => {
    * 4. clear the selected path
    */
   useTask$(({ track }) => {
-    console.log('selectedChars', state.selectedChars);
     track(() => state.selectedChars);
     if (state.selectedChars.length) {
-      console.log('selectedChars~!!!', state.selectedChars);
       const word = state.selectedChars
         .map((element: { index: number; char: string }) => element.char)
         .join('');
 
-      const wordExists = dictionary.data.includes(word);
-      const wordNotFound = !foundWords.data.includes(word);
-      const longEnough = word.length >= state.minWordLength;
-      if (longEnough && wordExists && wordNotFound) {
+      const isWordInDict = dictionary.data.includes(word);
+      const isWordYetToBeFound = !foundWords.data.includes(word);
+      const isWordLongEnough = word.length >= state.minWordLength;
+      if (isWordLongEnough && isWordInDict && isWordYetToBeFound) {
         state.isWordFound = true;
 
         setTimeout(() => {
@@ -137,6 +141,10 @@ export default component$(() => {
   const answersLength = answers.data.length;
   const foundWordsLength = foundWords.data.length - 1;
 
+  useClientEffect$(async () => {
+    dictionary.data = await getDictionary(LANGUAGE.ENGLISH);
+  });
+
   return (
     <Resource
       value={boardData}
@@ -151,11 +159,14 @@ export default component$(() => {
               answersLength={answersLength}
               foundWordsLength={foundWordsLength}
             />
-            <BoggleGrid
+            <BoggleBoard
               board={state.board.length > 1 ? state.board : data.board}
               boardSize={state.boardSize}
               state={state}
-              cellWidth={data.screenWidth / state.boardSize}
+              cellWidth={
+                data.screenWidth / state.boardSize - (state.boardSize + 4)
+              }
+              screenWidth={data.screenWidth}
             />
             <div class="max-w-[600px] m-auto w-[98%] mb-[50px]">
               <FoundWords
@@ -214,7 +225,7 @@ export const onGet: RequestHandler<Boggle> = async ({ url, request }) => {
     screenWidth = 400;
   }
 
-  let answers: string[] = [];
+  // let answers: string[] = [];
   let board: string[] = [];
 
   if (paramsObject.board) {
@@ -224,15 +235,15 @@ export const onGet: RequestHandler<Boggle> = async ({ url, request }) => {
     board = randomBoard(LANGUAGE.ENGLISH, 5).split('');
   }
 
-  const dictionary = await getDictionary(LANGUAGE.ENGLISH);
+  // const dictionary = await getDictionary(LANGUAGE.ENGLISH);
 
-  answers = solve(dictionary, board).filter((value: string) => {
-    return value.length >= 5;
-  });
+  // answers = solve(dictionary, board).filter((value: string) => {
+  //   return value.length >= 5;
+  // });
 
   return {
     board,
-    answers,
+    answers: [],
     screenWidth,
   };
 };

@@ -1,4 +1,4 @@
-import type { ScreenState } from '../components/BoggleGrid';
+import type { ScreenState } from '../components/BoggleBoard';
 import { LANGUAGE } from './api';
 
 export const generateRandomBoard = (length: number): string => {
