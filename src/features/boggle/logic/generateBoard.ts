@@ -1,8 +1,22 @@
-export const generateRandomBoard = (length: number): string => {
-  const lengthSquared = length * length;
+import type { ScreenState } from '../components/BoggleGrid';
+import { LANGUAGE } from './api';
 
-  const vowels = ['e', 'e', 'e', 'e', 'e', 'a', 'a', 'a', 'i', 'i', 's', 's'];
-  const consonants = [
+export const generateRandomBoard = (length: number): string => {
+  const englishVowels = [
+    'e',
+    'e',
+    'e',
+    'e',
+    'e',
+    'a',
+    'a',
+    'a',
+    'i',
+    'i',
+    's',
+    's',
+  ];
+  const eglishConsonants = [
     'r',
     'h',
     'm',
@@ -29,9 +43,10 @@ export const generateRandomBoard = (length: number): string => {
     'y',
     'z',
   ];
+  const lengthSquared = length * length;
 
-  const shuffledVowels = vowels.sort(() => 0.5 - Math.random());
-  const shuffledConsonants = consonants.sort(() => 0.5 - Math.random());
+  const shuffledVowels = englishVowels.sort(() => 0.5 - Math.random());
+  const shuffledConsonants = eglishConsonants.sort(() => 0.5 - Math.random());
 
   const zip = (a: string[], b: string[]) => {
     const result = [];
@@ -53,9 +68,10 @@ export const generateRandomBoard = (length: number): string => {
   if (lengthSquared > results.length) {
     const difference = lengthSquared - results.length;
     for (let i = 0; i < difference; i++) {
-      const randomVowel = vowels[Math.floor(Math.random() * vowels.length)];
+      const randomVowel =
+        englishVowels[Math.floor(Math.random() * englishVowels.length)];
       const randomConsonant =
-        consonants[Math.floor(Math.random() * consonants.length)];
+        eglishConsonants[Math.floor(Math.random() * eglishConsonants.length)];
       const vowelOrConsonant =
         Math.random() > 0.5 ? randomVowel : randomConsonant;
       results.push(vowelOrConsonant);
@@ -72,8 +88,10 @@ export const generateRandomBoard = (length: number): string => {
 export const generateRandomRussianBoard = (length: number): string => {
   const lengthSquared = length * length;
 
-  const vowels = ['а', 'о', 'е', 'и', 'н', 'т', 'с', 'р', 'в', 'л'];
+  const vowels = ['а', 'а', 'а', 'о', 'е', 'е', 'е', 'и', 'и', 'и', 'н'];
   const consonants = [
+    'р',
+    'т',
     'к',
     'м',
     'д',
@@ -95,6 +113,9 @@ export const generateRandomRussianBoard = (length: number): string => {
     'щ',
     'ф',
     'э',
+    'с',
+    'в',
+    'л',
   ];
 
   const shuffledVowels = vowels.sort(() => 0.5 - Math.random());
@@ -149,6 +170,69 @@ export const handleBoardResize = (
   }
 };
 
+export const generateRandomSpanishBoard = (length: number): string => {
+  const lengthSquared = length * length;
+
+  const vowels = ['a', 'e', 'i', 'o', 'u'];
+
+  const consonants = [
+    'b',
+    'c',
+    'd',
+    'f',
+    'g',
+    'h',
+    'j',
+    'k',
+    'l',
+    'm',
+    'n',
+    'ñ',
+    'p',
+    'q',
+    'r',
+    's',
+    't',
+    'w',
+  ];
+
+  const shuffledVowels = vowels.sort(() => 0.5 - Math.random());
+
+  const shuffledConsonants = consonants.sort(() => 0.5 - Math.random());
+
+  const zip = (a: string[], b: string[]) => {
+    const result = [];
+    for (let i = 0; i < a.length; i++) {
+      result.push(a[i]);
+      result.push(b[i]);
+    }
+    return result;
+  };
+
+  const zipped = zip(shuffledVowels, shuffledConsonants);
+
+  const results = [...zipped];
+  const shuffledResults = results.sort(() => 0.5 - Math.random());
+
+  if (lengthSquared > results.length) {
+    const difference = lengthSquared - results.length;
+    for (let i = 0; i < difference; i++) {
+      const randomVowel = vowels[Math.floor(Math.random() * vowels.length)];
+      const randomConsonant =
+        consonants[Math.floor(Math.random() * consonants.length)];
+      const vowelOrConsonant =
+        Math.random() > 0.5 ? randomVowel : randomConsonant;
+      results.push(vowelOrConsonant);
+    }
+  } else if (lengthSquared < results.length) {
+    const shuffledResults = results.sort(() => 0.5 - Math.random());
+    shuffledResults.splice(lengthSquared, results.length);
+    return shuffledResults.join('');
+  }
+
+  return shuffledResults.join('');
+};
+
 export const bgColor = (
   isInSelectedPath: boolean,
   wordFound: boolean
@@ -162,4 +246,14 @@ export const bgColor = (
   }
 
   return bgColor;
+};
+
+// create one random board function that takes in a language and returns a random board
+export const randomBoard = (language: string, length: number): string => {
+  if (language === LANGUAGE.ENGLISH) {
+    return generateRandomBoard(length);
+  } else if (language === LANGUAGE.RUSSIAN) {
+    return generateRandomRussianBoard(length);
+  }
+  return '';
 };
