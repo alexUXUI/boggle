@@ -15,22 +15,12 @@ import { solve } from '~/features/boggle/logic/boggle';
 import { randomBoard } from '~/features/boggle/logic/generateBoard';
 import parser from 'ua-parser-js';
 
-import fs from 'fs';
-
-const wasmBuffer = fs.readFileSync('../features/boggle/logic/boggle.wasm');
-
-WebAssembly.instantiate(wasmBuffer).then((wasmModule) => {
-  // Exported function live under instance.exports
-  const { main } = wasmModule.instance.exports;
-  main();
-});
-
 export interface State {
   boardSize: number;
   board: string[];
   minWordLength: number;
-  selectedPath: { index: number; char: string }[];
-  wordFound: boolean;
+  selectedChars: { index: number; char: string }[];
+  isWordFound: boolean;
   isLoaded: boolean;
   language: Language;
 }
@@ -42,8 +32,8 @@ export default component$(() => {
     boardSize: 5, // default board length and width and height
     board: [], // random default board
     minWordLength: 5, // minimum word length
-    selectedPath: [], // selected path on the board
-    wordFound: false, // whether a word was found, used for feedback
+    selectedChars: [], // selected path on the board
+    isWordFound: false, // whether a word was found, used for feedback
     isLoaded: false, // whether the dictionary has been loaded
     language: LANGUAGE.ENGLISH,
   });
@@ -75,7 +65,7 @@ export default component$(() => {
       }
     );
 
-    state.selectedPath = [];
+    state.selectedChars = [];
     foundWords.data = [];
   });
 
@@ -94,7 +84,7 @@ export default component$(() => {
       }
     );
 
-    state.selectedPath = [];
+    state.selectedChars = [];
   });
 
   /**
@@ -105,9 +95,11 @@ export default component$(() => {
    * 4. clear the selected path
    */
   useTask$(({ track }) => {
-    track(() => state.selectedPath);
-    if (state.selectedPath.length > 1) {
-      const word = state.selectedPath
+    console.log('selectedChars', state.selectedChars);
+    track(() => state.selectedChars);
+    if (state.selectedChars.length) {
+      console.log('selectedChars~!!!', state.selectedChars);
+      const word = state.selectedChars
         .map((element: { index: number; char: string }) => element.char)
         .join('');
 
@@ -115,12 +107,12 @@ export default component$(() => {
       const wordNotFound = !foundWords.data.includes(word);
       const longEnough = word.length >= state.minWordLength;
       if (longEnough && wordExists && wordNotFound) {
-        state.wordFound = true;
+        state.isWordFound = true;
 
         setTimeout(() => {
           foundWords.data = [...foundWords.data, word];
-          state.selectedPath = [];
-          state.wordFound = false;
+          state.selectedChars = [];
+          state.isWordFound = false;
           fireWorks();
         }, 100);
       }

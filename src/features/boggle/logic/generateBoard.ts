@@ -235,11 +235,11 @@ export const generateRandomSpanishBoard = (length: number): string => {
 
 export const bgColor = (
   isInSelectedPath: boolean,
-  wordFound: boolean
+  isWordFound: boolean
 ): string => {
   let bgColor = 'bg-white'; // if char is not part of the selected path, or a found word keep white bg
 
-  if (isInSelectedPath && wordFound) {
+  if (isInSelectedPath && isWordFound) {
     bgColor = 'bg-green-200'; // if word found, highlight the path in green
   } else if (isInSelectedPath) {
     bgColor = 'bg-blue-200'; // if char is part of the selected path, highlight it in blue

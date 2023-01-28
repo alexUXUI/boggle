@@ -33,13 +33,13 @@ export const BoggleGrid = component$(
     useClientEffect$(({ cleanup }) => {
       const clickHandler = (e: MouseEvent) => {
         if (!document.getElementById('board')?.contains(e.target as Node)) {
-          state.selectedPath = [];
+          state.selectedChars = [];
         }
       };
 
       const handleKeydown = (e: KeyboardEvent) => {
         if (e.key === 'Backspace' || e.key === 'Escape') {
-          state.selectedPath = [];
+          state.selectedChars = [];
         }
       };
 
@@ -63,8 +63,8 @@ export const BoggleGrid = component$(
     });
 
     const addToFoundList = $((i: number, j: number) => {
-      state.selectedPath = [
-        ...state.selectedPath,
+      state.selectedChars = [
+        ...state.selectedChars,
         {
           index: i * boardSize + j,
           char: board[i * boardSize + j],
@@ -74,30 +74,30 @@ export const BoggleGrid = component$(
 
     const handleCellClick = $(
       (
-        isInSelectedPath: boolean,
+        isInSelectedChars: boolean,
         currentIndex: number,
         i: number,
         j: number
       ) => {
-        const selectedPath = state.selectedPath;
-        const lastNodeInPath = selectedPath[selectedPath.length - 1];
+        const selectedChars = state.selectedChars;
+        const previousChar = selectedChars[selectedChars.length - 1];
 
         // neighors of the last node in the path
         const neighbors = [
-          lastNodeInPath?.index - boardSize - 1,
-          lastNodeInPath?.index - boardSize,
-          lastNodeInPath?.index - boardSize + 1,
-          lastNodeInPath?.index - 1,
-          lastNodeInPath?.index + 1,
-          lastNodeInPath?.index + boardSize - 1,
-          lastNodeInPath?.index + boardSize,
-          lastNodeInPath?.index + boardSize + 1,
+          previousChar?.index - boardSize, // top
+          previousChar?.index - boardSize + 1, // top right
+          previousChar?.index + 1, // right
+          previousChar?.index + boardSize + 1, // bottom right
+          previousChar?.index + boardSize, // bottom
+          previousChar?.index + boardSize - 1, // bottom left
+          previousChar?.index - 1, // left
+          previousChar?.index - boardSize - 1, // top left
         ];
 
-        const isFirstChar = selectedPath.length === 0;
+        const isFirstChar = selectedChars.length === 0;
         const isValidNeighbor =
-          lastNodeInPath && neighbors.includes(currentIndex);
-        const isNotAlreadySelected = !isInSelectedPath;
+          previousChar && neighbors.includes(currentIndex);
+        const isNotAlreadySelected = !isInSelectedChars;
 
         /**
          * Add to path if the selected char is:
@@ -106,24 +106,20 @@ export const BoggleGrid = component$(
          */
         if (isFirstChar || (isValidNeighbor && isNotAlreadySelected)) {
           addToFoundList(i, j);
-        } else if (isInSelectedPath) {
+        } else if (isInSelectedChars) {
           // deselect the node and all the nodes after it
-          const index = selectedPath.findIndex(
+          const index = selectedChars.findIndex(
             (element) => element.index === currentIndex
           );
-          state.selectedPath = selectedPath.slice(0, index);
+          state.selectedChars = selectedChars.slice(0, index);
 
           return;
         }
       }
     );
 
-    console.log(screenState);
-
     const width = `${cellWidth || screenState.width}px`;
     const height = `${cellWidth || screenState.width}px`;
-
-    console.log(width, height);
 
     return (
       <div class="w-full flex flex-col justify-center items-center mt-[20px] mb-[20px]">
@@ -136,22 +132,20 @@ export const BoggleGrid = component$(
               <tr class={`flex w-full`}>
                 {Array.from({ length: boardSize }, (jdx, j) => {
                   const currentIndex = i * boardSize + j;
-                  const isInSelectedPath = isInPath(
+                  const isInSelectedChars = isInPath(
                     currentIndex,
-                    state.selectedPath,
+                    state.selectedChars,
                     board
                   );
                   const cellBgColor = bgColor(
-                    isInSelectedPath,
-                    state.wordFound
+                    isInSelectedChars,
+                    state.isWordFound
                   );
                   return (
                     <td
                       style={{
                         width,
                         height,
-                        // minWidth: `72px`,
-                        // minHeight: `72px`,
                       }}
                       class={`cell border-[1px]bg-blue-800 border-blue-800 hover:cursor-pointer m-[1px] flex justify-center items-center rounded-sm`}
                       id={`data-cell-${i}-${j}`}
@@ -159,11 +153,16 @@ export const BoggleGrid = component$(
                       <button
                         class={`text-[30px] ${cellBgColor} leading-[40px] p-0 m-0 rounded-sm`}
                         onClick$={() => {
-                          handleCellClick(isInSelectedPath, currentIndex, i, j);
+                          handleCellClick(
+                            isInSelectedChars,
+                            currentIndex,
+                            i,
+                            j
+                          );
                         }}
                       >
-                        {board[i * boardSize + j]
-                          ? board[i * boardSize + j].toLocaleUpperCase()
+                        {board[currentIndex]
+                          ? board[currentIndex].toLocaleUpperCase()
                           : ' '}
                       </button>
                     </td>
