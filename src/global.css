@@ -20,9 +20,9 @@
 
 html,
 body {
-  margin: 0;
+  /* margin: 0;
   height: 100%;
-  overflow: hidden;
+  overflow: hidden; */
 }
 
 body {
@@ -183,5 +183,5 @@ a.mindblow:hover {
 .heavy-glass {
   background: rgba(255, 255, 255, 0.33);
   backdrop-filter: blur(19px);
-  -webkit-backdrop-filter: blur(19px);
+  -webkit-backdrop-filter: blur(14px);
 }

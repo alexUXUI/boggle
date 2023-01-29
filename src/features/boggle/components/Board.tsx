@@ -169,7 +169,7 @@ export const BoggleBoard = component$(
 
     return (
       <div
-        class="w-full flex flex-col justify-center items-center"
+        class="w-full flex flex-col justify-center items-center mt-[150px]"
         id="no-scroll"
       >
         <table id="board" class={`bg-blue-800`}>
@@ -292,6 +292,8 @@ export const Cube = ({
               );
             }}
             onTouchMove$={(e) => {
+              console.log('touch move');
+              console.log(e);
               const element = document.elementFromPoint(
                 e.targetTouches[0].clientX,
                 e.targetTouches[0].clientY

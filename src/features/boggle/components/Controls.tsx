@@ -67,8 +67,10 @@ export const Controls = component$(
 
     return (
       <div class="fixed w-full top-0 z-50 ">
-        <div class="glass h-[30px] flex items-center justify-center">
-          <h1 class="text-center m-0 p-0">Foggle</h1>
+        <div class="glass h-[40px] flex items-center justify-center">
+          <h1 class="text-center text-xl text-blue-900 font-medium m-0 py-2">
+            Foggle
+          </h1>
         </div>
 
         <div class=" glass flex items-center h-[50px] w-full m-auto">
@@ -103,7 +105,7 @@ export const Controls = component$(
           </div>
         </div>
         {constrolsState.isOpen ? (
-          <form class="glass border-b-2 border-[#dfdfdf] fixed z-50 w-full m-auto px-2 py-4 flex justify-center">
+          <form class="glass border-b-2 border-[#dfdfdf] fixed z-50 w-full m-auto px-2 flex justify-center">
             <fieldset class="w-full p-2 rounded-md border-blue-900 flex flex-wrap justify-evenly max-w-[700px]">
               <div class="flex flex-col my-[10px]">
                 <label class="text-[14px]" for="language">

@@ -97,7 +97,7 @@ export const BoogleRoot = component$(
     });
 
     return (
-      <div class="flex flex-col justify-center h-[100vh] bg-slate-300 dont-scroll">
+      <div class="h-[100%] dont-scroll">
         <Controls
           boardState={boardState}
           languageState={languageState}
@@ -109,21 +109,19 @@ export const BoogleRoot = component$(
           selectedCharsState={selectedCharsState}
           gameState={gameState}
         />
-        <div class="absolute w-full bottom-0 bg-blue-900">
-          <div class="m-auto flex">
-            <WordsList
-              answersState={answersState}
-              title="foundWords"
-              minCharLength={languageState.minCharLength}
-              state={foundListState}
-            />
-            <WordsList
-              answersState={answersState}
-              title="answers"
-              minCharLength={languageState.minCharLength}
-              state={answerListState}
-            />
-          </div>
+        <div class="flex justify-center absolute bottom-0 w-full h-[60px]">
+          <WordsList
+            answersState={answersState}
+            title="foundWords"
+            minCharLength={languageState.minCharLength}
+            state={foundListState}
+          />
+          <WordsList
+            answersState={answersState}
+            title="answers"
+            minCharLength={languageState.minCharLength}
+            state={answerListState}
+          />
         </div>
       </div>
     );
