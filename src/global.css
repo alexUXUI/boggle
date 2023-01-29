@@ -173,3 +173,15 @@ a.mindblow:hover {
   top: 4%;
   left: 4%;
 }
+
+.glass {
+  background: rgba(255, 255, 255, 0.33);
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
+}
+
+.heavy-glass {
+  background: rgba(255, 255, 255, 0.33);
+  backdrop-filter: blur(19px);
+  -webkit-backdrop-filter: blur(19px);
+}

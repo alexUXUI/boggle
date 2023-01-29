@@ -49,7 +49,7 @@ export const WordsList = component$(
     return (
       <div
         id={`words-list-${title} no-scroll`}
-        class={`bg-blue-900 w-[50%] flex flex-col items-center max-h-[500px]`}
+        class={` w-[50%] flex flex-col items-center max-h-[500px]`}
         style={{
           height: `${state.isOpen ? 500 : 50}px`,
           zIndex: `${state.isOpen ? 50 : 0}`,
@@ -65,7 +65,9 @@ export const WordsList = component$(
             : '0',
         }}
       >
-        <div class={`px-4 w-full flex items-center justify-center h-[50px]`}>
+        <div
+          class={`heavy-glass px-4 w-full flex items-center justify-center h-[50px]`}
+        >
           <button
             class=" hover:bg-blue-100 leading-[20px] text-[14px] bg-white p-2 rounded-md border-2 border-blue-800 h-[40px]"
             onClick$={handleToggle}
@@ -77,8 +79,8 @@ export const WordsList = component$(
 
         {state.isOpen &&
         answersState[isAnswers ? 'data' : 'foundWords'].length ? (
-          <div class="w-full overflow-scroll h-full bg-white flex flex-wrap justify-start">
-            <ul class="pt-[10px] pb-[20px] h-full bg-white flex flex-wrap w-full m-auto">
+          <div class="w-full overflow-scroll h-full heavy-glass">
+            <ul class=" flex flex-wrap justify-start items-start w-full m-auto">
               {answersState[isAnswers ? 'data' : 'foundWords']
                 .filter((word) => {
                   return word.length >= minCharLength;
@@ -90,7 +92,7 @@ export const WordsList = component$(
           </div>
         ) : (
           state.isOpen && (
-            <div class="w-full h-full items-center bg-white flex flex-wrap justify-center">
+            <div class="w-full h-full items-center heavy-glass flex flex-wrap justify-center">
               No data
             </div>
           )

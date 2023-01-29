@@ -66,48 +66,52 @@ export const Controls = component$(
     });
 
     return (
-      <div class="bg-blue-900 fixed w-full top-0">
-        <div class="h-[30px] flex items-center justify-center">
-          <h1 class="text-center text-white m-0 p-0">Foggle</h1>
+      <div class="fixed w-full top-0 z-50 ">
+        <div class="glass h-[30px] flex items-center justify-center">
+          <h1 class="text-center m-0 p-0">Foggle</h1>
         </div>
 
-        <div class="flex items-center h-[50px] max-w-[500px] m-auto">
-          <div class="w-[33.3%] flex justify-center">
-            <button
-              class="px-2 text-[14px] border-2 bg-white h-[40px] border-blue-800 hover:bg-blue-200 rounded-md "
-              onClick$={() => (constrolsState.isOpen = !constrolsState.isOpen)}
-            >
-              {constrolsState.isOpen ? 'Close' : 'Open'} Controls
-            </button>
-          </div>
-          <div class="w-[33.3%] flex justify-center">
-            <button
-              class="px-2 text-[14px] border-2 bg-white h-[40px] border-blue-800 hover:bg-blue-200 rounded-md "
-              onClick$={handleRandomizeBoard}
-              type="button"
-            >
-              Reset Board
-            </button>
-          </div>
-          <div class="w-[33.3%] flex justify-center">
-            <div class="text-[14px] bg-white rounded-md border-2 border-blue-800  h-[40px] w-[120px] flex items-center justify-start px-2">
-              Answers:{'  '}
-              <span class="text-[14px] rounded-sm">
-                {answersLength > 0 ? ` ${answersLength}` : ''}
-              </span>
+        <div class=" glass flex items-center h-[50px] w-full m-auto">
+          <div class="m-auto w-full flex max-w-[500px]">
+            <div class="w-[33.3%] flex justify-center">
+              <button
+                class="px-2 text-[14px] border-2 bg-white h-[40px] border-blue-800 hover:bg-blue-200 rounded-md "
+                onClick$={() =>
+                  (constrolsState.isOpen = !constrolsState.isOpen)
+                }
+              >
+                {constrolsState.isOpen ? 'Close' : 'Open'} Controls
+              </button>
+            </div>
+            <div class="w-[33.3%] flex justify-center">
+              <button
+                class="px-2 text-[14px] border-2 bg-white h-[40px] border-blue-800 hover:bg-blue-200 rounded-md "
+                onClick$={handleRandomizeBoard}
+                type="button"
+              >
+                Reset Board
+              </button>
+            </div>
+            <div class="w-[33.3%] flex justify-center">
+              <div class="text-[14px] rounded-md border-2 border-blue-900 bg-blue-50  h-[40px] w-[120px] flex items-center justify-start px-2">
+                Answers:{'  '}
+                <span class="text-[14px] rounded-sm">
+                  {answersLength > 0 ? ` ${answersLength}` : ''}
+                </span>
+              </div>
             </div>
           </div>
         </div>
         {constrolsState.isOpen ? (
-          <form class="bg-blue-800 fixed z-50 w-full m-auto px-2 pb-2 flex justify-center max-w-[710px]">
-            <fieldset class="w-full p-2 rounded-md border-slate-300 flex flex-wrap justify-evenly max-w-[700px]">
-              <div class="flex flex-col my-[3px]">
-                <label class="text-white text-[14px]" for="language">
+          <form class="glass border-b-2 border-[#dfdfdf] fixed z-50 w-full m-auto px-2 py-4 flex justify-center">
+            <fieldset class="w-full p-2 rounded-md border-blue-900 flex flex-wrap justify-evenly max-w-[700px]">
+              <div class="flex flex-col my-[10px]">
+                <label class="text-[14px]" for="language">
                   Language
                 </label>
                 <select
                   id="language"
-                  class="pl-[2px] rounded-md w-[10ch] h-[40px] border-2 border-slate-400"
+                  class="pl-[2px] rounded-md w-[10ch] h-[40px] border-2 border-blue-900"
                   onChange$={handleChangeLanguage}
                   value={languageState.data}
                 >
@@ -116,8 +120,8 @@ export const Controls = component$(
                   <option value="Russian">Russian</option>
                 </select>
               </div>
-              <div class="flex flex-col my-[3px]">
-                <label for="min-char-length" class="text-white text-[14px]">
+              <div class="flex flex-col my-[10px]">
+                <label for="min-char-length" class="text-[14px]">
                   Word Size
                 </label>
                 <input
@@ -125,11 +129,11 @@ export const Controls = component$(
                   type="number"
                   onChange$={handleChangeMinCharLength}
                   value={languageState.minCharLength}
-                  class="pl-2 rounded-md w-[70px] h-[40px] border-2 border-slate-400"
+                  class="pl-2 rounded-md w-[70px] h-[40px] border-2 border-blue-900"
                 />
               </div>
-              <div class="flex flex-col my-[3px]">
-                <label class="text-white text-[14px]" for="board-size">
+              <div class="flex flex-col my-[10px]">
+                <label class="text-[14px]" for="board-size">
                   Board Size
                 </label>
                 <input
@@ -137,17 +141,17 @@ export const Controls = component$(
                   type="number"
                   onChange$={handleChangeBoardSize}
                   value={boardState.boardSize}
-                  class="pl-2 rounded-md w-[70px] h-[40px] border-2 border-slate-400"
+                  class="pl-2 rounded-md w-[70px] h-[40px] border-2 border-blue-900"
                 />
               </div>
-              <div class="flex flex-col my-[3px]">
-                <label class="text-white text-[14px] w-fit" for="customize">
+              <div class="flex flex-col my-[10px]">
+                <label class="text-[14px] w-fit" for="customize">
                   Customize
                 </label>
                 <input
                   id="customize"
                   type="text"
-                  class="w-[25ch] tracking-wide h-[40px] rounded-md text-center border-2 border-slate-400"
+                  class="w-[25ch] tracking-wide h-[40px] rounded-md text-center border-2 border-blue-900"
                   placeholder="customize board"
                   value={boardState.data.join('')}
                   onChange$={handleBoardCustomization}
