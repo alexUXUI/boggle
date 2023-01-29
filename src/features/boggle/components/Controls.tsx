@@ -70,7 +70,8 @@ export const Controls = component$(
         <div class="h-[30px] flex items-center justify-center">
           <h1 class="text-center text-white m-0 p-0">Foggle</h1>
         </div>
-        <div class="flex items-center h-[50px]">
+
+        <div class="flex items-center h-[50px] max-w-[500px] m-auto">
           <div class="w-[33.3%] flex justify-center">
             <button
               class="px-2 text-[14px] border-2 bg-white h-[40px] border-blue-800 hover:bg-blue-200 rounded-md "
@@ -88,7 +89,7 @@ export const Controls = component$(
               Reset Board
             </button>
           </div>
-          <div class="w-[33.3%] flex justify-start">
+          <div class="w-[33.3%] flex justify-center">
             <div class="text-[14px] bg-white rounded-md border-2 border-blue-800  h-[40px] w-[120px] flex items-center justify-start px-2">
               Answers:{'  '}
               <span class="text-[14px] rounded-sm">
