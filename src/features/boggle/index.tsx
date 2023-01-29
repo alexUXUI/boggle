@@ -137,19 +137,13 @@ export const BoogleRoot = component$(
     });
 
     return (
-      <div class="flex flex-col overflow-y-scroll">
-        <div class="pb-[20px]">
-          <h1 class="text-[22px] w-fit m-auto bg-white p-2 rounded-sm text-blue-800 text-center">
-            Boogle
-          </h1>
-          <Controls
-            boardState={boardState}
-            languageState={languageState}
-            answersState={answersState}
-            dictionaryState={dictionaryState}
-          />
-        </div>
-
+      <div class="flex flex-col h-[100vh]">
+        <Controls
+          boardState={boardState}
+          languageState={languageState}
+          answersState={answersState}
+          dictionaryState={dictionaryState}
+        />
         <BoggleBoard
           boardState={boardState}
           selectedCharsState={selectedCharsState}
@@ -190,9 +184,6 @@ export const WordsList = component$(
   }) => {
     // const openState = useStore({ isOpen: false });
     const isAnswers = title === 'answers';
-
-    console.log('words list rerendered');
-    console.log('isAnswers', isAnswers);
 
     useOnWindow(
       'DOMContentLoaded',

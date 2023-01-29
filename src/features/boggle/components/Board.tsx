@@ -158,7 +158,7 @@ export const BoggleBoard = component$(
     );
 
     return (
-      <div class="w-full flex flex-col items-center">
+      <div class="w-full flex flex-col items-center h-full justify-center">
         <table id="board" class={`bg-blue-800`}>
           <tbody
             style={{
