@@ -152,13 +152,23 @@ export const BoggleBoard = component$(
           }
         };
 
+        // prevent scrolling on mobile on the no-scroll div
+        const noScroll = document.getElementById('no-scroll');
+        noScroll?.addEventListener('wheel', (e) => {
+          e.preventDefault();
+        });
+
+        noScroll?.addEventListener('touchmove', (e) => {
+          e.preventDefault();
+        });
+
         document.addEventListener('click', clickHandler);
         document.addEventListener('keydown', handleKeydown);
       })
     );
 
     return (
-      <div class="w-full flex flex-col items-center mt-[10px]">
+      <div class="w-full flex flex-col items-center mt-[10px]" id="no-scroll">
         <table id="board" class={`bg-blue-800`}>
           <tbody
             style={{
@@ -266,6 +276,9 @@ export const Cube = ({
         ></div>
         <div class="face flex items-center justify-center">
           <button
+            data-cell-index={currentIndex}
+            data-cell-char={board[currentIndex]}
+            data-cell-is-in-path={isInSelectedChars}
             class={`${cellBgColor} h-[90%] w-[90%] text-[30px] leading-[40px] p-0 m-0 rounded-sm`}
             onClick$={() => {
               handleCellClick(
@@ -274,6 +287,57 @@ export const Cube = ({
                 boardState,
                 selectedCharsState
               );
+            }}
+            onTouchMove$={(e) => {
+              const element = document.elementFromPoint(
+                e.targetTouches[0].clientX,
+                e.targetTouches[0].clientY
+              );
+              if (element) {
+                // get the data-cell-index from the button
+                const cellIndex = element.getAttribute('data-cell-index')!;
+                const cellChar = element.getAttribute('data-cell-char');
+                const cellIsInPath = element.getAttribute(
+                  'data-cell-is-in-path'
+                );
+                // const currently selected path
+                const selectedPath = selectedCharsState.data;
+                const lastNodeInPath =
+                  selectedCharsState.data[selectedCharsState.data.length - 1];
+                // neighors of the last node in the path
+                const neighbors = [
+                  lastNodeInPath?.index - boardState.boardSize - 1,
+                  lastNodeInPath?.index - boardState.boardSize,
+                  lastNodeInPath?.index - boardState.boardSize + 1,
+                  lastNodeInPath?.index - 1,
+                  lastNodeInPath?.index + 1,
+                  lastNodeInPath?.index + boardState.boardSize - 1,
+                  lastNodeInPath?.index + boardState.boardSize,
+                  lastNodeInPath?.index + boardState.boardSize + 1,
+                ];
+                // if the current node is not in the path, and it is a neighbor of the last node in the path
+                // add it to the path
+                if (cellIsInPath && cellIndex) {
+                  // deselect the node and all the nodes after it
+                  const index = selectedPath.findIndex(
+                    (element) => element.index === Number.parseInt(cellIndex)
+                  );
+                  selectedCharsState.data = selectedPath.slice(0, index);
+                  return;
+                } else if (
+                  !lastNodeInPath ||
+                  (lastNodeInPath &&
+                    neighbors.includes(Number.parseInt(cellIndex)))
+                ) {
+                  selectedCharsState.data = [
+                    ...selectedCharsState.data,
+                    {
+                      index: Number.parseInt(cellIndex)!,
+                      char: cellChar!,
+                    },
+                  ];
+                }
+              }
             }}
           >
             {board[currentIndex]

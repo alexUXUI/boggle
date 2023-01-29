@@ -137,7 +137,7 @@ export const BoogleRoot = component$(
     });
 
     return (
-      <div class="flex flex-col h-[100vh]">
+      <div class="flex flex-col h-[100vh] dont-scroll">
         <Controls
           boardState={boardState}
           languageState={languageState}
