@@ -137,7 +137,7 @@ export const BoogleRoot = component$(
     });
 
     return (
-      <div class="h-[100vh] flex flex-col">
+      <div class="flex flex-col overflow-y-scroll">
         <div class="pb-[20px]">
           <h1 class="text-[22px] w-fit m-auto bg-white p-2 rounded-sm text-blue-800 text-center">
             Boogle
@@ -235,7 +235,14 @@ export const WordsList = component$(
           zIndex: `${state.isOpen ? 50 : 0}`,
           bottom: `${isAnswers ? 0 : 0}px`,
           width: state.isOpen ? '100%' : '50%',
-          position: state.isOpen ? 'absolute' : 'relative',
+          position: state.isOpen ? 'fixed' : 'fixed',
+          right: state.isOpen
+            ? isAnswers
+              ? '0'
+              : '0'
+            : isAnswers
+            ? '50%'
+            : '0',
         }}
       >
         <div class={`px-4 w-full flex items-center justify-between`}>
