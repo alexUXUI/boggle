@@ -18,7 +18,6 @@ interface BoggleProps {
 export interface BoardState {
   data: string[];
   boardSize: number;
-  selectedChars: { index: number; char: string }[];
   boardWidth: number;
   cellWidth: number;
 }
@@ -56,7 +55,6 @@ export const BoogleRoot = component$(
     const boardState = useStore<BoardState>({
       data: board,
       boardSize: boardSize ?? 0,
-      selectedChars: [],
       boardWidth: boardWidth ?? 0,
       cellWidth: calculateCellWidth(boardWidth, boardSize),
     });
@@ -126,20 +124,6 @@ export const BoogleRoot = component$(
       }
     });
 
-    // const handleBoardChange = $((newBoard: string[]) => {
-    //   if (webWorkerState?.data) {
-    //     webWorkerState.data.onmessage = (event) => {
-    //       dictionaryState.data = event.data.dictionary;
-    //       answersState.data = event.data.answers;
-    //     };
-    //     webWorkerState.data.postMessage({
-    //       language: languageState.data,
-    //       board: newBoard,
-    //       minCharLength: languageState.minCharLength,
-    //     });
-    //   }
-    // });
-
     return (
       <div>
         <h1 class="text-[22px] w-fit m-auto bg-white p-2 rounded-sm text-blue-800 text-center">
@@ -156,6 +140,103 @@ export const BoogleRoot = component$(
           selectedCharsState={selectedCharsState}
           gameState={gameState}
         />
+        <WordsList
+          answersState={answersState}
+          title="answers"
+          minCharLength={languageState.minCharLength}
+        />
+        <WordsList
+          answersState={answersState}
+          title="foundWords"
+          minCharLength={languageState.minCharLength}
+        />
+      </div>
+    );
+  }
+);
+
+export const WordsList = component$(
+  ({
+    answersState,
+    title,
+    minCharLength,
+  }: {
+    answersState: AnswersState;
+    title: string;
+    minCharLength: number;
+  }) => {
+    const openState = useStore({ isOpen: false });
+    const isAnswers = title === 'answers';
+
+    // create a ref to the list
+
+    useOnWindow(
+      'DOMContentLoaded',
+      $(() => {
+        const list = document.getElementById(`words-list-${title}`);
+
+        // on click detect if the click was outside the list
+        // if it was, close the list
+        const handleClick = (event: MouseEvent) => {
+          if (list && !list.contains(event.target as Node)) {
+            openState.isOpen = false;
+          }
+        };
+
+        // if the user presses esc close the list
+        const handleKeyDown = (event: KeyboardEvent) => {
+          if (event.key === 'Escape') {
+            openState.isOpen = false;
+          }
+        };
+
+        // add the event listener
+        document.addEventListener('click', handleClick);
+        document.addEventListener('keydown', handleKeyDown);
+      })
+    );
+
+    const handleToggle = $(() => {
+      openState.isOpen = !openState.isOpen;
+    });
+
+    return (
+      <div
+        id={`words-list-${title}`}
+        class={`bg-white transition-all absolute h-[${
+          openState.isOpen ? 500 : 50
+        }px] bottom-[${
+          isAnswers ? 0 : 50
+        }px] w-full flex flex-col items-center`}
+        style={{
+          zIndex: isAnswers ? 50 : 5,
+        }}
+      >
+        <div class={`w-full bg-blue-${isAnswers ? 100 : 50}`}>
+          <h2 class="h-[40px] mt-[5px] text-[18px] w-fit m-auto bg-white p-2 rounded-sm text-blue-800 text-center">
+            {isAnswers ? 'Answers' : 'Found Words'}
+          </h2>
+          <button
+            class="hover:bg-blue-100 leading-[20px] absolute right-[5px] bottom-[5px] text-[18px] bg-white p-2 rounded-md border-2 border-slate-300 h-[40px]"
+            onClick$={handleToggle}
+          >
+            {openState.isOpen ? 'Close' : 'Open'}
+          </button>
+        </div>
+
+        {openState.isOpen ? (
+          <div class="w-full overflow-scroll bg-white flex flex-wrap justify-center">
+            <ul class="mb-[40px] mt-[10px] bg-white h-[100%] flex flex-wrap w-[100%] m-auto pb-[30px]">
+              {answersState[isAnswers ? 'data' : 'foundWords']
+                .filter((word) => {
+                  return word.length >= minCharLength;
+                })
+                .map((word) => (
+                  <li class="w-[33%] text-center">{word}</li>
+                ))}
+            </ul>
+          </div>
+        ) : null}
       </div>
     );
   }

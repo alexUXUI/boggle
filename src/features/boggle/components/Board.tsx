@@ -1,16 +1,5 @@
-import {
-  $,
-  component$,
-  useClientEffect$,
-  // $,
-  // useStore,
-  // useOnWindow,
-} from '@builder.io/qwik';
+import { $, component$, useOnWindow } from '@builder.io/qwik';
 import type { BoardState, GameState, SelectedCharsState } from '..';
-// import { isInPath } from '../logic/boggle';
-// import { bgColor, handleBoardResize } from '../logic/generateBoard';
-// import type { State } from '~/routes/index';
-// import { handleCellClick } from '../event-handlers/BoggleBoard.handlers';
 
 interface Props {
   boardState: BoardState;
@@ -148,27 +137,25 @@ export const BoggleBoard = component$(
 
     // unset the selected path when the user clicks outside
     // the board or presses backspace or escape
-    useClientEffect$(({ cleanup }) => {
-      const clickHandler = (e: MouseEvent) => {
-        if (!document.getElementById('board')?.contains(e.target as Node)) {
-          selectedCharsState.data = [];
-        }
-      };
+    useOnWindow(
+      'DOMContentLoaded',
+      $(() => {
+        const clickHandler = (e: MouseEvent) => {
+          if (!document.getElementById('board')?.contains(e.target as Node)) {
+            selectedCharsState.data = [];
+          }
+        };
 
-      const handleKeydown = (e: KeyboardEvent) => {
-        if (e.key === 'Backspace' || e.key === 'Escape') {
-          selectedCharsState.data = [];
-        }
-      };
+        const handleKeydown = (e: KeyboardEvent) => {
+          if (e.key === 'Backspace' || e.key === 'Escape') {
+            selectedCharsState.data = [];
+          }
+        };
 
-      document.addEventListener('click', clickHandler);
-      document.addEventListener('keydown', handleKeydown);
-
-      cleanup(() => {
-        document.removeEventListener('click', clickHandler);
-        document.removeEventListener('keydown', handleKeydown);
-      });
-    });
+        document.addEventListener('click', clickHandler);
+        document.addEventListener('keydown', handleKeydown);
+      })
+    );
 
     return (
       <div class="w-full flex flex-col items-center">
@@ -280,7 +267,7 @@ export const Cube = ({
         <div class="face flex items-center justify-center">
           <button
             class={`${cellBgColor} h-[90%] w-[90%] text-[30px] leading-[40px] p-0 m-0 rounded-sm`}
-            onClick$={(e) => {
+            onClick$={() => {
               handleCellClick(
                 isInSelectedChars,
                 currentIndex,
