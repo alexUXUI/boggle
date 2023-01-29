@@ -224,7 +224,6 @@ export const WordsList = component$(
       state.isOpen = !state.isOpen;
     });
 
-    const tabColor = `bg-blue-${isAnswers ? 100 : 50}`;
     const position = state.isOpen ? 'absolute' : '';
 
     return (
@@ -236,6 +235,7 @@ export const WordsList = component$(
           zIndex: `${state.isOpen ? 50 : 0}`,
           bottom: `${isAnswers ? 0 : 0}px`,
           width: state.isOpen ? '100%' : '50%',
+          position: state.isOpen ? 'absolute' : 'relative',
         }}
       >
         <div class={`px-4 w-full flex items-center justify-between`}>
