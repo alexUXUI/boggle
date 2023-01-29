@@ -75,8 +75,9 @@ export const WordsList = component$(
           </button>
         </div>
 
-        {state.isOpen && (
-          <div class="w-full overflow-scroll h-full bg-white flex flex-wrap justify-center">
+        {state.isOpen &&
+        answersState[isAnswers ? 'data' : 'foundWords'].length ? (
+          <div class="w-full overflow-scroll h-full bg-white flex flex-wrap justify-start">
             <ul class="pt-[10px] pb-[20px] h-full bg-white flex flex-wrap w-full m-auto">
               {answersState[isAnswers ? 'data' : 'foundWords']
                 .filter((word) => {
@@ -87,6 +88,12 @@ export const WordsList = component$(
                 ))}
             </ul>
           </div>
+        ) : (
+          state.isOpen && (
+            <div class="w-full h-full items-center bg-white flex flex-wrap justify-center">
+              No data
+            </div>
+          )
         )}
       </div>
     );
