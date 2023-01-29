@@ -137,7 +137,7 @@ export const BoogleRoot = component$(
     });
 
     return (
-      <div class="flex flex-col h-[100vh] dont-scroll">
+      <div class="flex flex-col h-[100vh] dont-scroll  ">
         <Controls
           boardState={boardState}
           languageState={languageState}
@@ -149,8 +149,8 @@ export const BoogleRoot = component$(
           selectedCharsState={selectedCharsState}
           gameState={gameState}
         />
-        <div class="absolute w-full bottom-0">
-          <div class="m-auto  flex">
+        <div class="absolute w-full bottom-0 bg-blue-900">
+          <div class="m-auto flex">
             <WordsList
               answersState={answersState}
               title="foundWords"
@@ -220,7 +220,7 @@ export const WordsList = component$(
     return (
       <div
         id={`words-list-${title}`}
-        class={`${position} bg-white w-[50%] flex flex-col items-center max-h-[500px]`}
+        class={`${position} bg-blue-900 w-[50%] flex flex-col items-center max-h-[500px]`}
         style={{
           height: `${state.isOpen ? 500 : 50}px`,
           zIndex: `${state.isOpen ? 50 : 0}`,
@@ -236,33 +236,29 @@ export const WordsList = component$(
             : '0',
         }}
       >
-        <div class={`px-4 w-full flex items-center justify-between`}>
-          <h2 class=" h-[40px] mt-[5px] text-[18px] bg-white p-2 rounded-sm text-blue-800 text-center">
-            {isAnswers ? 'Answers' : 'Found'}
-          </h2>
+        <div class={`px-4 w-full flex items-center justify-center h-[50px]`}>
           <button
-            class=" hover:bg-blue-100 leading-[20px] text-[18px] bg-white p-2 rounded-md border-2 border-slate-300 h-[40px]"
+            class=" hover:bg-blue-100 leading-[20px] text-[14px] bg-white p-2 rounded-md border-2 border-slate-300 h-[40px]"
             onClick$={handleToggle}
-            style={{
-              right: '5px',
-              bottom: isAnswers ? '5px' : '55px',
-            }}
           >
-            {state.isOpen ? 'Close' : 'Open'}
+            {state.isOpen ? 'Close ' : 'Open '}
+            {isAnswers ? 'Answers' : 'Found'}
           </button>
         </div>
 
-        <div class="w-full overflow-scroll bg-white flex flex-wrap justify-center pb-20px">
-          <ul class="mb-[40px] mt-[10px] bg-white h-[100%] flex flex-wrap w-[100%] m-auto pb-[30px]">
-            {answersState[isAnswers ? 'data' : 'foundWords']
-              .filter((word) => {
-                return word.length >= minCharLength;
-              })
-              .map((word) => (
-                <li class="w-[33%] text-center">{word}</li>
-              ))}
-          </ul>
-        </div>
+        {state.isOpen && (
+          <div class="w-full overflow-scroll bg-white flex flex-wrap justify-center">
+            <ul class="mb-[40px] bg-white h-[100%] flex flex-wrap w-[100%] m-auto">
+              {answersState[isAnswers ? 'data' : 'foundWords']
+                .filter((word) => {
+                  return word.length >= minCharLength;
+                })
+                .map((word) => (
+                  <li class="w-[33%] text-center">{word}</li>
+                ))}
+            </ul>
+          </div>
+        )}
       </div>
     );
   }

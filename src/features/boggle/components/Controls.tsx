@@ -65,7 +65,7 @@ export const Controls = component$(
     });
 
     return (
-      <div>
+      <div class="bg-blue-900">
         <div class="flex items-center h-[60px]">
           <div class="w-[33.3%] flex justify-center">
             <button
@@ -85,25 +85,26 @@ export const Controls = component$(
             </button>
           </div>
           <div class="w-[33.3%] flex justify-start">
-            <div class="text-[14px]">
-              Answers:{' '}
+            <div class="text-[14px] bg-white rounded-md border-2 border-blue-800  h-[40px] w-[120px] flex items-center justify-start px-2">
+              Answers:{'  '}
               <span class="text-[14px] rounded-sm">
-                {answersLength > 0 ? answersLength : ''}
+                {answersLength > 0 ? ` ${answersLength}` : ''}
               </span>
             </div>
           </div>
         </div>
         {constrolsState.isOpen ? (
-          <form class="absolute z-50 w-full m-auto bg-white px-2 rounded-md pb-2 flex justify-center max-w-[710px]">
+          <form class="bg-blue-800 fixed z-50 w-full m-auto px-2 pb-2 flex justify-center max-w-[710px]">
             <fieldset class="w-full p-2 rounded-md border-slate-300 flex flex-wrap justify-evenly max-w-[700px]">
               <div class="flex flex-col my-[3px]">
-                <label class="text-[14px]" for="language">
+                <label class="text-white text-[14px]" for="language">
                   Language
                 </label>
                 <select
                   id="language"
                   class="pl-[2px] rounded-md w-[10ch] h-[40px] border-2 border-slate-400"
                   onChange$={handleChangeLanguage}
+                  value={languageState.data}
                 >
                   <option value="English">English</option>
                   <option value="Spanish">Spanish</option>
@@ -111,7 +112,7 @@ export const Controls = component$(
                 </select>
               </div>
               <div class="flex flex-col my-[3px]">
-                <label for="min-char-length" class="text-[14px]">
+                <label for="min-char-length" class="text-white text-[14px]">
                   Word Size
                 </label>
                 <input
@@ -123,7 +124,7 @@ export const Controls = component$(
                 />
               </div>
               <div class="flex flex-col my-[3px]">
-                <label class="text-[14px]" for="board-size">
+                <label class="text-white text-[14px]" for="board-size">
                   Board Size
                 </label>
                 <input
@@ -135,7 +136,7 @@ export const Controls = component$(
                 />
               </div>
               <div class="flex flex-col my-[3px]">
-                <label class="text-[14px] w-fit" for="customize">
+                <label class="text-white text-[14px] w-fit" for="customize">
                   Customize
                 </label>
                 <input
