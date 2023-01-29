@@ -2,13 +2,14 @@ import { $, component$, useStore } from '@builder.io/qwik';
 import type { QwikChangeEvent } from '@builder.io/qwik';
 
 import { randomBoard } from '../../../routes/boggle/logic/generateBoard';
-import type {
-  AnswersState,
-  BoardState,
-  DictionaryState,
-  LanguageState,
-} from '~/features/boggle';
+
 import { solve } from '../../../routes/boggle/logic/boggle';
+import type {
+  BoardState,
+  LanguageState,
+  AnswersState,
+  DictionaryState,
+} from '../models';
 interface Props {
   boardState: BoardState;
   languageState: LanguageState;

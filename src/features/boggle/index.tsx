@@ -1,57 +1,24 @@
-import { NoSerialize, useTask$ } from '@builder.io/qwik';
-import { $, component$, useOnWindow, useStore } from '@builder.io/qwik';
-import { Controls } from '~/features/boggle/components/Controls';
-import type { Language } from '~/routes/boggle/logic/api';
-import BoggleWorker from './worker?worker';
+import {
+  useTask$,
+  $,
+  component$,
+  useOnWindow,
+  useStore,
+} from '@builder.io/qwik';
+import { Controls } from './components/Controls';
 import { BoggleBoard } from './components/Board';
-
-interface BoggleProps {
-  data: {
-    board: string[];
-    boardWidth: number;
-    boardSize: number;
-    language: string;
-    minCharLength: number;
-  };
-}
-
-export interface BoardState {
-  data: string[];
-  boardSize: number;
-  boardWidth: number;
-  cellWidth: number;
-}
-
-export interface SelectedCharsState {
-  data: { index: number; char: string }[];
-}
-
-export interface LanguageState {
-  data: Language;
-  minCharLength: number;
-}
-
-export interface AnswersState {
-  data: string[];
-  foundWords: string[];
-}
-
-export interface DictionaryState {
-  data: string[];
-}
-
-export interface WebWorkerState {
-  mod: NoSerialize<Worker> | null;
-}
-
-export interface GameState {
-  isWordFound: boolean;
-}
-
-export interface WordsListState {
-  isAnswersOpen: boolean;
-  isFoundWordsOpen: boolean;
-}
+import { WordsList } from './components/WordsList';
+import { calculateCellWidth } from './logic/board.logic';
+import BoggleWorker from './worker?worker';
+import type {
+  BoggleProps,
+  BoardState,
+  GameState,
+  SelectedCharsState,
+  LanguageState,
+  AnswersState,
+  DictionaryState,
+} from './models';
 
 export const BoogleRoot = component$(
   ({
@@ -64,9 +31,7 @@ export const BoogleRoot = component$(
       cellWidth: calculateCellWidth(boardWidth, boardSize),
     });
 
-    const gameState = useStore<GameState>({
-      isWordFound: false,
-    });
+    const gameState = useStore<GameState>({ isWordFound: false });
 
     const selectedCharsState = useStore<SelectedCharsState>({
       data: [],
@@ -83,6 +48,9 @@ export const BoogleRoot = component$(
     });
 
     const dictionaryState = useStore<DictionaryState>({ data: [] });
+
+    const answerListState = useStore({ isOpen: false });
+    const foundListState = useStore({ isOpen: false });
 
     useOnWindow(
       'DOMContentLoaded',
@@ -128,14 +96,6 @@ export const BoogleRoot = component$(
       }
     });
 
-    const answerListState = useStore({
-      isOpen: false,
-    });
-
-    const foundListState = useStore({
-      isOpen: false,
-    });
-
     return (
       <div class="flex flex-col justify-center h-[100vh] bg-slate-300 dont-scroll">
         <Controls
@@ -169,120 +129,3 @@ export const BoogleRoot = component$(
     );
   }
 );
-
-export const WordsList = component$(
-  ({
-    answersState,
-    title,
-    minCharLength,
-    state,
-  }: {
-    answersState: AnswersState;
-    title: string;
-    minCharLength: number;
-    state: { isOpen: boolean };
-  }) => {
-    // const openState = useStore({ isOpen: false });
-    const isAnswers = title === 'answers';
-
-    useOnWindow(
-      'DOMContentLoaded',
-      $(() => {
-        const list = document.getElementById(`words-list-${title}`);
-
-        // on click detect if the click was outside the list
-        // if it was, close the list
-        const handleClick = (event: MouseEvent) => {
-          if (list && !list.contains(event.target as Node)) {
-            state.isOpen = false;
-          }
-        };
-
-        // if the user presses esc close the list
-        const handleKeyDown = (event: KeyboardEvent) => {
-          if (event.key === 'Escape') {
-            state.isOpen = false;
-          }
-        };
-
-        // add the event listener
-        document.addEventListener('click', handleClick);
-        document.addEventListener('keydown', handleKeyDown);
-      })
-    );
-
-    const handleToggle = $(() => {
-      state.isOpen = !state.isOpen;
-    });
-
-    const position = state.isOpen ? 'absolute' : '';
-
-    return (
-      <div
-        id={`words-list-${title} no-scroll`}
-        class={`${position} bg-blue-900 w-[50%] flex flex-col items-center max-h-[500px]`}
-        style={{
-          height: `${state.isOpen ? 500 : 50}px`,
-          zIndex: `${state.isOpen ? 50 : 0}`,
-          bottom: `${isAnswers ? 0 : 0}px`,
-          width: state.isOpen ? '100%' : '50%',
-          position: state.isOpen ? 'fixed' : 'fixed',
-          right: state.isOpen
-            ? isAnswers
-              ? '0'
-              : '0'
-            : isAnswers
-            ? '50%'
-            : '0',
-        }}
-      >
-        <div class={`px-4 w-full flex items-center justify-center h-[50px]`}>
-          <button
-            class=" hover:bg-blue-100 leading-[20px] text-[14px] bg-white p-2 rounded-md border-2 border-blue-800 h-[40px]"
-            onClick$={handleToggle}
-          >
-            {state.isOpen ? 'Close ' : 'Open '}
-            {isAnswers ? 'Answers' : 'Found'}
-          </button>
-        </div>
-
-        {state.isOpen && (
-          <div class="w-full overflow-scroll h-full bg-white flex flex-wrap justify-center">
-            <ul class="pt-[10px] pb-[20px] h-full bg-white flex flex-wrap w-full m-auto">
-              {answersState[isAnswers ? 'data' : 'foundWords']
-                .filter((word) => {
-                  return word.length >= minCharLength;
-                })
-                .map((word) => (
-                  <li class="w-[33%] text-center">{word}</li>
-                ))}
-            </ul>
-          </div>
-        )}
-      </div>
-    );
-  }
-);
-
-export const calculateCellWidth = (boardWidth: number, boardSize: number) => {
-  switch (boardSize) {
-    case 2:
-      return boardWidth / boardSize - 40;
-    case 3:
-      return boardWidth / boardSize - 20;
-    case 4:
-      return boardWidth / boardSize - 12;
-    case 5:
-      return boardWidth / boardSize - boardSize * 2;
-    case 6:
-      return boardWidth / boardSize - boardSize - 2;
-    case 7:
-      return boardWidth / boardSize - 6;
-    case 8:
-      return boardWidth / boardSize - 6;
-    case 9:
-      return boardWidth / boardSize - 4;
-    default:
-      return boardWidth / boardSize - 2;
-  }
-};

@@ -1,5 +1,5 @@
 import { $, component$, useOnWindow } from '@builder.io/qwik';
-import type { BoardState, GameState, SelectedCharsState } from '..';
+import type { BoardState, SelectedCharsState, GameState } from '../models';
 
 interface Props {
   boardState: BoardState;
