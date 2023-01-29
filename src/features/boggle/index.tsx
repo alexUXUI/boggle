@@ -48,6 +48,11 @@ export interface GameState {
   isWordFound: boolean;
 }
 
+export interface WordsListState {
+  isAnswersOpen: boolean;
+  isFoundWordsOpen: boolean;
+}
+
 export const BoogleRoot = component$(
   ({
     data: { board, boardSize, language, boardWidth, minCharLength },
@@ -100,7 +105,6 @@ export const BoogleRoot = component$(
     // track when the selected chars change
     useTask$(({ track }) => {
       track(() => selectedCharsState.data);
-      console.log('selected chars changed', selectedCharsState.data);
       // figure out if the selected chars are in the dictionary
       // if they are, add them to the answers
       if (selectedCharsState.data.length) {
@@ -124,32 +128,49 @@ export const BoogleRoot = component$(
       }
     });
 
+    const answerListState = useStore({
+      isOpen: false,
+    });
+
+    const foundListState = useStore({
+      isOpen: false,
+    });
+
     return (
-      <div>
-        <h1 class="text-[22px] w-fit m-auto bg-white p-2 rounded-sm text-blue-800 text-center">
-          Boogle
-        </h1>
-        <Controls
-          boardState={boardState}
-          languageState={languageState}
-          answersState={answersState}
-          dictionaryState={dictionaryState}
-        />
+      <div class="h-[100vh] flex flex-col">
+        <div class="pb-[20px]">
+          <h1 class="text-[22px] w-fit m-auto bg-white p-2 rounded-sm text-blue-800 text-center">
+            Boogle
+          </h1>
+          <Controls
+            boardState={boardState}
+            languageState={languageState}
+            answersState={answersState}
+            dictionaryState={dictionaryState}
+          />
+        </div>
+
         <BoggleBoard
           boardState={boardState}
           selectedCharsState={selectedCharsState}
           gameState={gameState}
         />
-        <WordsList
-          answersState={answersState}
-          title="answers"
-          minCharLength={languageState.minCharLength}
-        />
-        <WordsList
-          answersState={answersState}
-          title="foundWords"
-          minCharLength={languageState.minCharLength}
-        />
+        <div class="absolute w-full bottom-0">
+          <div class="m-auto  flex">
+            <WordsList
+              answersState={answersState}
+              title="foundWords"
+              minCharLength={languageState.minCharLength}
+              state={foundListState}
+            />
+            <WordsList
+              answersState={answersState}
+              title="answers"
+              minCharLength={languageState.minCharLength}
+              state={answerListState}
+            />
+          </div>
+        </div>
       </div>
     );
   }
@@ -160,15 +181,18 @@ export const WordsList = component$(
     answersState,
     title,
     minCharLength,
+    state,
   }: {
     answersState: AnswersState;
     title: string;
     minCharLength: number;
+    state: { isOpen: boolean };
   }) => {
-    const openState = useStore({ isOpen: false });
+    // const openState = useStore({ isOpen: false });
     const isAnswers = title === 'answers';
 
-    // create a ref to the list
+    console.log('words list rerendered');
+    console.log('isAnswers', isAnswers);
 
     useOnWindow(
       'DOMContentLoaded',
@@ -179,14 +203,14 @@ export const WordsList = component$(
         // if it was, close the list
         const handleClick = (event: MouseEvent) => {
           if (list && !list.contains(event.target as Node)) {
-            openState.isOpen = false;
+            state.isOpen = false;
           }
         };
 
         // if the user presses esc close the list
         const handleKeyDown = (event: KeyboardEvent) => {
           if (event.key === 'Escape') {
-            openState.isOpen = false;
+            state.isOpen = false;
           }
         };
 
@@ -197,46 +221,50 @@ export const WordsList = component$(
     );
 
     const handleToggle = $(() => {
-      openState.isOpen = !openState.isOpen;
+      state.isOpen = !state.isOpen;
     });
+
+    const tabColor = `bg-blue-${isAnswers ? 100 : 50}`;
+    const position = state.isOpen ? 'absolute' : '';
 
     return (
       <div
         id={`words-list-${title}`}
-        class={`bg-white transition-all absolute h-[${
-          openState.isOpen ? 500 : 50
-        }px] bottom-[${
-          isAnswers ? 0 : 50
-        }px] w-full flex flex-col items-center`}
+        class={`${position} bg-white w-[50%] flex flex-col items-center max-h-[500px]`}
         style={{
-          zIndex: isAnswers ? 50 : 5,
+          height: `${state.isOpen ? 500 : 50}px`,
+          zIndex: `${state.isOpen ? 50 : 0}`,
+          bottom: `${isAnswers ? 0 : 0}px`,
+          width: state.isOpen ? '100%' : '50%',
         }}
       >
-        <div class={`w-full bg-blue-${isAnswers ? 100 : 50}`}>
-          <h2 class="h-[40px] mt-[5px] text-[18px] w-fit m-auto bg-white p-2 rounded-sm text-blue-800 text-center">
-            {isAnswers ? 'Answers' : 'Found Words'}
+        <div class={`px-4 w-full flex items-center justify-between`}>
+          <h2 class=" h-[40px] mt-[5px] text-[18px] bg-white p-2 rounded-sm text-blue-800 text-center">
+            {isAnswers ? 'Answers' : 'Found'}
           </h2>
           <button
-            class="hover:bg-blue-100 leading-[20px] absolute right-[5px] bottom-[5px] text-[18px] bg-white p-2 rounded-md border-2 border-slate-300 h-[40px]"
+            class=" hover:bg-blue-100 leading-[20px] text-[18px] bg-white p-2 rounded-md border-2 border-slate-300 h-[40px]"
             onClick$={handleToggle}
+            style={{
+              right: '5px',
+              bottom: isAnswers ? '5px' : '55px',
+            }}
           >
-            {openState.isOpen ? 'Close' : 'Open'}
+            {state.isOpen ? 'Close' : 'Open'}
           </button>
         </div>
 
-        {openState.isOpen ? (
-          <div class="w-full overflow-scroll bg-white flex flex-wrap justify-center">
-            <ul class="mb-[40px] mt-[10px] bg-white h-[100%] flex flex-wrap w-[100%] m-auto pb-[30px]">
-              {answersState[isAnswers ? 'data' : 'foundWords']
-                .filter((word) => {
-                  return word.length >= minCharLength;
-                })
-                .map((word) => (
-                  <li class="w-[33%] text-center">{word}</li>
-                ))}
-            </ul>
-          </div>
-        ) : null}
+        <div class="w-full overflow-scroll bg-white flex flex-wrap justify-center pb-20px">
+          <ul class="mb-[40px] mt-[10px] bg-white h-[100%] flex flex-wrap w-[100%] m-auto pb-[30px]">
+            {answersState[isAnswers ? 'data' : 'foundWords']
+              .filter((word) => {
+                return word.length >= minCharLength;
+              })
+              .map((word) => (
+                <li class="w-[33%] text-center">{word}</li>
+              ))}
+          </ul>
+        </div>
       </div>
     );
   }
