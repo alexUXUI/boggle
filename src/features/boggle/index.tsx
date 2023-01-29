@@ -137,7 +137,7 @@ export const BoogleRoot = component$(
     });
 
     return (
-      <div class="flex flex-col h-[100vh] dont-scroll  ">
+      <div class="flex flex-col justify-center h-[100vh] bg-slate-300 dont-scroll">
         <Controls
           boardState={boardState}
           languageState={languageState}
@@ -219,7 +219,7 @@ export const WordsList = component$(
 
     return (
       <div
-        id={`words-list-${title}`}
+        id={`words-list-${title} no-scroll`}
         class={`${position} bg-blue-900 w-[50%] flex flex-col items-center max-h-[500px]`}
         style={{
           height: `${state.isOpen ? 500 : 50}px`,
@@ -238,7 +238,7 @@ export const WordsList = component$(
       >
         <div class={`px-4 w-full flex items-center justify-center h-[50px]`}>
           <button
-            class=" hover:bg-blue-100 leading-[20px] text-[14px] bg-white p-2 rounded-md border-2 border-slate-300 h-[40px]"
+            class=" hover:bg-blue-100 leading-[20px] text-[14px] bg-white p-2 rounded-md border-2 border-blue-800 h-[40px]"
             onClick$={handleToggle}
           >
             {state.isOpen ? 'Close ' : 'Open '}
@@ -247,8 +247,8 @@ export const WordsList = component$(
         </div>
 
         {state.isOpen && (
-          <div class="w-full overflow-scroll bg-white flex flex-wrap justify-center">
-            <ul class="mb-[40px] bg-white h-[100%] flex flex-wrap w-[100%] m-auto">
+          <div class="w-full overflow-scroll h-full bg-white flex flex-wrap justify-center">
+            <ul class="pt-[10px] pb-[20px] h-full bg-white flex flex-wrap w-full m-auto">
               {answersState[isAnswers ? 'data' : 'foundWords']
                 .filter((word) => {
                   return word.length >= minCharLength;

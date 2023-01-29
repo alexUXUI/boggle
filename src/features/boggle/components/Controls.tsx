@@ -65,8 +65,11 @@ export const Controls = component$(
     });
 
     return (
-      <div class="bg-blue-900">
-        <div class="flex items-center h-[60px]">
+      <div class="bg-blue-900 fixed w-full top-0">
+        <div class="h-[30px] flex items-center justify-center">
+          <h1 class="text-center text-white m-0 p-0">Foggle</h1>
+        </div>
+        <div class="flex items-center h-[50px]">
           <div class="w-[33.3%] flex justify-center">
             <button
               class="px-2 text-[14px] border-2 bg-white h-[40px] border-blue-800 hover:bg-blue-200 rounded-md "
