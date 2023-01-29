@@ -1,4 +1,4 @@
-import { component$, Slot } from "@builder.io/qwik";
+import { component$, Slot } from '@builder.io/qwik';
 
 export default component$(() => {
   return (
@@ -8,11 +8,11 @@ export default component$(() => {
           <Slot />
         </section>
       </div>
-      <footer>
+      {/* <footer>
         <a href="https://www.twitter.com/alexux_ui" target="_blank">
           Made with ♡ by Alex Bennett
         </a>
-      </footer>
+      </footer> */}
     </>
   );
 });

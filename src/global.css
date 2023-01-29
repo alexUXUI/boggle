@@ -90,23 +90,6 @@ footer a:hover {
   text-decoration: underline;
 }
 
-a.mindblow {
-  margin: 0 auto;
-  display: block;
-  background: var(--qwik-dark-purple);
-  padding: 10px 20px;
-  border-radius: 10px;
-  border: 0;
-  color: white;
-  text-decoration: none;
-  font-size: 20px;
-  width: fit-content;
-  border-bottom: 4px solid black;
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'  width='40' height='48' viewport='0 0 100 100' style='fill:black;font-size:24px;'><text y='50%'>🤯</text></svg>")
-      16 0,
-    auto; /*!emojicursor.app*/
-}
-
 a.mindblow:hover {
   border-bottom-width: 0px;
   margin-bottom: 4px;
@@ -116,4 +99,81 @@ a.mindblow:hover {
 .stop-scrolling {
   height: 100%;
   overflow: hidden;
+}
+
+.cell {
+  width: 99.5%;
+  height: 99.5%;
+  background-color: rgb(250, 250, 250);
+}
+
+.letter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  border-radius: 20%;
+  box-shadow: -1px -1px 2px rgba(146, 146, 146, 0.1),
+    1px 1px 2px rgba(192, 192, 192, 0.1);
+}
+
+.letter::after {
+  content: '';
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  /* background-color: transparent; */
+  border-radius: 20%;
+  box-shadow: inset -1px -1px 2px rgba(250, 250, 250, 0.186),
+    inset 1px 1px 2px rgba(119, 113, 113, 0.1);
+}
+
+.scene {
+  perspective: 600px;
+  background: rgb(244, 244, 244);
+  box-shadow: inset -2px -2px 4px rgb(129, 129, 129),
+    inset 10px 10px 4px rgb(255, 255, 255);
+}
+
+.scene:hover {
+  perspective: 400px;
+  cursor: pointer;
+}
+
+.cube {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 1s;
+}
+
+.cube__face {
+  position: absolute;
+  font-weight: bold;
+  text-align: center;
+  border-radius: 5px;
+}
+
+.cube__face--right {
+  background: rgb(177, 177, 177);
+}
+.cube__face--back {
+  background: hsla(0, 0%, 55%, 1);
+}
+.cube__face--left {
+  background: hsla(0, 0%, 91%, 1);
+}
+.cube__face--top {
+  background: hsla(0, 0%, 96%, 1);
+}
+.cube__face--bottom {
+  background: rgb(116, 116, 116);
+}
+
+.face {
+  border-radius: 10%;
+  width: 92%;
+  height: 92%;
+  position: absolute;
+  top: 4%;
+  left: 4%;
 }

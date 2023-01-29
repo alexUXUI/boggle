@@ -9,10 +9,46 @@
  */
 import { setupServiceWorker } from '@builder.io/qwik-city/service-worker';
 
+// This is the service worker entry point
+// set up a fetch listener to handle all requests
+
 setupServiceWorker();
 
-addEventListener('install', () => self.skipWaiting());
+addEventListener('install', () => {
+  self.skipWaiting();
+});
 
-addEventListener('activate', () => self.clients.claim());
+// Immediately claim any new clients. This is not needed to send messages, but
+// makes for a better demo experience since the user does not need to refresh.
+// A more complete example of this given in the immediate-claim recipe.
+self.addEventListener('activate', function (event) {
+  event.waitUntil(self.clients.claim());
+});
+
+// Listen for messages from clients.
+self.addEventListener('message', function (event) {
+  // Get all the connected clients and forward the message along.
+  const promise = self.clients.matchAll().then(function (clientList) {
+    // event.source.id contains the ID of the sender of the message.
+    const senderID = (event?.source as any).id ?? 0;
+
+    clientList.forEach(function (client) {
+      // Skip sending the message to the client that sent it.
+      if (client.id === senderID) {
+        return;
+      }
+      client.postMessage({
+        client: senderID,
+        message: event.data,
+      });
+    });
+  });
+
+  // If event.waitUntil is defined, use it to extend the
+  // lifetime of the Service Worker.
+  if (event.waitUntil) {
+    event.waitUntil(promise);
+  }
+});
 
 declare const self: ServiceWorkerGlobalScope;

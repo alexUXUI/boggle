@@ -1,269 +1,337 @@
-import {
-  component$,
-  useStore,
-  useTask$,
-  useClientEffect$,
-} from "@builder.io/qwik";
-import type { DocumentHead } from "@builder.io/qwik-city";
-import { Answers } from "./components/Answers";
-import { generateRandomBoard } from "./logic/generateBoard";
-import { BoggleGrid } from "./components/BoggleGrid";
-import { Controls } from "./components/Controls";
-import { FoundWords } from "./components/FoundWords";
-import { importWordsFromPublicDir } from "./logic/api";
-import { solve } from "./logic/boggle";
-export const Boggle = import("../../boggle/pkg/boggle");
-export const confetti = import("canvas-confetti");
+// import {
+//   component$,
+//   useStore,
+//   useTask$,
+//   Resource,
+//   useClientEffect$,
+// } from '@builder.io/qwik';
+// import type { DocumentHead, RequestHandler } from '@builder.io/qwik-city';
+// import { useEndpoint } from '@builder.io/qwik-city';
+// import { Answers } from './components/Answers';
+// import { randomBoard } from './logic/generateBoard';
+// import { BoggleGrid } from './components/BoggleGrid';
+// import { Controls } from './components/Controls';
+// import { FoundWords } from './components/FoundWords';
+// import { importWordsFromPublicDir } from './logic/api';
+// import { solve } from './logic/boggle';
+// import parser from 'ua-parser-js';
+// export const Boggle = import('../../boggle/pkg/boggle');
 
-export interface State {
-  boardSize: number;
-  board: string[];
-  minWordLength: number;
-  selectedPath: { index: number; char: string }[];
-  wordFound: boolean;
-  isLoaded: boolean;
-}
+// export const confetti = import('canvas-confetti');
 
-export default component$(() => {
-  const state = useStore<State>({
-    boardSize: 5, // default board length and width dimension
-    board: generateRandomBoard(5).split(""), // random default board
-    minWordLength: 5, // minimum word length
-    selectedPath: [], // selected path on the board
-    wordFound: false, // whether a word was found, used for animation
-    isLoaded: false, // whether the dictionary has been loaded
-  });
+// export interface State {
+//   boardSize: number;
+//   board: string[];
+//   minWordLength: number;
+//   selectedPath: { index: number; char: string }[];
+//   wordFound: boolean;
+//   isLoaded: boolean;
+// }
 
-  const answers = useStore({
-    data: [""],
-  });
+// export default component$(() => {
+//   const boardData = useEndpoint<string>();
 
-  const foundWords = useStore({
-    words: [""],
-  });
+//   const state = useStore<State>({
+//     boardSize: 5, // default board length and width dimension
+//     // board: generateRandomBoard(5).split(''), // random default board
+//     board: [],
+//     minWordLength: 5, // minimum word length
+//     selectedPath: [], // selected path on the board
+//     wordFound: false, // whether a word was found, used for animation
+//     isLoaded: false, // whether the dictionary has been loaded
+//   });
 
-  const dictionaryState = useStore({
-    dictionary: [""],
-  });
+//   const answers = useStore({
+//     data: [''],
+//   });
 
-  // use client effect to import the wasm module in the top level directory in the boggle directory
-  useClientEffect$(() => {
-    Boggle.then(async (module) => {
-      await module.default();
-      module.greet("OMGGGGG");
-    });
-  });
+//   const foundWords = useStore({
+//     words: [''],
+//   });
 
-  // when the component mounts, fetch the dictionary
-  useClientEffect$(() => {
-    if (dictionaryState.dictionary.length <= 1) {
-      importWordsFromPublicDir().then((data) => {
-        dictionaryState.dictionary = data;
-        answers.data = solve(data, state.board).filter((value: string) => {
-          return value.length >= state.minWordLength;
-        });
-        state.isLoaded = true;
-      });
-    } else {
-      const filtered = solve(dictionaryState.dictionary, state.board).filter(
-        (value: string) => {
-          return value.length >= state.minWordLength;
-        }
-      );
-      answers.data = filtered;
-      state.isLoaded = true;
-    }
-  });
+//   const dictionaryState = useStore({
+//     dictionary: [''],
+//   });
 
-  /**
-   * When the board size updates:
-   * 1. generate a new board
-   * 2. solve the board
-   * 3. update the answers
-   */
-  useTask$(({ track }) => {
-    track(() => state.boardSize);
-    track(() => state.board);
-    answers.data = solve(dictionaryState.dictionary, state.board).filter(
-      (value: string) => {
-        return value.length >= state.minWordLength;
-      }
-    );
+//   // use client effect to import the wasm module in the top level directory in the boggle directory
+//   // useClientEffect$(() => {
+//   //   Boggle.then(async (module) => {
+//   //     await module.default();
+//   //     module.greet('OMGGGGG');
+//   //   });
+//   // });
 
-    state.selectedPath = [];
-    foundWords.words = [""];
-  });
+//   // when the component mounts, fetch the dictionary
+//   useClientEffect$(() => {
+//     if (dictionaryState.dictionary.length <= 1) {
+//       importWordsFromPublicDir().then((data) => {
+//         dictionaryState.dictionary = data;
+//         answers.data = solve(data, state.board).filter((value: string) => {
+//           return value.length >= state.minWordLength;
+//         });
+//         state.isLoaded = true;
+//       });
+//     } else {
+//       const filtered = solve(dictionaryState.dictionary, state.board).filter(
+//         (value: string) => {
+//           return value.length >= state.minWordLength;
+//         }
+//       );
+//       answers.data = filtered;
+//       state.isLoaded = true;
+//     }
+//   });
 
-  /**
-   * When the minimum word length updates:
-   * 1. solve the board
-   * 2. update the answers
-   */
-  useTask$(({ track }) => {
-    track(() => state.minWordLength);
-    answers.data = solve(dictionaryState.dictionary, state.board).filter(
-      (value: string) => {
-        return value.length >= state.minWordLength;
-      }
-    );
+//   /**
+//    * When the board size updates:
+//    * 1. generate a new board
+//    * 2. solve the board
+//    * 3. update the answers
+//    */
+//   useTask$(({ track }) => {
+//     track(() => state.boardSize);
+//     track(() => state.board);
+//     answers.data = solve(dictionaryState.dictionary, state.board).filter(
+//       (value: string) => {
+//         return value.length >= state.minWordLength;
+//       }
+//     );
 
-    state.selectedPath = [];
-  });
+//     state.selectedPath = [];
+//     foundWords.words = [''];
+//   });
 
-  /**
-   * When the selected path updates:
-   * 1. check if the word is long enough
-   * 2. check if the word exists in the dictionary
-   * 3. if both are true, add the word to the found words list
-   * 4. clear the selected path
-   */
-  useTask$(({ track }) => {
-    track(() => state.selectedPath);
-    if (state.selectedPath.length > 1) {
-      const word = state.selectedPath
-        .map((element: { index: number; char: string }) => element.char)
-        .join("");
+//   /**
+//    * When the minimum word length updates:
+//    * 1. solve the board
+//    * 2. update the answers
+//    */
+//   useTask$(({ track }) => {
+//     track(() => state.minWordLength);
+//     answers.data = solve(dictionaryState.dictionary, state.board).filter(
+//       (value: string) => {
+//         return value.length >= state.minWordLength;
+//       }
+//     );
 
-      const wordExists = dictionaryState.dictionary.includes(word);
-      const wordNotFound = !foundWords.words.includes(word);
-      const longEnough = word.length >= state.minWordLength;
-      if (longEnough && wordExists && wordNotFound) {
-        state.wordFound = true;
+//     state.selectedPath = [];
+//   });
 
-        setTimeout(() => {
-          foundWords.words = [...foundWords.words, word];
-          state.selectedPath = [];
-          state.wordFound = false;
-          confetti.then((module) => {
-            const count = 200;
-            const defaults = {};
+//   /**
+//    * When the selected path updates:
+//    * 1. check if the word is long enough
+//    * 2. check if the word exists in the dictionary
+//    * 3. if both are true, add the word to the found words list
+//    * 4. clear the selected path
+//    */
+//   useTask$(({ track }) => {
+//     track(() => state.selectedPath);
+//     if (state.selectedPath.length > 1) {
+//       const word = state.selectedPath
+//         .map((element: { index: number; char: string }) => element.char)
+//         .join('');
 
-            function fire(particleRatio: number, opts: any) {
-              module.default(
-                Object.assign({}, defaults, opts, {
-                  particleCount: Math.floor(count * particleRatio) * 2,
-                  colors: [
-                    "#0000af",
-                    "#05b5eb",
-                    "#0051ba",
-                    "#230ee2",
-                    "#1f3bc6",
-                  ],
-                })
-              );
-            }
+//       const wordExists = dictionaryState.dictionary.includes(word);
+//       const wordNotFound = !foundWords.words.includes(word);
+//       const longEnough = word.length >= state.minWordLength;
+//       if (longEnough && wordExists && wordNotFound) {
+//         state.wordFound = true;
 
-            fire(0.25, {
-              spread: 46,
-              startVelocity: 55,
-              origin: { x: 0.5, y: 1 },
-              decay: 0.87,
-              scalar: 1.2,
-            });
-          });
-        }, 100);
-      }
-    }
-  });
+//         setTimeout(() => {
+//           foundWords.words = [...foundWords.words, word];
+//           state.selectedPath = [];
+//           state.wordFound = false;
+//           confetti.then((module) => {
+//             const count = 200;
+//             const defaults = {};
 
-  useTask$(({ track }) => {
-    track(() => foundWords.words);
-    track(() => answers.data);
+//             function fire(particleRatio: number, opts: any) {
+//               module.default(
+//                 Object.assign({}, defaults, opts, {
+//                   particleCount: Math.floor(count * particleRatio) * 2,
+//                   colors: [
+//                     '#0000af',
+//                     '#05b5eb',
+//                     '#0051ba',
+//                     '#230ee2',
+//                     '#1f3bc6',
+//                   ],
+//                 })
+//               );
+//             }
 
-    const answersLength = answers.data.length;
-    const foundWordsLength = foundWords.words.length - 1;
+//             fire(0.25, {
+//               spread: 46,
+//               startVelocity: 55,
+//               origin: { x: 0.5, y: 1 },
+//               decay: 0.87,
+//               scalar: 1.2,
+//             });
+//           });
+//         }, 100);
+//       }
+//     }
+//   });
 
-    console.log(foundWordsLength, answersLength);
+//   useTask$(({ track }) => {
+//     track(() => foundWords.words);
+//     track(() => answers.data);
 
-    if (foundWordsLength && foundWordsLength === answersLength) {
-      setTimeout(() => {
-        const duration = 15 * 1000;
-        const animationEnd = Date.now() + duration;
-        const defaults = {
-          startVelocity: 30,
-          spread: 360,
-          ticks: 60,
-          zIndex: 0,
-        };
+//     const answersLength = answers.data.length;
+//     const foundWordsLength = foundWords.words.length - 1;
 
-        confetti.then((module) => {
-          function randomInRange(min: number, max: number) {
-            return Math.random() * (max - min) + min;
-          }
+//     console.log(foundWordsLength, answersLength);
 
-          const interval: ReturnType<typeof setTimeout> = setInterval(
-            function () {
-              const timeLeft = animationEnd - Date.now();
+//     if (foundWordsLength && foundWordsLength === answersLength) {
+//       setTimeout(() => {
+//         const duration = 15 * 1000;
+//         const animationEnd = Date.now() + duration;
+//         const defaults = {
+//           startVelocity: 30,
+//           spread: 360,
+//           ticks: 60,
+//           zIndex: 0,
+//         };
 
-              if (timeLeft <= 0) {
-                return clearInterval(interval);
-              }
+//         confetti.then((module) => {
+//           function randomInRange(min: number, max: number) {
+//             return Math.random() * (max - min) + min;
+//           }
 
-              const particleCount = 50 * (timeLeft / duration);
-              // since particles fall down, start a bit higher than random
-              module.default(
-                Object.assign({}, defaults, {
-                  particleCount,
-                  origin: {
-                    x: randomInRange(0.1, 0.3),
-                    y: Math.random() - 0.2,
-                  },
-                })
-              );
-              module.default(
-                Object.assign({}, defaults, {
-                  particleCount,
-                  origin: {
-                    x: randomInRange(0.7, 0.9),
-                    y: Math.random() - 0.2,
-                  },
-                })
-              );
-            },
-            250
-          );
-        });
-      }, 100);
-    }
-  });
+//           const interval: ReturnType<typeof setTimeout> = setInterval(
+//             function () {
+//               const timeLeft = animationEnd - Date.now();
 
-  const answersLength = answers.data.length;
-  const foundWordsLength = foundWords.words.length - 1;
+//               if (timeLeft <= 0) {
+//                 return clearInterval(interval);
+//               }
 
-  return (
-    <div class=" flex justify-center flex-col">
-      <div class="flex w-full items-center justify-center">
-        <h1 class="text-4xl m-0 text-center text-blue-800 bg-white rounded-md px-3 py-1 mt-4">
-          Boggle
-        </h1>
-      </div>
-      <main class="flex max-w-[500px] m-auto items-center justify-center mt-4 bg-white z-10">
-        <Controls
-          state={state}
-          answersLength={answersLength}
-          foundWordsLength={foundWordsLength}
-        />
-      </main>
-      <BoggleGrid
-        board={state.board}
-        boardSize={state.boardSize}
-        state={state}
-      />
-      <main class="max-w-[600px] m-auto w-[98%] mb-[50px]">
-        <FoundWords
-          words={foundWords.words}
-          minWordLength={state.minWordLength}
-        />
-        <Answers
-          foundWords={foundWords.words}
-          answers={answers.data}
-          minWordLength={state.minWordLength}
-        />
-      </main>
-    </div>
-  );
-});
+//               const particleCount = 50 * (timeLeft / duration);
+//               // since particles fall down, start a bit higher than random
+//               module.default(
+//                 Object.assign({}, defaults, {
+//                   particleCount,
+//                   origin: {
+//                     x: randomInRange(0.1, 0.3),
+//                     y: Math.random() - 0.2,
+//                   },
+//                 })
+//               );
+//               module.default(
+//                 Object.assign({}, defaults, {
+//                   particleCount,
+//                   origin: {
+//                     x: randomInRange(0.7, 0.9),
+//                     y: Math.random() - 0.2,
+//                   },
+//                 })
+//               );
+//             },
+//             250
+//           );
+//         });
+//       }, 100);
+//     }
+//   });
 
-export const head: DocumentHead = {
-  title: "Boggle",
-};
+//   const answersLength = answers.data.length;
+//   const foundWordsLength = foundWords.words.length - 1;
+
+//   return (
+//     <div class=" flex justify-center flex-col">
+//       <div class="flex w-full items-center justify-center">
+//         <h1 class="text-4xl m-0 text-center text-blue-800 bg-white rounded-md px-3 py-1 mt-4">
+//           Boggle
+//         </h1>
+//       </div>
+//       <Resource
+//         value={boardData}
+//         onPending={() => <div>Loading...</div>}
+//         onRejected={() => <div>Error</div>}
+//         onResolved={(data: any) => {
+//           return (
+//             <>
+//               <main class="flex max-w-[500px] m-auto items-center justify-center mt-4 bg-white z-10">
+//                 <Controls
+//                   answersLength={answersLength}
+//                   foundWordsLength={foundWordsLength}
+//                   board={state.board.length > 1 ? state.board : data.board}
+//                 />
+//               </main>
+//               <BoggleGrid
+//                 board={state.board.length > 1 ? state.board : data.board}
+//                 boardSize={state.boardSize}
+//                 state={state}
+//                 cellWidth={
+//                   data.screenWidth / state.boardSize - (state.boardSize + 4)
+//                 }
+//                 screenWidth={data.screenWidth}
+//               />
+//               <main class="max-w-[600px] m-auto w-[98%] mb-[50px]">
+//                 <FoundWords
+//                   words={foundWords.words}
+//                   minWordLength={state.minWordLength}
+//                 />
+//                 <Answers
+//                   foundWords={foundWords.words}
+//                   answers={answers.data}
+//                   minWordLength={state.minWordLength}
+//                 />
+//               </main>
+//             </>
+//           );
+//         }}
+//       />
+//     </div>
+//   );
+// });
+
+// export const head: DocumentHead = {
+//   title: 'Boggle',
+// };
+
+// export interface Boggle {
+//   board: string[];
+//   screenWidth: number;
+// }
+
+// // handle get request
+// export const onGet: RequestHandler<Boggle> = async ({ url, request }) => {
+//   const paramsObject = Object.fromEntries(url.searchParams);
+
+//   const userAgent = parser(request.headers.get('user-agent') || '');
+//   const OS = userAgent.os;
+//   const isAndroid = OS.name === 'Android';
+//   const isIOS = OS.name === 'iOS';
+//   const isMac = OS.name === 'Mac OS';
+//   const isWindows = OS.name === 'Windows';
+//   const isChromeOS = OS.name === 'Chrome OS';
+
+//   let screenWidth = 0;
+//   if (isAndroid || isIOS) {
+//     screenWidth = 375;
+//   } else if (isMac || isWindows || isChromeOS) {
+//     screenWidth = 400;
+//   }
+
+//   // let answers: string[] = [];
+//   let board: string[] = [];
+
+//   if (paramsObject.board) {
+//     console.log(paramsObject.board);
+//     board = paramsObject.board.split('');
+//   } else {
+//     board = randomBoard(LANGUAGE.ENGLISH, 5).split('');
+//   }
+
+//   // const dictionary = await getDictionary(LANGUAGE.ENGLISH);
+
+//   // answers = solve(dictionary, board).filter((value: string) => {
+//   //   return value.length >= 5;
+//   // });
+
+//   return {
+//     board,
+//     screenWidth,
+//   };
+// };

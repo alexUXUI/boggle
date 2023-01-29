@@ -28,6 +28,7 @@
     "@types/eslint": "8.4.10",
     "@types/node": "^18.11.18",
     "@types/node-fetch": "latest",
+    "@types/ua-parser-js": "^0.7.36",
     "@typescript-eslint/eslint-plugin": "5.48.0",
     "@typescript-eslint/parser": "5.48.0",
     "autoprefixer": "10.4.11",
@@ -46,6 +47,7 @@
   "dependencies": {
     "@types/canvas-confetti": "^1.6.0",
     "canvas-confetti": "^1.6.0",
+    "ua-parser-js": "^1.0.33",
     "vite-plugin-wasm-pack": "^0.1.12",
     "wasm-pack": "^0.10.3"
   }
