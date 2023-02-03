@@ -1,5 +1,6 @@
 import { $, component$, useOnWindow } from '@builder.io/qwik';
 import type { BoardState, SelectedCharsState, GameState } from '../models';
+import console from 'console';
 
 interface Props {
   boardState: BoardState;
@@ -247,36 +248,63 @@ export const Cube = ({
   const translationDistance = cellWidth / 2;
 
   return (
-    <td style={baseStyle} key={key} class={`scene m-0 p-0`}>
-      <div style={baseStyle} class={`cube`}>
-        <div
-          style={{
-            ...baseStyle,
-            transform: `rotateY(90deg) translateZ(${translationDistance}px)`,
-          }}
-          class={`cube__face cube__face--right`}
-        ></div>
-        <div
-          style={{
-            ...baseStyle,
-            transform: `rotateY(-90deg) translateZ(${translationDistance}px)`,
-          }}
-          class={`cube__face cube__face--left`}
-        ></div>
-        <div
-          style={{
-            ...baseStyle,
-            transform: `rotateX(90deg) translateZ(${translationDistance}px)`,
-          }}
-          class={`cube__face cube__face--top`}
-        ></div>
+    <td id={`${key}`} style={baseStyle} key={key} class={`scene m-0 p-0`}>
+      <div style={baseStyle} class={`cube `}>
         <div
           style={{
             ...baseStyle,
             transform: `rotateX(-90deg) translateZ(${translationDistance}px)`,
           }}
-          class={`cube__face cube__face--bottom`}
-        ></div>
+          class={`cube__face text-[30px] flex items-center justify-center leading-[40px] cube__face--front`}
+        >
+          F
+        </div>
+        <div
+          style={{
+            ...baseStyle,
+            transform: `rotateY(90deg) translateZ(${translationDistance}px)`,
+          }}
+          class={`cube__face text-[30px] flex items-center justify-center leading-[40px] cube__face--right`}
+        >
+          E
+        </div>
+        <div
+          style={{
+            ...baseStyle,
+            transform: `rotateY(-90deg) translateZ(${translationDistance}px)`,
+          }}
+          class={`cube__face text-[30px] flex items-center justify-center leading-[40px] cube__face--left`}
+        >
+          A
+        </div>
+        <div
+          style={{
+            ...baseStyle,
+            transform: `rotateX(90deg) translateZ(${translationDistance}px)`,
+          }}
+          class={`cube__face text-[30px] flex items-center justify-center leading-[40px] cube__face--top`}
+        >
+          S
+        </div>
+        <div
+          style={{
+            ...baseStyle,
+            transform: `rotateX(-90deg) translateZ(${translationDistance}px)`,
+          }}
+          class={`cube__face text-[30px] flex items-center justify-center leading-[40px] cube__face--bottom`}
+        >
+          U
+        </div>
+
+        <div
+          style={{
+            ...baseStyle,
+            transform: `rotateX(-90deg) translateZ(${translationDistance}px)`,
+          }}
+          class={`cube__face text-[30px] flex items-center justify-center leading-[40px] cube__face--bacl`}
+        >
+          B
+        </div>
         <div class="face flex items-center justify-center">
           <button
             data-cell-index={currentIndex}
@@ -284,6 +312,14 @@ export const Cube = ({
             data-cell-is-in-path={isInSelectedChars}
             class={`${cellBgColor} h-[90%] w-[90%] text-[30px] leading-[40px] p-0 m-0 rounded-sm`}
             onClick$={() => {
+              // get the cube element by id using the key prop
+              const cube = document.getElementById(`${key}`);
+
+              // add the .cube.show-bottom class to the cube element
+              cube?.classList.add('.show-bottom');
+
+              console.log(cube);
+
               handleCellClick(
                 isInSelectedChars,
                 currentIndex,

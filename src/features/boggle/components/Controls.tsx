@@ -1,4 +1,4 @@
-import { $, component$, useStore } from '@builder.io/qwik';
+import { $, component$, useOnWindow, useStore } from '@builder.io/qwik';
 import type { QwikChangeEvent } from '@builder.io/qwik';
 
 import { randomBoard } from '../../../routes/boggle/logic/generateBoard';
@@ -65,8 +65,33 @@ export const Controls = component$(
       isOpen: false,
     });
 
+    useOnWindow(
+      'DOMContentLoaded',
+      $(() => {
+        // get controls by ID and add a click event listener to the document
+        // to close the controls when the user clicks outside of the controls
+        const controls = document.getElementById('controls');
+        document.addEventListener('click', (e) => {
+          console.log(e.target);
+          if (controls && !controls.contains(e.target as Node)) {
+            console.log('close');
+            constrolsState.isOpen = false;
+          }
+        });
+
+        // get the board and add a keyup event listener to the board
+        // to close the controls when the user presses the escape key
+        const board = document.getElementById('controls');
+        board?.addEventListener('keyup', (e) => {
+          if (e.key === 'Escape') {
+            constrolsState.isOpen = false;
+          }
+        });
+      })
+    );
+
     return (
-      <div class="fixed w-full top-0 z-50 ">
+      <div id="controls" class="fixed w-full top-0 z-50 ">
         <div class="glass h-[40px] flex items-center justify-center">
           <h1 class="text-center text-xl text-blue-900 font-medium m-0 py-2">
             Foggle

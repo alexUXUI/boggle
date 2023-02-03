@@ -49,7 +49,7 @@ export const WordsList = component$(
     return (
       <div class="">
         <button
-          class=" hover:bg-blue-100 leading-[20px] text-[14px] bg-white p-2 rounded-md border-2 border-blue-800 h-[40px] w-fit mx-4"
+          class="mt-3 hover:bg-blue-100 leading-[20px] text-[14px] bg-white p-2 rounded-md border-2 border-blue-800 h-[40px] w-fit mx-4"
           onClick$={handleToggle}
         >
           {state.isOpen ? 'Close ' : 'Open '}
