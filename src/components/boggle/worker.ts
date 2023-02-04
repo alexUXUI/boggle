@@ -7,10 +7,10 @@ interface MessageData {
 }
 
 onmessage = (e: MessageEvent<MessageData>) => {
-  import('./boggle-solver/pkg').then(async (module) => {
-    await module.default();
-    module.run_game();
-  });
+  // import('./boggle-solver/pkg').then(async (module) => {
+  //   await module.default();
+  //   module.run_game();
+  // });
   const { language, board } = e.data;
   getDictionary(language).then((dictionary) => {
     const answers = solve(dictionary, board);

@@ -1,7 +1,9 @@
-const English_DICT_URL =
+export const English_DICT_URL =
   'https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt';
 
-const Russian_DICT_URL =
+export const English_DICT_URL_2 = '/engmix.txt';
+
+export const Russian_DICT_URL =
   'https://raw.githubusercontent.com/hingston/Russian/master/10000-Russian-words.txt';
 
 export const Language = {
@@ -13,7 +15,7 @@ export type Language = typeof Language[keyof typeof Language];
 
 export const getDictionary = async (language: Language) => {
   const response = await fetch(
-    language === Language.English ? English_DICT_URL : Russian_DICT_URL
+    language === Language.English ? English_DICT_URL_2 : Russian_DICT_URL
   );
   const data = await response.text();
   const dictionary = data.replace(/(\r\n|\n|\r)/gm, ' ').split(' ');
