@@ -3,7 +3,7 @@ import { useEndpoint } from '@builder.io/qwik-city';
 import type { DocumentHead, RequestHandler } from '@builder.io/qwik-city';
 import { Language } from '~/components/boggle/logic/api';
 import { randomBoard } from '~/components/boggle/logic/generateBoard';
-import { BoogleRoot } from '~/components/boggle';
+import { BoogleRoot } from '~/components/boggle/BoggleRoot';
 import { boardWidthFromRequest } from '~/components/boggle/logic/server';
 
 export const head: DocumentHead = {

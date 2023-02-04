@@ -1,6 +1,6 @@
 import { $, component$, useContext, useOnWindow } from '@builder.io/qwik';
-import { BoardCtx, GameCtx } from '.';
-import { isInPath, bgColor } from './logic/board';
+import { BoardCtx, GameCtx } from '../BoggleRoot';
+import { isInPath, bgColor } from '../logic/board';
 import { LetterCube } from './LetterCube';
 
 export const BoggleBoard = component$(() => {
@@ -51,7 +51,7 @@ export const BoggleBoard = component$(() => {
           class={`flex flex-col bg-green w-fit h-fit justify-evenly`}
         >
           {Array.from({ length: boardState.boardSize }, (_idx, i) => (
-            <tr class={`flex w-full justify-evenly`}>
+            <tr class={`flex w-full justify-evenly`} key={i}>
               {Array.from({ length: boardState.boardSize }, (_jdx, j) => {
                 const currentIndex = i * boardState.boardSize + j;
                 const isInSelectedChars = isInPath(
@@ -66,6 +66,7 @@ export const BoggleBoard = component$(() => {
 
                 return (
                   <LetterCube
+                    key={currentIndex}
                     cellBgColor={cellBgColor}
                     isInSelectedChars={isInSelectedChars}
                     currentIndex={currentIndex}

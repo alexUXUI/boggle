@@ -1,6 +1,6 @@
 import { component$, useContext } from '@builder.io/qwik';
 import { WordsList, Variant } from './WordsList';
-import { AnswersCtx } from '.';
+import { AnswersCtx } from '../BoggleRoot';
 
 export const WordsPanel = component$(() => {
   const answersState = useContext(AnswersCtx);

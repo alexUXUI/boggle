@@ -1,8 +1,13 @@
 import { $, component$, useContext, useStore } from '@builder.io/qwik';
 import type { QwikChangeEvent } from '@builder.io/qwik';
-import { LanguageCtx, BoardCtx, AnswersCtx, DictionaryCtx } from '.';
-import { solve } from './logic/boggle';
-import { randomBoard } from './logic/generateBoard';
+import {
+  LanguageCtx,
+  BoardCtx,
+  AnswersCtx,
+  DictionaryCtx,
+} from '../BoggleRoot';
+import { solve } from '../logic/boggle';
+import { randomBoard } from '../logic/generateBoard';
 
 export const Controls = component$(() => {
   const languageState = useContext(LanguageCtx);

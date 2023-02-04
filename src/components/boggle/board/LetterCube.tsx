@@ -1,5 +1,5 @@
-import { handleCellClick, handleTouchMove } from './logic/board';
-import type { BoardState, GameState } from './models';
+import { handleCellClick, handleTouchMove } from '../logic/board';
+import type { BoardState, GameState } from '../models';
 
 export interface LetterCubeProps {
   cellBgColor: string;
@@ -7,6 +7,7 @@ export interface LetterCubeProps {
   currentIndex: number;
   boardState: BoardState;
   gameState: GameState;
+  key: number;
 }
 
 export const LetterCube = ({
@@ -15,6 +16,7 @@ export const LetterCube = ({
   isInSelectedChars,
   boardState,
   gameState,
+  key,
 }: LetterCubeProps) => {
   const letter = boardState.data[currentIndex].toLocaleUpperCase();
   const baseStyle = {
@@ -24,7 +26,7 @@ export const LetterCube = ({
   const baseClass = `cube__face cube__face--`;
   const zPerspective = boardState.cellWidth / 2;
   return (
-    <td style={baseStyle} key={currentIndex} class={`scene m-0 p-0`}>
+    <td style={baseStyle} key={key} class={`scene m-0 p-0`}>
       <div style={baseStyle} class={`cube`}>
         <div
           style={{

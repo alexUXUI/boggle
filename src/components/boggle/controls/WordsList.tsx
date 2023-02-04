@@ -1,5 +1,5 @@
 import { $, component$, useContext, useStore } from '@builder.io/qwik';
-import { LanguageCtx } from '.';
+import { LanguageCtx } from '../BoggleRoot';
 
 interface WordsListProps {
   words: string[];
