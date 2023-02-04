@@ -1,0 +1,12 @@
+{
+  "name": "boggle-solver",
+  "version": "0.1.0",
+  "files": [
+    "boggle_solver_bg.wasm",
+    "boggle_solver.js",
+    "boggle_solver.d.ts"
+  ],
+  "module": "boggle_solver.js",
+  "types": "boggle_solver.d.ts",
+  "sideEffects": false
+}
