@@ -1,19 +1,15 @@
-import { $, component$, useOnWindow } from '@builder.io/qwik';
-import type { AnswersState } from '../models';
+import { $, component$, useOnWindow, useStore } from '@builder.io/qwik';
 
 export const WordsList = component$(
   ({
-    answersState,
+    words,
     title,
     minCharLength,
-    state,
   }: {
-    answersState: AnswersState;
+    words: string[];
     title: string;
     minCharLength: number;
-    state: { isOpen: boolean };
   }) => {
-    // const openState = useStore({ isOpen: false });
     const isAnswers = title === 'answers';
 
     useOnWindow(
@@ -21,26 +17,24 @@ export const WordsList = component$(
       $(() => {
         const list = document.getElementById(`words-list-${title}`);
 
-        // on click detect if the click was outside the list
-        // if it was, close the list
         const handleClick = (event: MouseEvent) => {
           if (list && !list.contains(event.target as Node)) {
             state.isOpen = false;
           }
         };
 
-        // if the user presses esc close the list
         const handleKeyDown = (event: KeyboardEvent) => {
           if (event.key === 'Escape') {
             state.isOpen = false;
           }
         };
 
-        // add the event listener
         document.addEventListener('click', handleClick);
         document.addEventListener('keydown', handleKeyDown);
       })
     );
+
+    const state = useStore({ isOpen: false });
 
     const handleToggle = $(() => {
       state.isOpen = !state.isOpen;
@@ -68,11 +62,10 @@ export const WordsList = component$(
             left: 0,
           }}
         >
-          {state.isOpen &&
-          answersState[isAnswers ? 'data' : 'foundWords'].length ? (
+          {state.isOpen && words.length ? (
             <div class="overflow-scroll h-full w-full heavy-glass">
               <ul class=" flex flex-wrap justify-start items-start w-full">
-                {answersState[isAnswers ? 'data' : 'foundWords']
+                {words
                   .filter((word) => {
                     return word.length >= minCharLength;
                   })

@@ -4,12 +4,14 @@ import {
   component$,
   useOnWindow,
   useStore,
+  createContext,
+  useContextProvider,
+  useContext,
 } from '@builder.io/qwik';
 import { Controls } from './components/Controls';
 import { BoggleBoard } from './components/Board';
 import { WordsList } from './components/WordsList';
 import { calculateCellWidth } from './logic/board.logic';
-import BoggleWorker from './worker?worker';
 import type {
   BoggleProps,
   BoardState,
@@ -19,16 +21,31 @@ import type {
   AnswersState,
   DictionaryState,
 } from './models';
+import BoggleWorker from './worker?worker';
+
+export const BoardCtx = createContext<BoardState>('board-context');
+export const LanguageCtx = createContext<LanguageState>('language-context');
+export const GameCtx = createContext<GameState>('game-context');
+export const SelectedCharsCtx = createContext<SelectedCharsState>('selected');
+export const AnswersCtx = createContext<AnswersState>('answers-context');
+export const DictionaryCtx = createContext<DictionaryState>('dictionary');
 
 export const BoogleRoot = component$(
   ({
     data: { board, boardSize, language, boardWidth, minCharLength },
   }: BoggleProps) => {
+    const dictionaryState = useStore<DictionaryState>({ data: [] });
+
     const boardState = useStore<BoardState>({
       data: board,
       boardSize: boardSize ?? 0,
       boardWidth: boardWidth ?? 0,
       cellWidth: calculateCellWidth(boardWidth, boardSize),
+    });
+
+    const languageState = useStore<LanguageState>({
+      data: language,
+      minCharLength: minCharLength ?? 0,
     });
 
     const gameState = useStore<GameState>({ isWordFound: false });
@@ -37,20 +54,17 @@ export const BoogleRoot = component$(
       data: [],
     });
 
-    const languageState = useStore<LanguageState>({
-      data: language,
-      minCharLength: minCharLength ?? 0,
-    });
-
     const answersState = useStore<AnswersState>({
       data: [],
       foundWords: [],
     });
 
-    const dictionaryState = useStore<DictionaryState>({ data: [] });
-
-    const answerListState = useStore({ isOpen: false });
-    const foundListState = useStore({ isOpen: false });
+    useContextProvider(DictionaryCtx, dictionaryState);
+    useContextProvider(BoardCtx, boardState);
+    useContextProvider(LanguageCtx, languageState);
+    useContextProvider(GameCtx, gameState);
+    useContextProvider(SelectedCharsCtx, selectedCharsState);
+    useContextProvider(AnswersCtx, answersState);
 
     useOnWindow(
       'DOMContentLoaded',
@@ -98,32 +112,29 @@ export const BoogleRoot = component$(
 
     return (
       <div class="h-[100%] dont-scroll">
-        <Controls
-          boardState={boardState}
-          languageState={languageState}
-          answersState={answersState}
-          dictionaryState={dictionaryState}
-        />
-        <BoggleBoard
-          boardState={boardState}
-          selectedCharsState={selectedCharsState}
-          gameState={gameState}
-        />
-        <div class="flex justify-center absolute bottom-0 w-full h-[60px]">
-          <WordsList
-            answersState={answersState}
-            title="foundWords"
-            minCharLength={languageState.minCharLength}
-            state={foundListState}
-          />
-          <WordsList
-            answersState={answersState}
-            title="answers"
-            minCharLength={languageState.minCharLength}
-            state={answerListState}
-          />
-        </div>
+        <Controls />
+        <BoggleBoard />
+        <Words />
       </div>
     );
   }
 );
+
+export const Words = component$(() => {
+  const answersState = useContext(AnswersCtx);
+  const languageState = useContext(LanguageCtx);
+  return (
+    <div class="flex justify-center absolute bottom-0 w-full h-[60px]">
+      <WordsList
+        words={answersState.foundWords}
+        title="foundWords"
+        minCharLength={languageState.minCharLength}
+      />
+      <WordsList
+        words={answersState.data}
+        title="answers"
+        minCharLength={languageState.minCharLength}
+      />
+    </div>
+  );
+});
