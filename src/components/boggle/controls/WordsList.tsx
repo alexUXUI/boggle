@@ -1,5 +1,5 @@
 import { $, component$, useContext, useStore } from '@builder.io/qwik';
-import { LanguageCtx } from '../BoggleRoot';
+import { GameCtx } from '../context';
 
 interface WordsListProps {
   words: string[];
@@ -12,7 +12,7 @@ export enum Variant {
 }
 
 export const WordsList = component$(({ words, variant }: WordsListProps) => {
-  const languageState = useContext(LanguageCtx);
+  const gameState = useContext(GameCtx);
 
   const state = useStore({ isOpen: false });
 
@@ -50,7 +50,7 @@ export const WordsList = component$(({ words, variant }: WordsListProps) => {
           <div class="overflow-scroll h-full w-full heavy-glass">
             <ul class=" flex flex-wrap justify-start items-start w-full">
               {words
-                .filter((word) => word.length >= languageState.minCharLength)
+                .filter((word) => word.length >= gameState.minCharLength)
                 .map((word) => (
                   <li class="w-[33%] text-center">{word}</li>
                 ))}

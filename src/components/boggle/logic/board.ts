@@ -1,28 +1,22 @@
 import type { QwikTouchEvent } from '@builder.io/qwik';
 import { $ } from '@builder.io/qwik';
-import type { GameState, BoardState } from '../models';
+import type {
+  GameState,
+  BoardState,
+  AnswersState,
+  DictionaryState,
+} from '../models';
+import { Language } from './api';
+import { fireworks } from './confetti';
 
-export const calculateCellWidth = (boardWidth: number, boardSize: number) => {
-  switch (boardSize) {
-    case 2:
-      return boardWidth / boardSize - 40;
-    case 3:
-      return boardWidth / boardSize - 20;
-    case 4:
-      return boardWidth / boardSize - 12;
-    case 5:
-      return boardWidth / boardSize - boardSize * 2;
-    case 6:
-      return boardWidth / boardSize - boardSize - 2;
-    case 7:
-      return boardWidth / boardSize - 6;
-    case 8:
-      return boardWidth / boardSize - 6;
-    case 9:
-      return boardWidth / boardSize - 4;
-    default:
-      return boardWidth / boardSize - 2;
+// create one random board function that takes in a language and returns a random board
+export const randomBoard = (language: string, length: number): string => {
+  if (language === Language.English) {
+    return generateRandomBoard(length);
+  } else if (language === Language.Russian) {
+    return generateRandomRussianBoard(length);
   }
+  return '';
 };
 
 export const isInPath = (
@@ -65,7 +59,7 @@ export const addToSelectedChars = $(
       ...gameState.selectedChars,
       {
         index: currentIndex,
-        char: boardState.data[currentIndex],
+        char: boardState.chars[currentIndex],
       },
     ]);
   }
@@ -170,6 +164,270 @@ export const handleTouchMove = $(
     }
   }
 );
+
+export const handleFoundWord = $(
+  (
+    gameState: GameState,
+    dictionaryState: DictionaryState,
+    answersState: AnswersState
+  ) => {
+    const word = gameState.selectedChars
+      .map((element) => element.char)
+      .join('');
+
+    const isWordInDict = dictionaryState.dictionary.includes(word);
+    const isWordNotFound = !answersState.foundWords.includes(word);
+    const isWordLongEnough = word.length >= gameState.minCharLength;
+    if (isWordInDict && isWordNotFound && isWordLongEnough) {
+      gameState.isWordFound = true;
+      fireworks();
+      setTimeout(() => {
+        answersState.foundWords = [...answersState.foundWords, word];
+        gameState.selectedChars = [];
+        gameState.isWordFound = false;
+      }, 200);
+    }
+  }
+);
+
+export const generateRandomBoard = (length: number): string => {
+  const englishVowels = [
+    'e',
+    'e',
+    'e',
+    'e',
+    'e',
+    'a',
+    'a',
+    'a',
+    'i',
+    'i',
+    's',
+    's',
+  ];
+  const eglishConsonants = [
+    'r',
+    'h',
+    'm',
+    't',
+    'd',
+    'c',
+    'l',
+    'b',
+    'f',
+    'g',
+    'n',
+    'p',
+    'w',
+  ];
+  const unpopularConsonants = [
+    'j',
+    'k',
+    'k',
+    'q',
+    'v',
+    'x',
+    'y',
+    'y',
+    'y',
+    'z',
+  ];
+  const lengthSquared = length * length;
+
+  const shuffledVowels = englishVowels.sort(() => 0.5 - Math.random());
+  const shuffledConsonants = eglishConsonants.sort(() => 0.5 - Math.random());
+
+  const zip = (a: string[], b: string[]) => {
+    const result = [];
+    for (let i = 0; i < a.length; i++) {
+      result.push(a[i]);
+      result.push(b[i]);
+    }
+    return result;
+  };
+
+  const zipped = zip(shuffledVowels, shuffledConsonants);
+
+  const randomUnPopularConsonant =
+    unpopularConsonants[Math.floor(Math.random() * unpopularConsonants.length)];
+
+  const results = [...zipped, randomUnPopularConsonant];
+  const shuffledResults = results.sort(() => 0.5 - Math.random());
+
+  if (lengthSquared > results.length) {
+    const difference = lengthSquared - results.length;
+    for (let i = 0; i < difference; i++) {
+      const randomVowel =
+        englishVowels[Math.floor(Math.random() * englishVowels.length)];
+      const randomConsonant =
+        eglishConsonants[Math.floor(Math.random() * eglishConsonants.length)];
+      const vowelOrConsonant =
+        Math.random() > 0.5 ? randomVowel : randomConsonant;
+      results.push(vowelOrConsonant);
+    }
+  } else if (lengthSquared < results.length) {
+    const shuffledResults = results.sort(() => 0.5 - Math.random());
+    shuffledResults.splice(lengthSquared, results.length);
+    return shuffledResults.join('');
+  }
+
+  return shuffledResults.join('');
+};
+
+export const generateRandomRussianBoard = (length: number): string => {
+  const lengthSquared = length * length;
+
+  const vowels = ['а', 'а', 'а', 'о', 'е', 'е', 'е', 'и', 'и', 'и', 'н'];
+  const consonants = [
+    'р',
+    'т',
+    'к',
+    'м',
+    'д',
+    'п',
+    'у',
+    'я',
+    'ы',
+    'ь',
+    'г',
+    'з',
+    'б',
+    'ч',
+    'й',
+    'х',
+    'ж',
+    'ш',
+    'ю',
+    'ц',
+    'щ',
+    'ф',
+    'э',
+    'с',
+    'в',
+    'л',
+  ];
+
+  const shuffledVowels = vowels.sort(() => 0.5 - Math.random());
+  const shuffledConsonants = consonants.sort(() => 0.5 - Math.random());
+
+  const zip = (a: string[], b: string[]) => {
+    const result = [];
+    for (let i = 0; i < a.length; i++) {
+      result.push(a[i]);
+      result.push(b[i]);
+    }
+    return result;
+  };
+
+  const zipped = zip(shuffledVowels, shuffledConsonants);
+
+  const results = [...zipped];
+  const shuffledResults = results.sort(() => 0.5 - Math.random());
+
+  if (lengthSquared > results.length) {
+    const difference = lengthSquared - results.length;
+    for (let i = 0; i < difference; i++) {
+      const randomVowel = vowels[Math.floor(Math.random() * vowels.length)];
+      const randomConsonant =
+        consonants[Math.floor(Math.random() * consonants.length)];
+      const vowelOrConsonant =
+        Math.random() > 0.5 ? randomVowel : randomConsonant;
+      results.push(vowelOrConsonant);
+    }
+  } else if (lengthSquared < results.length) {
+    const shuffledResults = results.sort(() => 0.5 - Math.random());
+    shuffledResults.splice(lengthSquared, results.length);
+    return shuffledResults.join('');
+  }
+
+  return shuffledResults.join('');
+};
+
+export const generateRandomSpanishBoard = (length: number): string => {
+  const lengthSquared = length * length;
+
+  const vowels = ['a', 'e', 'i', 'o', 'u'];
+
+  const consonants = [
+    'b',
+    'c',
+    'd',
+    'f',
+    'g',
+    'h',
+    'j',
+    'k',
+    'l',
+    'm',
+    'n',
+    'ñ',
+    'p',
+    'q',
+    'r',
+    's',
+    't',
+    'w',
+  ];
+
+  const shuffledVowels = vowels.sort(() => 0.5 - Math.random());
+
+  const shuffledConsonants = consonants.sort(() => 0.5 - Math.random());
+
+  const zip = (a: string[], b: string[]) => {
+    const result = [];
+    for (let i = 0; i < a.length; i++) {
+      result.push(a[i]);
+      result.push(b[i]);
+    }
+    return result;
+  };
+
+  const zipped = zip(shuffledVowels, shuffledConsonants);
+
+  const results = [...zipped];
+  const shuffledResults = results.sort(() => 0.5 - Math.random());
+
+  if (lengthSquared > results.length) {
+    const difference = lengthSquared - results.length;
+    for (let i = 0; i < difference; i++) {
+      const randomVowel = vowels[Math.floor(Math.random() * vowels.length)];
+      const randomConsonant =
+        consonants[Math.floor(Math.random() * consonants.length)];
+      const vowelOrConsonant =
+        Math.random() > 0.5 ? randomVowel : randomConsonant;
+      results.push(vowelOrConsonant);
+    }
+  } else if (lengthSquared < results.length) {
+    const shuffledResults = results.sort(() => 0.5 - Math.random());
+    shuffledResults.splice(lengthSquared, results.length);
+    return shuffledResults.join('');
+  }
+
+  return shuffledResults.join('');
+};
+
+export const calculateCellWidth = (boardWidth: number, boardSize: number) => {
+  switch (boardSize) {
+    case 2:
+      return boardWidth / boardSize - 40;
+    case 3:
+      return boardWidth / boardSize - 20;
+    case 4:
+      return boardWidth / boardSize - 12;
+    case 5:
+      return boardWidth / boardSize - boardSize * 2;
+    case 6:
+      return boardWidth / boardSize - boardSize - 2;
+    case 7:
+      return boardWidth / boardSize - 6;
+    case 8:
+      return boardWidth / boardSize - 6;
+    case 9:
+      return boardWidth / boardSize - 4;
+    default:
+      return boardWidth / boardSize - 2;
+  }
+};
 
 // export const handleBoardResize = (
 //   screenState: ScreenState,

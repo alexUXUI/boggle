@@ -1,64 +1,59 @@
 import { $, component$, useContext, useStore } from '@builder.io/qwik';
 import type { QwikChangeEvent } from '@builder.io/qwik';
-import {
-  LanguageCtx,
-  BoardCtx,
-  AnswersCtx,
-  DictionaryCtx,
-} from '../BoggleRoot';
+import { GameCtx, BoardCtx, AnswersCtx, DictionaryCtx } from '../context';
 import { solve } from '../logic/boggle';
-import { randomBoard } from '../logic/generateBoard';
+import { randomBoard } from '../logic/board';
 
 export const Controls = component$(() => {
-  const languageState = useContext(LanguageCtx);
+  const gameState = useContext(GameCtx);
   const boardState = useContext(BoardCtx);
   const answersState = useContext(AnswersCtx);
   const dictionaryState = useContext(DictionaryCtx);
 
   // changes the board string and solves it
   const handleBoardCustomization = $((e: QwikChangeEvent<HTMLInputElement>) => {
-    boardState.data = e.target.value.split('');
-    answersState.data = solve(dictionaryState.data, boardState.data);
+    boardState.chars = e.target.value.split('');
+    answersState.answers = solve(dictionaryState.dictionary, boardState.chars);
   });
 
   // generate new board and solve it
   const handleRandomizeBoard = $(() => {
-    boardState.data = randomBoard(
-      languageState.data,
+    boardState.chars = randomBoard(
+      gameState.language,
       boardState.boardSize
     ).split('');
-    answersState.data = solve(dictionaryState.data, boardState.data);
+    answersState.answers = solve(dictionaryState.dictionary, boardState.chars);
   });
 
   // chaneg the language, load the dict, create new board and solve it
   const handleChangeLanguage = $((e: QwikChangeEvent<HTMLSelectElement>) => {
-    languageState.data = e.target.value;
-    boardState.data = randomBoard(e.target.value, boardState.boardSize).split(
+    gameState.language = e.target.value;
+    boardState.chars = randomBoard(e.target.value, boardState.boardSize).split(
       ''
     );
-    answersState.data = solve(dictionaryState.data, boardState.data);
+    answersState.answers = solve(dictionaryState.dictionary, boardState.chars);
   });
 
   // change the board dimensions, create new board and solve it
   const handleChangeBoardSize = $((e: QwikChangeEvent<HTMLInputElement>) => {
     boardState.boardSize = e.target.valueAsNumber;
-    boardState.data = randomBoard(
-      languageState.data,
+    boardState.chars = randomBoard(
+      gameState.language,
       e.target.valueAsNumber
     ).split('');
-    answersState.data = solve(dictionaryState.data, boardState.data);
+    answersState.answers = solve(dictionaryState.dictionary, boardState.chars);
   });
 
   // change the min char length
   const handleChangeMinCharLength = $(
     (e: QwikChangeEvent<HTMLInputElement>) => {
-      languageState.minCharLength = e.target.valueAsNumber;
+      gameState.minCharLength = e.target.valueAsNumber;
     }
   );
 
   // filter the answers by the min char length
-  const answersLength = answersState.data.filter(
-    (word) => word.length >= languageState.minCharLength
+  const answersLength = answersState.answers.filter(
+    (word) => word.length >= gameState.minCharLength
   ).length;
 
   // are controls open
@@ -118,7 +113,7 @@ export const Controls = component$(() => {
                 id="language"
                 class="pl-[2px] rounded-md w-[10ch] h-[40px] border-2 border-blue-900"
                 onChange$={handleChangeLanguage}
-                value={languageState.data}
+                value={gameState.language}
               >
                 <option value="English">English</option>
                 <option value="Spanish">Spanish</option>
@@ -133,7 +128,7 @@ export const Controls = component$(() => {
                 id="min-char-length"
                 type="number"
                 onChange$={handleChangeMinCharLength}
-                value={languageState.minCharLength}
+                value={gameState.minCharLength}
                 class="pl-2 rounded-md w-[70px] h-[40px] border-2 border-blue-900"
               />
             </div>
@@ -158,7 +153,7 @@ export const Controls = component$(() => {
                 type="text"
                 class="w-[25ch] tracking-wide h-[40px] rounded-md text-center border-2 border-blue-900"
                 placeholder="customize board"
-                value={boardState.data.join('')}
+                value={boardState.chars.join('')}
                 onChange$={handleBoardCustomization}
               />
             </div>

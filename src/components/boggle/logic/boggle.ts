@@ -131,9 +131,7 @@ export const solve = (words: string[], board: string[]): string[] => {
     // convert the board string to a 2D matrix
     const stringToMatrix = convertStringToMatrix(board.join(''));
     // get the words from the board
-    const foundWords = getWords(stringToMatrix, trie);
-    // sort the words
-    results = Array.from(foundWords).sort();
+    results = getWords(stringToMatrix, trie).sort();
   } catch (error) {
     console.log(error);
   }

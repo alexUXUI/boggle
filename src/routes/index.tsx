@@ -2,7 +2,7 @@ import { Resource, component$ } from '@builder.io/qwik';
 import { useEndpoint } from '@builder.io/qwik-city';
 import type { DocumentHead, RequestHandler } from '@builder.io/qwik-city';
 import { Language } from '~/components/boggle/logic/api';
-import { randomBoard } from '~/components/boggle/logic/generateBoard';
+import { randomBoard } from '~/components/boggle/logic/board';
 import { BoogleRoot } from '~/components/boggle/BoggleRoot';
 import { boardWidthFromRequest } from '~/components/boggle/logic/server';
 

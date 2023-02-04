@@ -1,35 +1,19 @@
 import type { NoSerialize } from '@builder.io/qwik';
 import type { Language } from '~/components/boggle/logic/api';
 
-export interface BoggleProps {
-  data: {
-    board: string[];
-    boardWidth: number;
-    boardSize: number;
-    language: string;
-    minCharLength: number;
-  };
-}
-
 export interface BoardState {
-  data: string[];
+  chars: string[];
   boardSize: number;
   boardWidth: number;
   cellWidth: number;
 }
-
-export interface LanguageState {
-  data: Language;
-  minCharLength: number;
-}
-
 export interface AnswersState {
-  data: string[];
+  answers: string[];
   foundWords: string[];
 }
 
 export interface DictionaryState {
-  data: string[];
+  dictionary: string[];
 }
 
 export interface WebWorkerState {
@@ -39,6 +23,8 @@ export interface WebWorkerState {
 export interface GameState {
   isWordFound: boolean;
   selectedChars: { index: number; char: string }[];
+  language: Language;
+  minCharLength: number;
 }
 
 export interface WordsListState {

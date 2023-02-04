@@ -1,5 +1,5 @@
 import { $, component$, useContext, useOnWindow } from '@builder.io/qwik';
-import { BoardCtx, GameCtx } from '../BoggleRoot';
+import { BoardCtx, GameCtx } from '../context';
 import { isInPath, bgColor } from '../logic/board';
 import { LetterCube } from './LetterCube';
 
@@ -57,7 +57,7 @@ export const BoggleBoard = component$(() => {
                 const isInSelectedChars = isInPath(
                   currentIndex,
                   gameState.selectedChars,
-                  boardState.data
+                  boardState.chars
                 );
                 const cellBgColor = bgColor(
                   isInSelectedChars,

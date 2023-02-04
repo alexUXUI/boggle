@@ -18,7 +18,7 @@ export const LetterCube = ({
   gameState,
   key,
 }: LetterCubeProps) => {
-  const letter = boardState.data[currentIndex].toLocaleUpperCase();
+  const letter = boardState.chars[currentIndex].toLocaleUpperCase();
   const baseStyle = {
     height: `${boardState.cellWidth}px` ?? 0,
     width: `${boardState.cellWidth}px` ?? 0,
