@@ -26,8 +26,3 @@ export interface GameState {
   language: Language;
   minCharLength: number;
 }
-
-export interface WordsListState {
-  isAnswersOpen: boolean;
-  isFoundWordsOpen: boolean;
-}

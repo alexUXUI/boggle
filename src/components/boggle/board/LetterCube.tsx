@@ -48,14 +48,14 @@ export const LetterCube = ({
             transform: `rotateX(90deg) translateZ(${zPerspective}px)`,
           }}
           class={`${baseClass}--top`}
-        ></div>
+        />
         <div
           style={{
             ...baseStyle,
             transform: `rotateX(-90deg) translateZ(${zPerspective}px)`,
           }}
           class={`${baseClass}--bottom`}
-        ></div>
+        />
         <div class="face flex items-center justify-center">
           <button
             data-cell-index={currentIndex}

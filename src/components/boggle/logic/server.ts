@@ -1,5 +1,8 @@
 import type { RequestContext } from '@builder.io/qwik-city';
 import parser from 'ua-parser-js';
+import { Language } from './api';
+import { randomBoard } from './board';
+import type { ServerData } from '~/routes';
 
 export const boardWidthFromRequest = (request: RequestContext) => {
   const userAgent = parser(request.headers.get('user-agent') || '');
@@ -17,4 +20,43 @@ export const boardWidthFromRequest = (request: RequestContext) => {
   }
 
   return 0;
+};
+
+type ReqArgs = {
+  url: URL;
+  request: RequestContext;
+};
+
+export const handleGet = ({ url, request }: ReqArgs): ServerData => {
+  let language = Language.English;
+  let board = randomBoard(language, 5).split('');
+  let boardSize = 5;
+  let minCharLength = 3;
+
+  const boardWidth = boardWidthFromRequest(request);
+  const paramsObject = Object.fromEntries(url.searchParams);
+
+  if (paramsObject.language) {
+    language = paramsObject.language;
+  }
+
+  if (paramsObject.board) {
+    board = paramsObject.board.split('');
+  }
+
+  if (paramsObject.size) {
+    boardSize = parseInt(paramsObject.size);
+  }
+
+  if (paramsObject.min) {
+    minCharLength = parseInt(paramsObject.min);
+  }
+
+  return {
+    board,
+    boardWidth,
+    boardSize,
+    language,
+    minCharLength,
+  };
 };
