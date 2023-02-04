@@ -10,7 +10,7 @@ export default defineConfig(() => {
       qwikCity(),
       qwikVite(),
       tsconfigPaths(),
-      // wasmPack('./src/boggle/boggle'),
+      wasmPack('./src/components/boggle/boggle-solver'),
     ],
     preview: {
       headers: {

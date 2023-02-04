@@ -53,10 +53,8 @@ export const boardWidthFromRequest = (request: RequestContext) => {
   const isChromeOS = OS.name === 'Chrome OS';
 
   if (isAndroid || isIOS) {
-    console.log('isAndroid || isIOS');
     return 375;
   } else if (isMac || isWindows || isChromeOS) {
-    console.log('isMac || isWindows || isChromeOS');
     return 400;
   }
 

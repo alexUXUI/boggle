@@ -30,7 +30,7 @@ export const WordsList = component$(({ words, variant }: WordsListProps) => {
     left: 0,
   };
 
-  const isAnswers = variant === 'answers';
+  const isAnswers = variant === Variant.Answers;
 
   return (
     <div class="">

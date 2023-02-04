@@ -3248,7 +3248,7 @@ vite@4.0.3:
 
 wasm-pack@^0.10.3:
   version "0.10.3"
-  resolved "https://registry.npmjs.org/wasm-pack/-/wasm-pack-0.10.3.tgz"
+  resolved "https://registry.yarnpkg.com/wasm-pack/-/wasm-pack-0.10.3.tgz#2d7dd78ba539c34b3817e2249c3f30c646c84b69"
   integrity sha512-dg1PPyp+QwWrhfHsgG12K/y5xzwfaAoK1yuVC/DUAuQsDy5JywWDuA7Y/ionGwQz+JBZVw8jknaKBnaxaJfwTA==
   dependencies:
     binary-install "^0.1.0"
