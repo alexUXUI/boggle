@@ -7,16 +7,21 @@ interface MessageData {
 }
 
 onmessage = (e: MessageEvent<MessageData>) => {
-  // import('./boggle-solver/pkg').then(async (module) => {
-  //   await module.default();
-  //   module.run_game();
-  // });
   const { language, board } = e.data;
+  // import('./boggle-solver/pkg').then(async (module) => {
   getDictionary(language).then((dictionary) => {
+    // await module.default();
+    // const answers = await module.run_game(dictionary);
+    // console.log(answers);
+    // const value = await module.run_game();
+    // console.log(value);
+    // console.log(dict);
     const answers = solve(dictionary, board);
+
     postMessage({
       dictionary,
       answers,
     });
   });
+  // });
 };

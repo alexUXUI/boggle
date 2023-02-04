@@ -48,15 +48,15 @@ pub fn get_board_string(board: js_sys::Array) -> String {
 }
 
 #[wasm_bindgen]
-pub async fn run_game() -> js_sys::Array {
+pub async fn run_game(dictionary: js_sys::Array) -> js_sys::Array {
     // Dictionary
-    let words = get_dictionary().await.unwrap();
+    // let words = get_dictionary().await.unwrap();
 
     // Trie
     let mut trie = TrieStruct::create();
 
-    for i in 0..words.length() {
-        trie.insert(words.get(i).as_string().unwrap());
+    for i in 0..dictionary.length() {
+        trie.insert(dictionary.get(i).as_string().unwrap());
     }
 
     // Board
