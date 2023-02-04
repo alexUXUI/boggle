@@ -12,6 +12,28 @@ use trie::TrieStruct;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 
+
+#[wasm_bindgen]
+extern "C" {
+    // Use `js_namespace` here to bind `console.log(..)` instead of just
+    // `log(..)`
+    #[wasm_bindgen(js_namespace = console)]
+    fn log(s: &str);
+
+    // The `console.log` is quite polymorphic, so we can bind it with multiple
+    // signatures. Note that we need to use `js_name` to ensure we always call
+    // `log` in JS.
+    #[wasm_bindgen(js_namespace = console, js_name = log)]
+    fn log_u32(a: u32);
+
+    // Multiple arguments too!
+    #[wasm_bindgen(js_namespace = console, js_name = log)]
+    fn log_many(a: &str, b: &str);
+
+    fn alert(s: &str);
+}
+
+
 pub fn matrix_to_js_array(vec: Vec<Vec<char>>) -> js_sys::Array {
     let array = js_sys::Array::new();
 
@@ -48,9 +70,9 @@ pub fn get_board_string(board: js_sys::Array) -> String {
 }
 
 #[wasm_bindgen]
-pub async fn run_game(dictionary: js_sys::Array) -> js_sys::Array {
-    // Dictionary
-    // let words = get_dictionary().await.unwrap();
+pub async fn run_game(dictionary: js_sys::Array, board: js_sys::JsString) -> js_sys::Array {
+    // print the board  using format
+    // log(&format!("Board: {:?}", board));
 
     // Trie
     let mut trie = TrieStruct::create();
@@ -59,14 +81,16 @@ pub async fn run_game(dictionary: js_sys::Array) -> js_sys::Array {
         trie.insert(dictionary.get(i).as_string().unwrap());
     }
 
-    // Board
-    // let board_string = generate_fixed_board();
-    let board = generate_fixed_board();
+    // print the trie using format
+    // log(&format!("Trie: {:?}", trie));
 
-    let js_array = matrix_to_js_array(board.clone());
+    let board_from_string = generate_board_from_string(board.into());
+
+    // print the board_from_string using format
+    // log(&format!("Board: {:?}", board_from_string));
 
     // given the board and the trie, solve the board
-    let answers = find_words(board, &mut trie);
+    let answers = find_words(board_from_string, &mut trie);
 
     // convert the answers into a js array
     let array = js_sys::Array::new();
@@ -76,9 +100,4 @@ pub async fn run_game(dictionary: js_sys::Array) -> js_sys::Array {
     }
 
     array
-}
-
-#[wasm_bindgen]
-extern "C" {
-    fn alert(s: &str);
 }

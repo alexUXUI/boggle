@@ -234,10 +234,11 @@ export function get_board_string(board) {
 
 /**
 * @param {Array<any>} dictionary
+* @param {string} board
 * @returns {Promise<Array<any>>}
 */
-export function run_game(dictionary) {
-    const ret = wasm.run_game(addHeapObject(dictionary));
+export function run_game(dictionary, board) {
+    const ret = wasm.run_game(addHeapObject(dictionary), addHeapObject(board));
     return takeObject(ret);
 }
 
@@ -453,7 +454,7 @@ function getImports() {
     imports.wbg.__wbindgen_throw = function(arg0, arg1) {
         throw new Error(getStringFromWasm0(arg0, arg1));
     };
-    imports.wbg.__wbindgen_closure_wrapper225 = function(arg0, arg1, arg2) {
+    imports.wbg.__wbindgen_closure_wrapper226 = function(arg0, arg1, arg2) {
         const ret = makeMutClosure(arg0, arg1, 38, __wbg_adapter_18);
         return addHeapObject(ret);
     };

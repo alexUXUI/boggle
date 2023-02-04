@@ -2,17 +2,20 @@
  * Given a string of chars and a board size, generate a board from the string
  * using the size as the length and width of the board matrix.
  */
-pub fn generate_board_from_string(string: String, board_size: usize) -> Vec<Vec<char>> {
+pub fn generate_board_from_string(string: String) -> Vec<Vec<char>> {
+    let string_length = string.len();
+    let board_size = (string_length as f64).sqrt() as usize;
     let mut board: Vec<Vec<char>> = Vec::new();
-    let mut row: Vec<char> = Vec::new();
 
-    for (i, c) in string.chars().enumerate() {
-        row.push(c);
+    for i in 0..board_size {
+        let mut row: Vec<char> = Vec::new();
 
-        if (i + 1) % board_size == 0 {
-            board.push(row);
-            row = Vec::new();
+        for j in 0..board_size {
+            let index = (i * board_size) + j;
+            row.push(string.chars().nth(index).unwrap());
         }
+
+        board.push(row);
     }
 
     board
@@ -22,7 +25,7 @@ pub fn generate_board_from_string(string: String, board_size: usize) -> Vec<Vec<
 fn test_generate_board_from_string() {
     let board_string: &str = "cane";
     let board_size: usize = 2;
-    let board = generate_board_from_string(board_string.to_string(), board_size);
+    let board = generate_board_from_string(board_string.to_string());
     let expected_board: Vec<Vec<char>> = vec![vec!['c', 'a'], vec!['r', 'e']];
 
     assert_eq!(board, expected_board);

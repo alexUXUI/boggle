@@ -3,7 +3,7 @@
 export const memory: WebAssembly.Memory;
 export function get_dictionary(): number;
 export function get_board_string(a: number, b: number): void;
-export function run_game(a: number): number;
+export function run_game(a: number, b: number): number;
 export function __wbindgen_malloc(a: number): number;
 export function __wbindgen_realloc(a: number, b: number, c: number): number;
 export const __wbindgen_export_2: WebAssembly.Table;

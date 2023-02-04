@@ -11,9 +11,10 @@ export function get_dictionary(): Promise<Array<any>>;
 export function get_board_string(board: Array<any>): string;
 /**
 * @param {Array<any>} dictionary
+* @param {string} board
 * @returns {Promise<Array<any>>}
 */
-export function run_game(dictionary: Array<any>): Promise<Array<any>>;
+export function run_game(dictionary: Array<any>, board: string): Promise<Array<any>>;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
@@ -21,7 +22,7 @@ export interface InitOutput {
   readonly memory: WebAssembly.Memory;
   readonly get_dictionary: () => number;
   readonly get_board_string: (a: number, b: number) => void;
-  readonly run_game: (a: number) => number;
+  readonly run_game: (a: number, b: number) => number;
   readonly __wbindgen_malloc: (a: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number) => number;
   readonly __wbindgen_export_2: WebAssembly.Table;
