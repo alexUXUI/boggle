@@ -74,13 +74,6 @@ export const BoogleRoot = component$(({ data }: BoggleProps) => {
           answersState.answers = event.data.answers;
         };
       }
-      // import('./boggle-solver/pkg').then(async (module) => {
-      //   await module.default();
-      //   await module.run('alexuxui');
-      //   // const value = await module.run_game();
-      //   // console.log(value);
-      //   // console.log(dict);
-      // });
     })
   );
 

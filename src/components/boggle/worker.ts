@@ -5,16 +5,14 @@ interface MessageData {
   board: string[];
 }
 
-onmessage = (e: MessageEvent<MessageData>) => {
+onmessage = async (e: MessageEvent<MessageData>) => {
   const { language, board } = e.data;
-  import('./boggle-solver/pkg').then(async (module) => {
-    getDictionary(language).then(async (dictionary) => {
-      await module.default();
-      const answers = await module.run_game(dictionary, board.flat().join(''));
-      postMessage({
-        dictionary,
-        answers,
-      });
-    });
+  const dictionary = await getDictionary(language);
+  const boggle = await import('./boggle-solver/pkg');
+  await boggle.default();
+  const answers = await boggle.run_game(dictionary, board.flat().join(''));
+  postMessage({
+    dictionary,
+    answers,
   });
 };
