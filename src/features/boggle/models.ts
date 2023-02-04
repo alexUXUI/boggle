@@ -1,5 +1,5 @@
 import type { NoSerialize } from '@builder.io/qwik';
-import type { Language } from '~/routes/boggle/logic/api';
+import type { Language } from '~/features/boggle/logic/api';
 
 export interface BoggleProps {
   data: {
@@ -16,10 +16,6 @@ export interface BoardState {
   boardSize: number;
   boardWidth: number;
   cellWidth: number;
-}
-
-export interface SelectedCharsState {
-  data: { index: number; char: string }[];
 }
 
 export interface LanguageState {
@@ -42,6 +38,7 @@ export interface WebWorkerState {
 
 export interface GameState {
   isWordFound: boolean;
+  selectedChars: { index: number; char: string }[];
 }
 
 export interface WordsListState {

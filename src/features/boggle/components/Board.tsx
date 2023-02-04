@@ -1,11 +1,10 @@
 import { $, component$, useContext, useOnWindow } from '@builder.io/qwik';
-import { BoardCtx, GameCtx, SelectedCharsCtx } from '..';
+import { BoardCtx, GameCtx } from '..';
 import { isInPath, bgColor } from '../logic/board.logic';
 import { LetterCube } from './LetterCube';
 
 export const BoggleBoard = component$(() => {
   const boardState = useContext(BoardCtx);
-  const selectedCharsState = useContext(SelectedCharsCtx);
   const gameState = useContext(GameCtx);
 
   useOnWindow(
@@ -13,13 +12,13 @@ export const BoggleBoard = component$(() => {
     $(() => {
       const clickHandler = (e: MouseEvent) => {
         if (!document.getElementById('board')?.contains(e.target as Node)) {
-          selectedCharsState.data = [];
+          gameState.selectedChars = [];
         }
       };
 
       const handleKeydown = (e: KeyboardEvent) => {
         if (e.key === 'Backspace' || e.key === 'Escape') {
-          selectedCharsState.data = [];
+          gameState.selectedChars = [];
         }
       };
 
@@ -57,7 +56,7 @@ export const BoggleBoard = component$(() => {
                 const currentIndex = i * boardState.boardSize + j;
                 const isInSelectedChars = isInPath(
                   currentIndex,
-                  selectedCharsState.data,
+                  gameState.selectedChars,
                   boardState.data
                 );
                 const cellBgColor = bgColor(
@@ -71,7 +70,7 @@ export const BoggleBoard = component$(() => {
                     isInSelectedChars={isInSelectedChars}
                     currentIndex={currentIndex}
                     boardState={boardState}
-                    selectedCharsState={selectedCharsState}
+                    gameState={gameState}
                   />
                 );
               })}

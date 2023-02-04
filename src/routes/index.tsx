@@ -1,21 +1,17 @@
 import { Resource, component$ } from '@builder.io/qwik';
-import type {
-  DocumentHead,
-  RequestContext,
-  RequestHandler,
-} from '@builder.io/qwik-city';
 import { useEndpoint } from '@builder.io/qwik-city';
-import { Language } from './boggle/logic/api';
-import { randomBoard } from './boggle/logic/generateBoard';
-import parser from 'ua-parser-js';
+import type { DocumentHead, RequestHandler } from '@builder.io/qwik-city';
+import { Language } from '~/features/boggle/logic/api';
+import { randomBoard } from '~/features/boggle/logic/generateBoard';
 import { BoogleRoot } from '~/features/boggle';
+import { boardWidthFromRequest } from '~/features/boggle/server.logic';
 
 export const head: DocumentHead = {
-  title: 'Foggle',
+  title: 'Boggle',
   meta: [
     {
-      name: 'Foggle Game',
-      content: 'Play Foggle',
+      name: 'Boggle Game',
+      content: 'Play Boggle',
     },
   ],
 };
@@ -43,33 +39,29 @@ export default component$(() => {
 });
 
 export const onGet: RequestHandler<ServerData> = ({ url, request }) => {
-  const paramsObject = Object.fromEntries(url.searchParams);
-
   let language = Language.English;
+  let board: string[] = randomBoard(language, 5).split('');
+  let boardSize = 5;
+  let minCharLength = 3;
+
+  const boardWidth = boardWidthFromRequest(request);
+  const paramsObject = Object.fromEntries(url.searchParams);
 
   if (paramsObject.language) {
     language = paramsObject.language;
   }
 
-  let board: string[] = randomBoard(language, 5).split('');
-
   if (paramsObject.fixedboard) {
     board = paramsObject.board.split('');
   }
-
-  let boardSize = 5;
 
   if (paramsObject.boardSize) {
     boardSize = parseInt(paramsObject.boardSize);
   }
 
-  let minCharLength = 3;
-
   if (paramsObject.minCharLength) {
     minCharLength = parseInt(paramsObject.minCharLength);
   }
-
-  const boardWidth = boardSizeFromRequest(request);
 
   return {
     board,
@@ -78,22 +70,4 @@ export const onGet: RequestHandler<ServerData> = ({ url, request }) => {
     language,
     minCharLength,
   };
-};
-
-export const boardSizeFromRequest = (request: RequestContext) => {
-  const userAgent = parser(request.headers.get('user-agent') || '');
-  const OS = userAgent.os;
-  const isAndroid = OS.name === 'Android';
-  const isIOS = OS.name === 'iOS';
-  const isMac = OS.name === 'Mac OS';
-  const isWindows = OS.name === 'Windows';
-  const isChromeOS = OS.name === 'Chrome OS';
-
-  if (isAndroid || isIOS) {
-    return 375;
-  } else if (isMac || isWindows || isChromeOS) {
-    return 400;
-  }
-
-  return 0;
 };

@@ -1,6 +1,6 @@
 import type { QwikTouchEvent } from '@builder.io/qwik';
 import { $ } from '@builder.io/qwik';
-import type { SelectedCharsState, BoardState } from '../models';
+import type { GameState, BoardState } from '../models';
 
 export const calculateCellWidth = (boardWidth: number, boardSize: number) => {
   switch (boardSize) {
@@ -60,13 +60,9 @@ export const bgColor = (
 };
 
 export const addToSelectedChars = $(
-  (
-    currentIndex: number,
-    selectedCharsState: SelectedCharsState,
-    boardState: BoardState
-  ) => {
-    return (selectedCharsState.data = [
-      ...selectedCharsState.data,
+  (currentIndex: number, gameState: GameState, boardState: BoardState) => {
+    return (gameState.selectedChars = [
+      ...gameState.selectedChars,
       {
         index: currentIndex,
         char: boardState.data[currentIndex],
@@ -76,11 +72,11 @@ export const addToSelectedChars = $(
 );
 
 export const deselectCharAndAncestors = $(
-  (currentIndex: number, selectedCharsState: SelectedCharsState) => {
-    const index = selectedCharsState.data.findIndex(
+  (currentIndex: number, gameState: GameState) => {
+    const index = gameState.selectedChars.findIndex(
       (element: any) => element.index === currentIndex
     );
-    selectedCharsState.data = selectedCharsState.data.slice(0, index);
+    gameState.selectedChars = gameState.selectedChars.slice(0, index);
   }
 );
 
@@ -89,12 +85,12 @@ export const handleCellClick = $(
     isInSelectedChars: boolean,
     currentIndex: number,
     boardState: BoardState,
-    selectedCharsState: SelectedCharsState
+    gameState: GameState
   ) => {
     const { boardSize } = boardState;
 
     const currentChar =
-      selectedCharsState.data[selectedCharsState.data.length - 1];
+      gameState.selectedChars[gameState.selectedChars.length - 1];
 
     const neighbors = [
       currentChar?.index - boardSize, // top
@@ -107,15 +103,15 @@ export const handleCellClick = $(
       currentChar?.index - boardSize - 1, // top left
     ];
 
-    const isFirstChar = selectedCharsState.data.length === 0;
+    const isFirstChar = gameState.selectedChars.length === 0;
     const isValidNeighbor = currentChar && neighbors.includes(currentIndex);
     const isNotSelected = !isInSelectedChars;
     const isEligible = isFirstChar || (isNotSelected && isValidNeighbor);
 
     if (isEligible) {
-      addToSelectedChars(currentIndex, selectedCharsState, boardState);
+      addToSelectedChars(currentIndex, gameState, boardState);
     } else if (isInSelectedChars) {
-      deselectCharAndAncestors(currentIndex, selectedCharsState);
+      deselectCharAndAncestors(currentIndex, gameState);
     }
   }
 );
@@ -124,7 +120,7 @@ export const handleTouchMove = $(
   (
     e: QwikTouchEvent<HTMLButtonElement>,
     boardState: BoardState,
-    selectedCharsState: SelectedCharsState
+    gameState: GameState
   ) => {
     const element = document.elementFromPoint(
       e.targetTouches[0].clientX,
@@ -136,9 +132,9 @@ export const handleTouchMove = $(
       const cellChar = element.getAttribute('data-cell-char');
       const cellIsInPath = element.getAttribute('data-cell-is-in-path');
       // const currently selected path
-      const selectedPath = selectedCharsState.data;
+      const selectedPath = gameState.selectedChars;
       const lastNodeInPath =
-        selectedCharsState.data[selectedCharsState.data.length - 1];
+        gameState.selectedChars[gameState.selectedChars.length - 1];
       // neighors of the last node in the path
       const neighbors = [
         lastNodeInPath?.index - boardState.boardSize - 1,
@@ -157,14 +153,14 @@ export const handleTouchMove = $(
         const index = selectedPath.findIndex(
           (element) => element.index === Number.parseInt(cellIndex)
         );
-        selectedCharsState.data = selectedPath.slice(0, index);
+        gameState.selectedChars = selectedPath.slice(0, index);
         return;
       } else if (
         !lastNodeInPath ||
         (lastNodeInPath && neighbors.includes(Number.parseInt(cellIndex)))
       ) {
-        selectedCharsState.data = [
-          ...selectedCharsState.data,
+        gameState.selectedChars = [
+          ...gameState.selectedChars,
           {
             index: Number.parseInt(cellIndex)!,
             char: cellChar!,

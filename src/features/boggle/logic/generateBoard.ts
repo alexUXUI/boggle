@@ -1,4 +1,4 @@
-import type { ScreenState } from '../../../features/boggle/components/Board';
+// import type { ScreenState } from '../components/Board';
 import { Language } from './api';
 
 export const generateRandomBoard = (length: number): string => {
@@ -152,22 +152,6 @@ export const generateRandomRussianBoard = (length: number): string => {
   }
 
   return shuffledResults.join('');
-};
-
-export const handleBoardResize = (
-  screenState: ScreenState,
-  boardSize: number
-) => {
-  const maxWidth = 500;
-  if (typeof window !== 'undefined') {
-    screenState.width = window.innerWidth - 20;
-    screenState.squareWidth = Math.floor(screenState.width / boardSize);
-
-    if (screenState.width > maxWidth) {
-      screenState.width = maxWidth;
-      screenState.squareWidth = Math.floor(screenState.width / boardSize);
-    }
-  }
 };
 
 export const generateRandomSpanishBoard = (length: number): string => {

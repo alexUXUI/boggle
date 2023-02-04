@@ -1,12 +1,12 @@
 import { handleCellClick, handleTouchMove } from '../logic/board.logic';
-import type { BoardState, SelectedCharsState } from '../models';
+import type { BoardState, GameState } from '../models';
 
 export interface LetterCubeProps {
   cellBgColor: string;
   isInSelectedChars: boolean;
   currentIndex: number;
   boardState: BoardState;
-  selectedCharsState: SelectedCharsState;
+  gameState: GameState;
 }
 
 export const LetterCube = ({
@@ -14,7 +14,7 @@ export const LetterCube = ({
   cellBgColor,
   isInSelectedChars,
   boardState,
-  selectedCharsState,
+  gameState,
 }: LetterCubeProps) => {
   const letter = boardState.data[currentIndex].toLocaleUpperCase();
   const baseStyle = {
@@ -65,12 +65,10 @@ export const LetterCube = ({
                 isInSelectedChars,
                 currentIndex,
                 boardState,
-                selectedCharsState
+                gameState
               );
             }}
-            onTouchMove$={(e) =>
-              handleTouchMove(e, boardState, selectedCharsState)
-            }
+            onTouchMove$={(e) => handleTouchMove(e, boardState, gameState)}
           >
             {letter ? letter : ' '}
           </button>

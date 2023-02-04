@@ -1,88 +1,69 @@
-import { $, component$, useOnWindow, useStore } from '@builder.io/qwik';
+import { $, component$, useContext, useStore } from '@builder.io/qwik';
+import { LanguageCtx } from '..';
 
-export const WordsList = component$(
-  ({
-    words,
-    title,
-    minCharLength,
-  }: {
-    words: string[];
-    title: string;
-    minCharLength: number;
-  }) => {
-    const isAnswers = title === 'answers';
+interface WordsListProps {
+  words: string[];
+  variant: Variant;
+}
 
-    useOnWindow(
-      'DOMContentLoaded',
-      $(() => {
-        const list = document.getElementById(`words-list-${title}`);
+export enum Variant {
+  Answers = 'answers',
+  Found = 'foundwords',
+}
 
-        const handleClick = (event: MouseEvent) => {
-          if (list && !list.contains(event.target as Node)) {
-            state.isOpen = false;
-          }
-        };
+export const WordsList = component$(({ words, variant }: WordsListProps) => {
+  const languageState = useContext(LanguageCtx);
 
-        const handleKeyDown = (event: KeyboardEvent) => {
-          if (event.key === 'Escape') {
-            state.isOpen = false;
-          }
-        };
+  const state = useStore({ isOpen: false });
 
-        document.addEventListener('click', handleClick);
-        document.addEventListener('keydown', handleKeyDown);
-      })
-    );
+  const handleToggle = $(() => {
+    state.isOpen = !state.isOpen;
+  });
 
-    const state = useStore({ isOpen: false });
+  const styles = {
+    height: `${state.isOpen ? 400 : 0}px`,
+    zIndex: `${state.isOpen ? 50 : 0}`,
+    bottom: `${state.isOpen ? 60 : 0}px`,
+    width: state.isOpen ? '100%' : '150px',
+    position: 'fixed',
+    margin: 'auto',
+    left: 0,
+  };
 
-    const handleToggle = $(() => {
-      state.isOpen = !state.isOpen;
-    });
+  const isAnswers = variant === 'answers';
 
-    return (
-      <div class="">
-        <button
-          class=" hover:bg-blue-100 leading-[20px] text-[14px] bg-white p-2 rounded-md border-2 border-blue-800 h-[40px] w-fit mx-4"
-          onClick$={handleToggle}
-        >
-          {state.isOpen ? 'Close ' : 'Open '}
-          {isAnswers ? 'Answers' : 'Found Words'}
-        </button>
-        <div
-          id={`words-list-${title} no-scroll`}
-          class={`flex flex-col items-center`}
-          style={{
-            height: `${state.isOpen ? 400 : 0}px`,
-            zIndex: `${state.isOpen ? 50 : 0}`,
-            bottom: `${state.isOpen ? 60 : 0}px`,
-            width: state.isOpen ? '100%' : '150px',
-            position: 'fixed',
-            margin: 'auto',
-            left: 0,
-          }}
-        >
-          {state.isOpen && words.length ? (
-            <div class="overflow-scroll h-full w-full heavy-glass">
-              <ul class=" flex flex-wrap justify-start items-start w-full">
-                {words
-                  .filter((word) => {
-                    return word.length >= minCharLength;
-                  })
-                  .map((word) => (
-                    <li class="w-[33%] text-center">{word}</li>
-                  ))}
-              </ul>
+  return (
+    <div class="">
+      <button
+        class=" hover:bg-blue-100 leading-[20px] text-[14px] bg-white p-2 rounded-md border-2 border-blue-800 h-[40px] w-fit mx-4"
+        onClick$={handleToggle}
+      >
+        {state.isOpen ? 'Close ' : 'Open '}
+        {isAnswers ? 'Answers' : 'Found Words'}
+      </button>
+      <div
+        id={`words-list-${variant} no-scroll`}
+        class={`flex flex-col items-center`}
+        style={styles}
+      >
+        {state.isOpen && words.length ? (
+          <div class="overflow-scroll h-full w-full heavy-glass">
+            <ul class=" flex flex-wrap justify-start items-start w-full">
+              {words
+                .filter((word) => word.length >= languageState.minCharLength)
+                .map((word) => (
+                  <li class="w-[33%] text-center">{word}</li>
+                ))}
+            </ul>
+          </div>
+        ) : (
+          state.isOpen && (
+            <div class="h-full w-full items-center heavy-glass flex flex-wrap justify-center">
+              No data
             </div>
-          ) : (
-            state.isOpen && (
-              <div class="h-full w-full items-center heavy-glass flex flex-wrap justify-center">
-                No data
-              </div>
-            )
-          )}
-        </div>
+          )
+        )}
       </div>
-    );
-  }
-);
+    </div>
+  );
+});
