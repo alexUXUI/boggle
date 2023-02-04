@@ -7,7 +7,7 @@
   "private": true,
   "scripts": {
     "wasm": "wasm-pack build ./src/components/boggle/boggle-solver --target web",
-    "build": "qwik build",
+    "build": "yarn wasm && qwik build",
     "build.client": "vite build",
     "build.preview": "vite build --ssr src/entry.preview.tsx",
     "build.server": "vite build -c adaptors/cloudflare-pages/vite.config.ts",
