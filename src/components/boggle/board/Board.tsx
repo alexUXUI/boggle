@@ -1,6 +1,5 @@
 import { $, component$, useContext, useOnWindow } from '@builder.io/qwik';
 import { BoardCtx, GameCtx } from '../context';
-import { isInPath, bgColor } from '../logic/board';
 import { LetterCube } from './LetterCube';
 
 export const BoggleBoard = component$(() => {
@@ -22,7 +21,6 @@ export const BoggleBoard = component$(() => {
         }
       };
 
-      // prevent scrolling on mobile on the no-scroll div
       const noScroll = document.getElementById('no-scroll');
       noScroll?.addEventListener('wheel', (e) => {
         e.preventDefault();
@@ -38,10 +36,7 @@ export const BoggleBoard = component$(() => {
   );
 
   return (
-    <div
-      class="w-full flex flex-col justify-center items-center mt-[150px]"
-      id="no-scroll"
-    >
+    <div class="flex flex-col items-center mt-[120px]" id="no-scroll">
       <table id="board" class={`bg-blue-800`}>
         <tbody
           style={{
@@ -54,21 +49,9 @@ export const BoggleBoard = component$(() => {
             <tr class={`flex w-full justify-evenly`} key={i}>
               {Array.from({ length: boardState.boardSize }, (_jdx, j) => {
                 const currentIndex = i * boardState.boardSize + j;
-                const isInSelectedChars = isInPath(
-                  currentIndex,
-                  gameState.selectedChars,
-                  boardState.chars
-                );
-                const cellBgColor = bgColor(
-                  isInSelectedChars,
-                  gameState?.isWordFound
-                );
-
                 return (
                   <LetterCube
                     key={currentIndex}
-                    cellBgColor={cellBgColor}
-                    isInSelectedChars={isInSelectedChars}
                     currentIndex={currentIndex}
                     boardState={boardState}
                     gameState={gameState}

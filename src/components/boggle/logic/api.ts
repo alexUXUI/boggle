@@ -9,7 +9,6 @@ export const Language = {
   Russian: 'Russian',
 };
 
-// type that enforces the values of LANGUAGE
 export type Language = typeof Language[keyof typeof Language];
 
 export const getDictionary = async (language: Language) => {

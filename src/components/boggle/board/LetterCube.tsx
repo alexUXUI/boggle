@@ -1,30 +1,34 @@
-import { handleCellClick, handleTouchMove } from '../logic/board';
+import {
+  bgColor,
+  handleCellClick,
+  handleTouchMove,
+  isInPath,
+} from '../logic/board';
 import type { BoardState, GameState } from '../models';
 
-export interface LetterCubeProps {
-  cellBgColor: string;
-  isInSelectedChars: boolean;
+export interface Props {
   currentIndex: number;
   boardState: BoardState;
   gameState: GameState;
   key: number;
 }
 
-export const LetterCube = ({
-  currentIndex,
-  cellBgColor,
-  isInSelectedChars,
-  boardState,
-  gameState,
-  key,
-}: LetterCubeProps) => {
+export const LetterCube = (props: Props) => {
+  const { currentIndex, boardState, gameState, key } = props;
   const letter = boardState.chars[currentIndex].toLocaleUpperCase();
+  const isInSelectedChars = isInPath(
+    currentIndex,
+    gameState.selectedChars,
+    boardState.chars
+  );
+  const cellBgColor = bgColor(isInSelectedChars, gameState?.isWordFound);
   const baseStyle = {
     height: `${boardState.cellWidth}px` ?? 0,
     width: `${boardState.cellWidth}px` ?? 0,
   };
   const baseClass = `cube__face cube__face--`;
   const zPerspective = boardState.cellWidth / 2;
+
   return (
     <td style={baseStyle} key={key} class={`scene m-0 p-0`}>
       <div style={baseStyle} class={`cube`}>
@@ -33,28 +37,28 @@ export const LetterCube = ({
             ...baseStyle,
             transform: `rotateY(90deg) translateZ(${zPerspective}px)`,
           }}
-          class={`${baseClass}--right`}
+          class={`${baseClass}right`}
         />
         <div
           style={{
             ...baseStyle,
             transform: `rotateY(-90deg) translateZ(${zPerspective}px)`,
           }}
-          class={`${baseClass}--left`}
+          class={`${baseClass}left`}
         />
         <div
           style={{
             ...baseStyle,
             transform: `rotateX(90deg) translateZ(${zPerspective}px)`,
           }}
-          class={`${baseClass}--top`}
+          class={`${baseClass}top`}
         />
         <div
           style={{
             ...baseStyle,
             transform: `rotateX(-90deg) translateZ(${zPerspective}px)`,
           }}
-          class={`${baseClass}--bottom`}
+          class={`${baseClass}bottom`}
         />
         <div class="face flex items-center justify-center">
           <button

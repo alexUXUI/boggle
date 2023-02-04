@@ -7,11 +7,3 @@ export default component$(() => {
     </section>
   );
 });
-
-{
-  /* <footer>
-        <a href="https://www.twitter.com/alexux_ui" target="_blank">
-          Made with ♡ by Alex Bennett
-        </a>
-      </footer> */
-}

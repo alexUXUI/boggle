@@ -35,5 +35,7 @@ export default component$(() => {
 });
 
 export const onGet: RequestHandler<ServerData> = ({ url, request }) => {
-  return handleGet({ url, request });
+  const response = handleGet({ url, request });
+  console.log('response', response);
+  return response;
 };

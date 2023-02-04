@@ -4,24 +4,6 @@ import { Language } from './api';
 import { randomBoard } from './board';
 import type { ServerData } from '~/routes';
 
-export const boardWidthFromRequest = (request: RequestContext) => {
-  const userAgent = parser(request.headers.get('user-agent') || '');
-  const OS = userAgent.os;
-  const isAndroid = OS.name === 'Android';
-  const isIOS = OS.name === 'iOS';
-  const isMac = OS.name === 'Mac OS';
-  const isWindows = OS.name === 'Windows';
-  const isChromeOS = OS.name === 'Chrome OS';
-
-  if (isAndroid || isIOS) {
-    return 375;
-  } else if (isMac || isWindows || isChromeOS) {
-    return 400;
-  }
-
-  return 0;
-};
-
 type ReqArgs = {
   url: URL;
   request: RequestContext;
@@ -59,4 +41,24 @@ export const handleGet = ({ url, request }: ReqArgs): ServerData => {
     language,
     minCharLength,
   };
+};
+
+export const boardWidthFromRequest = (request: RequestContext) => {
+  const userAgent = parser(request.headers.get('user-agent') || '');
+  const OS = userAgent.os;
+  const isAndroid = OS.name === 'Android';
+  const isIOS = OS.name === 'iOS';
+  const isMac = OS.name === 'Mac OS';
+  const isWindows = OS.name === 'Windows';
+  const isChromeOS = OS.name === 'Chrome OS';
+
+  if (isAndroid || isIOS) {
+    console.log('isAndroid || isIOS');
+    return 375;
+  } else if (isMac || isWindows || isChromeOS) {
+    console.log('isMac || isWindows || isChromeOS');
+    return 400;
+  }
+
+  return 0;
 };
