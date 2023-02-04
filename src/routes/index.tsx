@@ -1,10 +1,10 @@
 import { Resource, component$ } from '@builder.io/qwik';
 import { useEndpoint } from '@builder.io/qwik-city';
 import type { DocumentHead, RequestHandler } from '@builder.io/qwik-city';
-import { Language } from '~/features/boggle/logic/api';
-import { randomBoard } from '~/features/boggle/logic/generateBoard';
-import { BoogleRoot } from '~/features/boggle';
-import { boardWidthFromRequest } from '~/features/boggle/server.logic';
+import { Language } from '~/components/boggle/logic/api';
+import { randomBoard } from '~/components/boggle/logic/generateBoard';
+import { BoogleRoot } from '~/components/boggle';
+import { boardWidthFromRequest } from '~/components/boggle/logic/server';
 
 export const head: DocumentHead = {
   title: 'Boggle',
