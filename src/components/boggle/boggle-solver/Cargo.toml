@@ -12,6 +12,8 @@ rand = "0.8.4"
 wasm-bindgen = "0.2.84"
 js-sys = "0.3.61"
 wasm-bindgen-futures = "0.4.34"
+gloo = "0.3"
+gloo-utils = "0.1.2"
 
 [dependencies.web-sys]
 version = "0.3.4"
@@ -22,5 +24,8 @@ features = [
   'RequestMode',
   'Response',
   'Window',
+  'MessageEvent',
+  'Window',
+  'Worker'
+  
 ]
-

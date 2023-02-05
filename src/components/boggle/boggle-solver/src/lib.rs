@@ -11,6 +11,12 @@ use trie::TrieStruct;
 
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
+use wasm_bindgen_futures::JsFuture;
+use web_sys::Request;
+use web_sys::RequestInit;
+use web_sys::RequestMode;
+use web_sys::Response;
+
 
 
 #[wasm_bindgen]
@@ -73,6 +79,7 @@ pub fn get_board_string(board: js_sys::Array) -> String {
 pub async fn run_game(dictionary: js_sys::Array, board: js_sys::JsString) -> js_sys::Array {
     // print the board  using format
     log(&format!("Board: {:?}", board));
+
 
     // Trie
     let mut trie = TrieStruct::create();
