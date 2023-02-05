@@ -1,4 +1,3 @@
-import type { NoSerialize } from '@builder.io/qwik';
 import type { Language } from '~/components/boggle/logic/api';
 
 export interface BoardState {
@@ -14,10 +13,6 @@ export interface AnswersState {
 
 export interface DictionaryState {
   dictionary: string[];
-}
-
-export interface WebWorkerState {
-  mod: NoSerialize<Worker> | null;
 }
 
 export interface GameState {

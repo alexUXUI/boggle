@@ -10,14 +10,18 @@ export const Controls = component$(() => {
   const answersState = useContext(AnswersCtx);
   const dictionaryState = useContext(DictionaryCtx);
 
-  // changes the board string and solves it
-  const handleBoardCustomization = $((e: QwikChangeEvent<HTMLInputElement>) => {
-    boardState.chars = e.target.value.split('');
-    answersState.answers = solve(dictionaryState.dictionary, boardState.chars);
-  });
+  const handleBoardCustomization = $(
+    async (e: QwikChangeEvent<HTMLInputElement>) => {
+      boardState.chars = e.target.value.split('');
+      answersState.answers = solve(
+        dictionaryState.dictionary,
+        boardState.chars
+      );
+    }
+  );
 
   // generate new board and solve it
-  const handleRandomizeBoard = $(() => {
+  const handleRandomizeBoard = $(async () => {
     boardState.chars = randomBoard(
       gameState.language,
       boardState.boardSize
