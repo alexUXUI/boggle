@@ -2,13 +2,14 @@ import type { QwikTouchEvent } from '@builder.io/qwik';
 import { $ } from '@builder.io/qwik';
 
 import type { BoardState, GameState } from '../models';
+import type { LetterCubeBgColor } from './Board';
 
 export interface LetterCubeProps {
   currentIndex: number;
   boardState: BoardState;
   key: number;
   gameState: GameState;
-  cellBgColor: string;
+  cellBgColor: LetterCubeBgColor;
   isInSelectedChars: boolean;
 }
 
@@ -207,6 +208,7 @@ export const updatePath = ({
     }
     return;
   } else {
+    // removing everything from selected node and up in selected chars if already in path
     const index = gameState.selectedChars.findIndex(
       ({ index }: { index: number }) => index === currentIndex
     );

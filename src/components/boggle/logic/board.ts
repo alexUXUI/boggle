@@ -8,6 +8,7 @@ import type {
 } from '../models';
 import { Language } from './api';
 import { fireworks } from './confetti';
+import { LetterCubeBgColor } from '../board/Board';
 
 // create one random board takes in a language and returns a random board
 export const randomBoard = (language: string, length: number): string => {
@@ -41,18 +42,23 @@ export const isInPath = (
   );
 };
 
-export const bgColor = $(
-  (isInSelectedPath: boolean, isWordFound: boolean): string => {
-    let bgColor = 'bg-white'; // if char is not part of the selected path, or a found word keep white bg
-
-    if (isInSelectedPath && isWordFound) {
-      bgColor = 'bg-green-200'; // if word found, highlight the path in green
-    } else if (isInSelectedPath) {
-      bgColor = 'bg-blue-200'; // if char is part of the selected path, highlight it in blue
-    }
-    return bgColor;
+export const bgColor = (
+  isCharSelected: boolean,
+  isWordFound: boolean
+): LetterCubeBgColor => {
+  let cellBgColor;
+  switch (true) {
+    case isCharSelected && isWordFound:
+      cellBgColor = LetterCubeBgColor.WordFound; // if word found, highlight the path in green
+      break;
+    case isCharSelected:
+      cellBgColor = LetterCubeBgColor.Selected; // if char is part of the selected path, highlight it in blue
+      break;
+    default:
+      cellBgColor = LetterCubeBgColor.Unselected;
   }
-);
+  return cellBgColor;
+};
 
 export const addToSelectedChars = $(
   (currentIndex: number, gameState: GameState, boardState: BoardState) => {
@@ -142,7 +148,7 @@ export const handleFoundWord = $(
         answersState.foundWords = [...answersState.foundWords, word];
         gameState.isWordFound = false;
         gameState.selectedChars = [];
-      }, 200);
+      }, 300);
     }
   }
 );

@@ -1,7 +1,7 @@
 import { $, component$, useContext, useOnWindow } from '@builder.io/qwik';
 import { BoardCtx, GameCtx } from '../context';
 import { LetterCube } from './LetterCube';
-// import { bgColor, isInPath } from '../logic/board';
+import { bgColor } from '../logic/board';
 
 export enum LetterCubeBgColor {
   Unselected = 'bg-white',
@@ -63,13 +63,10 @@ export const BoggleBoard = component$(() => {
                   ).length
                 );
 
-                let cellBgColor = LetterCubeBgColor.Unselected; // if char is not part of the selected path, or a found word keep white bg
-                const isWordFound = false;
-                if (isCharSelected && isWordFound) {
-                  cellBgColor = LetterCubeBgColor.WordFound; // if word found, highlight the path in green
-                } else if (isCharSelected) {
-                  cellBgColor = LetterCubeBgColor.Selected; // if char is part of the selected path, highlight it in blue
-                }
+                const cellBgColor = bgColor(
+                  isCharSelected,
+                  gameState.isWordFound
+                );
 
                 return (
                   <LetterCube

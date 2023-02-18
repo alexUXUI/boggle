@@ -21,6 +21,16 @@ export const Controls = component$(() => {
   const dictionaryState = useContext(DictionaryCtx);
   const workerState = useStore<WebWorkerState>({ mod: null });
 
+  // are controls open
+  const constrolsState = useStore({
+    isOpen: false,
+  });
+
+  // toggle the controls
+  const toggleIsOpen = $(() => {
+    constrolsState.isOpen = !constrolsState.isOpen;
+  });
+
   useOnWindow(
     'DOMContentLoaded',
     $(async () => {
@@ -28,6 +38,12 @@ export const Controls = component$(() => {
         const worker = new BoggleWorker();
         workerState.mod = noSerialize(worker);
       }
+      // add keydown event listen that will close the controls if the escape key is pressed
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          constrolsState.isOpen = false;
+        }
+      });
     })
   );
 
@@ -96,16 +112,6 @@ export const Controls = component$(() => {
   const answersLength = answersState.answers.filter(
     (word) => word.length >= gameState.minCharLength
   ).length;
-
-  // are controls open
-  const constrolsState = useStore({
-    isOpen: false,
-  });
-
-  // toggle the controls
-  const toggleIsOpen = $(() => {
-    constrolsState.isOpen = !constrolsState.isOpen;
-  });
 
   return (
     <div class="fixed w-full top-0 z-50 ">
