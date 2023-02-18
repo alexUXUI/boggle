@@ -3,12 +3,6 @@ import { BoardCtx, GameCtx } from '../context';
 import { LetterCube } from './LetterCube';
 import { bgColor } from '../logic/board';
 
-export enum LetterCubeBgColor {
-  Unselected = 'bg-white',
-  Selected = 'bg-blue-200',
-  WordFound = 'bg-green-200',
-}
-
 export const BoggleBoard = component$(() => {
   const boardState = useContext(BoardCtx);
   const gameState = useContext(GameCtx);

@@ -6,12 +6,11 @@ export const English_DICT_URL_2 = 'https://boggle.pages.dev/engmix.txt';
 export const Russian_DICT_URL =
   'https://raw.githubusercontent.com/hingston/Russian/master/10000-Russian-words.txt';
 
-export const Language = {
-  English: 'English',
-  Russian: 'Russian',
-};
-
-export type Language = typeof Language[keyof typeof Language];
+export enum Language {
+  English = 'English',
+  Russian = 'Russian',
+  Spanish = 'Spanish',
+}
 
 export const getDictionary = async (language: Language) => {
   const response = await fetch(

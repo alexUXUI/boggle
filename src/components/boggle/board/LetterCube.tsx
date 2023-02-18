@@ -1,8 +1,7 @@
 import type { QwikTouchEvent } from '@builder.io/qwik';
 import { $ } from '@builder.io/qwik';
 
-import type { BoardState, GameState } from '../models';
-import type { LetterCubeBgColor } from './Board';
+import type { BoardState, GameState, LetterCubeBgColor } from '../models';
 
 export interface LetterCubeProps {
   currentIndex: number;

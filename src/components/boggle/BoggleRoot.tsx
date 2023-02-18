@@ -1,5 +1,4 @@
 import {
-  useTask$,
   $,
   component$,
   useOnWindow,
@@ -11,7 +10,7 @@ import {
 import { Controls } from './controls/Controls';
 import { WordsPanel } from './controls/WordsPanel';
 import { BoggleBoard } from './board/Board';
-import { calculateCellWidth, handleFoundWord } from './logic/board';
+import { calculateCellWidth } from './logic/board';
 import {
   DictionaryCtx,
   BoardCtx,
@@ -63,11 +62,6 @@ export const BoogleRoot = component$(({ data }: BoggleProps) => {
     foundWords: [],
   });
 
-  useContextProvider(DictionaryCtx, dictionaryState);
-  useContextProvider(BoardCtx, boardState);
-  useContextProvider(GameCtx, gameState);
-  useContextProvider(AnswersCtx, answersState);
-
   const workerState = useStore<WebWorkerState>({ mod: null });
 
   useOnWindow(
@@ -76,32 +70,25 @@ export const BoogleRoot = component$(({ data }: BoggleProps) => {
       if (window.Worker) {
         const worker = new BoggleWorker();
         workerState.mod = noSerialize(worker);
+        if (workerState.mod) {
+          workerState.mod.postMessage({
+            language: gameState.language,
+            board: boardState.chars,
+          });
+          workerState.mod.onmessage = (event) => {
+            dictionaryState.dictionary = event.data.dictionary;
+            answersState.answers = event.data.answers;
+          };
+        }
       }
     })
   );
 
   useContextProvider(WorkerCtx, workerState);
-
-  useTask$(({ track }) => {
-    track(() => workerState.mod);
-    if (workerState.mod) {
-      workerState.mod.postMessage({
-        language: gameState.language,
-        board: boardState.chars,
-      });
-      workerState.mod.onmessage = (event) => {
-        dictionaryState.dictionary = event.data.dictionary;
-        answersState.answers = event.data.answers;
-      };
-    }
-  });
-
-  useTask$(({ track }) => {
-    track(() => gameState.selectedChars);
-    if (gameState.selectedChars.length) {
-      handleFoundWord(gameState, dictionaryState, answersState);
-    }
-  });
+  useContextProvider(DictionaryCtx, dictionaryState);
+  useContextProvider(BoardCtx, boardState);
+  useContextProvider(GameCtx, gameState);
+  useContextProvider(AnswersCtx, answersState);
 
   return (
     <div class="h-[100%] dont-scroll">

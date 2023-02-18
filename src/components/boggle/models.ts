@@ -33,3 +33,9 @@ export interface GameState {
   language: Language;
   minCharLength: number;
 }
+
+export enum LetterCubeBgColor {
+  Unselected = 'bg-white',
+  Selected = 'bg-blue-200',
+  WordFound = 'bg-green-200',
+}
