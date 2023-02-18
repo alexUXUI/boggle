@@ -9,14 +9,16 @@ import type {
 import { Language } from './api';
 import { fireworks } from './confetti';
 
-// create one random board function that takes in a language and returns a random board
+// create one random board takes in a language and returns a random board
 export const randomBoard = (language: string, length: number): string => {
-  if (language === Language.English) {
-    return generateRandomBoard(length);
-  } else if (language === Language.Russian) {
-    return generateRandomRussianBoard(length);
+  switch (language) {
+    case Language.English:
+      return generateRandomBoard(length);
+    case Language.Russian:
+      return generateRandomRussianBoard(length);
+    default:
+      return generateRandomBoard(length);
   }
-  return '';
 };
 
 export const isInPath = (
@@ -160,7 +162,7 @@ export const generateRandomBoard = (length: number): string => {
     's',
     's',
   ];
-  const eglishConsonants = [
+  const englishConsonants = [
     'r',
     'h',
     'm',
@@ -190,7 +192,7 @@ export const generateRandomBoard = (length: number): string => {
   const lengthSquared = length * length;
 
   const shuffledVowels = englishVowels.sort(() => 0.5 - Math.random());
-  const shuffledConsonants = eglishConsonants.sort(() => 0.5 - Math.random());
+  const shuffledConsonants = englishConsonants.sort(() => 0.5 - Math.random());
 
   const zip = (a: string[], b: string[]) => {
     const result = [];
@@ -215,7 +217,7 @@ export const generateRandomBoard = (length: number): string => {
       const randomVowel =
         englishVowels[Math.floor(Math.random() * englishVowels.length)];
       const randomConsonant =
-        eglishConsonants[Math.floor(Math.random() * eglishConsonants.length)];
+        englishConsonants[Math.floor(Math.random() * englishConsonants.length)];
       const vowelOrConsonant =
         Math.random() > 0.5 ? randomVowel : randomConsonant;
       results.push(vowelOrConsonant);
