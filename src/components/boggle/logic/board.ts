@@ -1,11 +1,6 @@
 // import type { QwikTouchEvent } from '@builder.io/qwik';
 import { $ } from '@builder.io/qwik';
-import type {
-  GameState,
-  BoardState,
-  AnswersState,
-  DictionaryState,
-} from '../models';
+import type { GameState, AnswersState, DictionaryState } from '../models';
 import { Language } from './api';
 import { fireworks } from './confetti';
 import { LetterCubeBgColor } from '../board/Board';
@@ -59,71 +54,6 @@ export const bgColor = (
   }
   return cellBgColor;
 };
-
-export const addToSelectedChars = $(
-  (currentIndex: number, gameState: GameState, boardState: BoardState) => {
-    return (gameState.selectedChars = [
-      ...gameState.selectedChars,
-      {
-        index: currentIndex,
-        char: boardState.chars[currentIndex],
-      },
-    ]);
-  }
-);
-
-// export const deselectCharAndAncestors = $(
-//   (currentIndex: number, gameState: GameState) => {
-//     const index = gameState.selectedChars.findIndex(
-//       (element: any) => element.index === currentIndex
-//     );
-//     gameState.selectedChars = gameState.selectedChars.slice(0, index);
-//   }
-// );
-
-export const handleCellClick = $(
-  (
-    isInSelectedChars: boolean,
-    currentIndex: number,
-    boardState: BoardState,
-    gameState: GameState
-  ) => {
-    const { boardSize } = boardState;
-
-    const currentChar =
-      gameState.selectedChars[gameState.selectedChars.length - 1];
-
-    const neighbors = [
-      currentChar?.index - boardSize, // top
-      currentChar?.index - boardSize + 1, // top right
-      currentChar?.index + 1, // right
-      currentChar?.index + boardSize + 1, // bottom right
-      currentChar?.index + boardSize, // bottom
-      currentChar?.index + boardSize - 1, // bottom left
-      currentChar?.index - 1, // left
-      currentChar?.index - boardSize - 1, // top left
-    ];
-
-    const isFirstChar = gameState.selectedChars.length === 0;
-    const isValidNeighbor = currentChar && neighbors.includes(currentIndex);
-    const isNotSelected = !isInSelectedChars;
-    const isEligible = isFirstChar || (isNotSelected && isValidNeighbor);
-
-    if (isEligible) {
-      addToSelectedChars(currentIndex, gameState, boardState);
-    } else if (isInSelectedChars) {
-      // deselectCharAndAncestors(currentIndex, gameState);
-    }
-  }
-);
-
-// export const handleTouchMove = $(
-//   (
-//     e: QwikTouchEvent<HTMLButtonElement>,
-//     boardState: BoardState,
-//     gameState: GameState
-//   ) => {}
-// );
 
 export const handleFoundWord = $(
   (
