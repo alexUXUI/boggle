@@ -140,8 +140,8 @@ export const handleFoundWord = $(
       fireworks();
       setTimeout(() => {
         answersState.foundWords = [...answersState.foundWords, word];
-        gameState.selectedChars = [];
         gameState.isWordFound = false;
+        gameState.selectedChars = [];
       }, 200);
     }
   }
