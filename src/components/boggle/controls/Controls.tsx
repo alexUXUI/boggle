@@ -19,7 +19,6 @@ export const Controls = component$(() => {
   const boardState = useContext(BoardCtx);
   const answersState = useContext(AnswersCtx);
   const dictionaryState = useContext(DictionaryCtx);
-
   const workerState = useStore<WebWorkerState>({ mod: null });
 
   useOnWindow(

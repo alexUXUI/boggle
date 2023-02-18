@@ -125,17 +125,20 @@ export const handleFoundWord = $(
   ) => {
     const word = gameState.selectedChars
       .map((element) => element.char)
-      .join('');
+      .join('')
+      .toLocaleLowerCase();
 
-    const isWordInDict = dictionaryState.dictionary.includes(word);
+    const isWordInDict =
+      Boolean(word.length) && dictionaryState.dictionary.includes(word);
     const isWordNotFound = !answersState.foundWords.includes(word);
     const isWordLongEnough = word.length >= gameState.minCharLength;
+
     if (isWordInDict && isWordNotFound && isWordLongEnough) {
       gameState.isWordFound = true;
       fireworks();
       setTimeout(() => {
         answersState.foundWords = [...answersState.foundWords, word];
-        // gameState.selectedChars = [];
+        gameState.selectedChars = [];
         gameState.isWordFound = false;
       }, 200);
     }
