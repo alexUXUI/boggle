@@ -127,11 +127,6 @@ export const handleClick = $(
     const lastCharInPath = selectedChars[selectedChars.length - 1];
     const currentChar = chars[currentIndex];
 
-    console.log('handleClick', {
-      lastCharInPath,
-      currentChar,
-      isInSelectedChars,
-    });
     updatePath({
       boardState,
       currentIndex,

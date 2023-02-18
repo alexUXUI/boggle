@@ -28,17 +28,13 @@ export const BoggleBoard = component$(() => {
         }
       };
 
-      // const noScroll = document.getElementById('no-scroll');
-      // noScroll?.addEventListener('wheel', (e) => {
-      //   e.preventDefault();
-      // });
+      const noScroll = document.getElementById('no-scroll');
+      noScroll?.addEventListener('wheel', (e) => {
+        e.preventDefault();
+      });
 
-      // noScroll?.addEventListener('touchmove', (e) => {
-      //   e.preventDefault();
-      // });
-
-      document.addEventListener('wheel', (event) => {
-        console.log('wheel', event);
+      noScroll?.addEventListener('touchmove', (e) => {
+        e.preventDefault();
       });
 
       document.addEventListener('click', clickHandler);

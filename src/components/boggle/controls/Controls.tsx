@@ -36,14 +36,18 @@ export const Controls = component$(() => {
     $(() => {
       window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-          constrolsState.isOpen = false;
+          constrolsState.isOpen = !constrolsState.isOpen;
         }
       });
       window.addEventListener('click', (e) => {
         if (constrolsState.isOpen) {
-          const controlFormDOMNode = document.getElementById('controls');
-          if (controlFormDOMNode) {
-            if (!controlFormDOMNode.contains(e.target as Node)) {
+          const controlFormNode = document.getElementById('controls');
+          const controlsButtonNode = document.getElementById('controls-btn');
+          if (controlFormNode) {
+            if (
+              !controlFormNode.contains(e.target as Node) &&
+              !controlsButtonNode?.contains(e.target as Node)
+            ) {
               constrolsState.isOpen = false;
             }
           }
@@ -62,46 +66,40 @@ export const Controls = component$(() => {
     }
   );
 
-  // generate new board and solve it
   const handleRandomizeBoard = $(() => {
     boardState.chars = randomBoard(
       gameState.language,
       boardState.boardSize
     ).split('');
-    answersState.answers = solve(dictionaryState.dictionary, boardState.chars);
-    // workerState.mod?.postMessage({
-    //   language: gameState.language,
-    //   board: boardState.chars,
-    // });
+    worker.mod?.postMessage({
+      language: gameState.language,
+      board: boardState.chars,
+    });
   });
 
-  // chaneg the language, load the dict, create new board and solve it
   const handleChangeLanguage = $((e: QwikChangeEvent<HTMLSelectElement>) => {
-    gameState.language = e.target.value;
-    boardState.chars = randomBoard(e.target.value, boardState.boardSize).split(
-      ''
-    );
-    answersState.answers = solve(dictionaryState.dictionary, boardState.chars);
+    const { value } = e.target;
+    gameState.language = value;
+    boardState.chars = randomBoard(value, boardState.boardSize).split('');
+    worker.mod?.postMessage({
+      language: gameState.language,
+      board: boardState.chars,
+    });
   });
 
-  // change the board dimensions, create new board and solve it
   const handleChangeBoardSize = $((e: QwikChangeEvent<HTMLInputElement>) => {
-    boardState.boardSize = e.target.valueAsNumber;
-    boardState.chars = randomBoard(
-      gameState.language,
-      e.target.valueAsNumber
-    ).split('');
+    const { valueAsNumber } = e.target;
+    boardState.boardSize = valueAsNumber;
+    boardState.chars = randomBoard(gameState.language, valueAsNumber).split('');
     answersState.answers = solve(dictionaryState.dictionary, boardState.chars);
   });
 
-  // change the min char length
   const handleChangeMinCharLength = $(
     (e: QwikChangeEvent<HTMLInputElement>) => {
       gameState.minCharLength = e.target.valueAsNumber;
     }
   );
 
-  // filter the answers by the min char length
   const answersLength = answersState.answers.filter(
     (word) => word.length >= gameState.minCharLength
   ).length;
@@ -117,6 +115,7 @@ export const Controls = component$(() => {
         <div class="m-auto w-full flex max-w-[500px]">
           <div class="w-[33.3%] flex justify-center">
             <button
+              id="controls-btn"
               class="px-2 text-[14px] border-2 bg-white h-[40px] border-blue-800 hover:bg-blue-200 rounded-md "
               onClick$={toggleIsOpen}
             >
