@@ -1,7 +1,7 @@
 import { $, component$, useContext, useOnWindow } from '@builder.io/qwik';
 import { BoardCtx, GameCtx } from '../context';
 import { LetterCube } from './LetterCube';
-import { bgColor, isInPath } from '../logic/board';
+import { bgColor } from '../logic/board';
 
 export enum LetterCubeBgColor {
   Unselected = 'bg-white',
