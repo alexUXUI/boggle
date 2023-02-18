@@ -5,12 +5,13 @@ import {
   useStore,
   useContextProvider,
   noSerialize,
+  useTask$,
 } from '@builder.io/qwik';
 
 import { Controls } from './controls/Controls';
 import { WordsPanel } from './controls/WordsPanel';
 import { BoggleBoard } from './board/Board';
-import { calculateCellWidth } from './logic/board';
+import { calculateCellWidth, handleFoundWord } from './logic/board';
 import {
   DictionaryCtx,
   BoardCtx,
@@ -89,6 +90,13 @@ export const BoogleRoot = component$(({ data }: BoggleProps) => {
   useContextProvider(BoardCtx, boardState);
   useContextProvider(GameCtx, gameState);
   useContextProvider(AnswersCtx, answersState);
+
+  useTask$(({ track }) => {
+    track(() => gameState.selectedChars);
+    if (gameState.selectedChars.length) {
+      handleFoundWord(gameState, dictionaryState, answersState);
+    }
+  });
 
   return (
     <div class="h-[100%] dont-scroll">

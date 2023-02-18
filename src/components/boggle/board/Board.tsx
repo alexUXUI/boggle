@@ -1,10 +1,4 @@
-import {
-  $,
-  component$,
-  useContext,
-  useOnWindow,
-  useTask$,
-} from '@builder.io/qwik';
+import { $, component$, useContext, useOnWindow } from '@builder.io/qwik';
 import { BoardCtx, GameCtx } from '../context';
 import { LetterCube } from './LetterCube';
 import { bgColor } from '../logic/board';
@@ -41,10 +35,6 @@ export const BoggleBoard = component$(() => {
       document.addEventListener('keydown', handleKeydown);
     })
   );
-
-  useTask$(({ track }) => {
-    track(() => gameState.selectedChars);
-  });
 
   return (
     <div class="flex flex-col items-center mt-[120px]" id="no-scroll">

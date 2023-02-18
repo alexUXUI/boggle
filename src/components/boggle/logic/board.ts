@@ -1,5 +1,25 @@
+import { $ } from '@builder.io/qwik';
 import { Language, LetterCubeBgColor } from '../models';
-import type { LanguageType } from '../models';
+import type {
+  LanguageType,
+  AnswersState,
+  DictionaryState,
+  GameState,
+} from '../models';
+import { fireworks } from './confetti';
+
+export const randomBoard = (language: LanguageType, length: number): string => {
+  switch (language) {
+    case Language.English:
+      return generateRandomBoard(length, Language.English);
+    case Language.Spanish:
+      return generateRandomBoard(length, Language.Spanish);
+    case Language.Russian:
+      return generateRandomBoard(length, Language.Russian);
+    default:
+      return generateRandomBoard(length, Language.English);
+  }
+};
 
 export const generateRandomBoard = (
   length: number,
@@ -72,18 +92,33 @@ export const generateRandomBoard = (
   return shuffledResults.join('');
 };
 
-export const randomBoard = (language: LanguageType, length: number): string => {
-  switch (language) {
-    case Language.English:
-      return generateRandomBoard(length, Language.English);
-    case Language.Spanish:
-      return generateRandomBoard(length, Language.Spanish);
-    case Language.Russian:
-      return generateRandomBoard(length, Language.Russian);
-    default:
-      return generateRandomBoard(length, Language.English);
+export const handleFoundWord = $(
+  (
+    gameState: GameState,
+    dictionaryState: DictionaryState,
+    answersState: AnswersState
+  ) => {
+    const word = gameState.selectedChars
+      .map((element) => element.char)
+      .join('')
+      .toLocaleLowerCase();
+
+    const isWordInDict =
+      Boolean(word.length) && dictionaryState.dictionary.includes(word);
+    const isWordNotFound = !answersState.foundWords.includes(word);
+    const isWordLongEnough = word.length >= gameState.minCharLength;
+
+    if (isWordInDict && isWordNotFound && isWordLongEnough) {
+      gameState.isWordFound = true;
+      fireworks();
+      setTimeout(() => {
+        answersState.foundWords = [...answersState.foundWords, word];
+        gameState.isWordFound = false;
+        gameState.selectedChars = [];
+      }, 300);
+    }
   }
-};
+);
 
 export const bgColor = (
   isCharSelected: boolean,
