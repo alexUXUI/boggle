@@ -1,4 +1,10 @@
-import { $, component$, useContext, useOnWindow } from '@builder.io/qwik';
+import {
+  $,
+  component$,
+  useContext,
+  useOnWindow,
+  useStore,
+} from '@builder.io/qwik';
 import { BoardCtx, GameCtx } from '../context';
 import { LetterCube } from './LetterCube';
 import { bgColor } from '../logic/board';
@@ -22,19 +28,27 @@ export const BoggleBoard = component$(() => {
         }
       };
 
-      const noScroll = document.getElementById('no-scroll');
-      noScroll?.addEventListener('wheel', (e) => {
-        e.preventDefault();
-      });
+      // const noScroll = document.getElementById('no-scroll');
+      // noScroll?.addEventListener('wheel', (e) => {
+      //   e.preventDefault();
+      // });
 
-      noScroll?.addEventListener('touchmove', (e) => {
-        e.preventDefault();
+      // noScroll?.addEventListener('touchmove', (e) => {
+      //   e.preventDefault();
+      // });
+
+      document.addEventListener('wheel', (event) => {
+        console.log('wheel', event);
       });
 
       document.addEventListener('click', clickHandler);
       document.addEventListener('keydown', handleKeydown);
     })
   );
+
+  const s = useStore({
+    isMouseDown: false,
+  });
 
   return (
     <div class="flex flex-col items-center mt-[120px]" id="no-scroll">
@@ -70,6 +84,7 @@ export const BoggleBoard = component$(() => {
                     currentIndex={currentIndex}
                     boardState={boardState}
                     isInSelectedChars={isCharSelected}
+                    s={s}
                   />
                 );
               })}

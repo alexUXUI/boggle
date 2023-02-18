@@ -27,6 +27,7 @@ import type {
   AnswersState,
   DictionaryState,
   WebWorkerState,
+  LanguageType,
 } from './models';
 
 export interface BoggleProps {
@@ -34,7 +35,7 @@ export interface BoggleProps {
     board: string[];
     boardWidth: number;
     boardSize: number;
-    language: string;
+    language: LanguageType;
     minCharLength: number;
   };
 }
@@ -85,18 +86,18 @@ export const BoogleRoot = component$(({ data }: BoggleProps) => {
     })
   );
 
-  useContextProvider(WorkerCtx, workerState);
-  useContextProvider(DictionaryCtx, dictionaryState);
-  useContextProvider(BoardCtx, boardState);
-  useContextProvider(GameCtx, gameState);
-  useContextProvider(AnswersCtx, answersState);
-
   useTask$(({ track }) => {
     track(() => gameState.selectedChars);
     if (gameState.selectedChars.length) {
       handleFoundWord(gameState, dictionaryState, answersState);
     }
   });
+
+  useContextProvider(WorkerCtx, workerState);
+  useContextProvider(DictionaryCtx, dictionaryState);
+  useContextProvider(BoardCtx, boardState);
+  useContextProvider(GameCtx, gameState);
+  useContextProvider(AnswersCtx, answersState);
 
   return (
     <div class="h-[100%] dont-scroll">

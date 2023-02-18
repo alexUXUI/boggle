@@ -10,6 +10,9 @@ export interface LetterCubeProps {
   gameState: GameState;
   cellBgColor: LetterCubeBgColor;
   isInSelectedChars: boolean;
+  s: {
+    isMouseDown: boolean;
+  };
 }
 
 export const LetterCube = ({
@@ -19,6 +22,7 @@ export const LetterCube = ({
   gameState,
   cellBgColor,
   isInSelectedChars,
+  s,
 }: LetterCubeProps) => {
   const letter = boardState.chars[currentIndex].toLocaleUpperCase();
   const baseStyle = {
@@ -65,20 +69,37 @@ export const LetterCube = ({
             data-cell-char={letter}
             data-cell-is-in-path={false}
             class={`${cellBgColor} h-[90%] w-[90%] text-[30px] leading-[40px] p-0 m-0 rounded-sm`}
-            onClick$={() => {
-              handleClick({
-                boardState,
-                currentIndex,
-                gameState,
-                isInSelectedChars,
-              });
-            }}
             onTouchMove$={(e) => {
               handleTouch({
                 boardState,
                 gameState,
                 e,
               });
+            }}
+            onMouseOver$={(e) => {
+              if (s.isMouseDown) {
+                const el = document.elementFromPoint(e.clientX, e.clientY);
+                if (el) {
+                  handleClick({
+                    boardState,
+                    currentIndex,
+                    gameState,
+                    isInSelectedChars,
+                  });
+                }
+              }
+            }}
+            onMouseDown$={() => {
+              handleClick({
+                boardState,
+                currentIndex,
+                gameState,
+                isInSelectedChars,
+              });
+              s.isMouseDown = true;
+            }}
+            onMouseUp$={() => {
+              s.isMouseDown = false;
             }}
           >
             {letter ? letter : ' '}
@@ -106,6 +127,11 @@ export const handleClick = $(
     const lastCharInPath = selectedChars[selectedChars.length - 1];
     const currentChar = chars[currentIndex];
 
+    console.log('handleClick', {
+      lastCharInPath,
+      currentChar,
+      isInSelectedChars,
+    });
     updatePath({
       boardState,
       currentIndex,
