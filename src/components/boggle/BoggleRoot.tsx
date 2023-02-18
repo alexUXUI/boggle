@@ -5,13 +5,20 @@ import {
   useOnWindow,
   useStore,
   useContextProvider,
+  noSerialize,
 } from '@builder.io/qwik';
 
 import { Controls } from './controls/Controls';
 import { WordsPanel } from './controls/WordsPanel';
 import { BoggleBoard } from './board/Board';
 import { calculateCellWidth, handleFoundWord } from './logic/board';
-import { DictionaryCtx, BoardCtx, GameCtx, AnswersCtx } from './context';
+import {
+  DictionaryCtx,
+  BoardCtx,
+  GameCtx,
+  AnswersCtx,
+  WorkerCtx,
+} from './context';
 import BoggleWorker from './worker?worker';
 
 import type {
@@ -19,6 +26,7 @@ import type {
   GameState,
   AnswersState,
   DictionaryState,
+  WebWorkerState,
 } from './models';
 
 export interface BoggleProps {
@@ -60,26 +68,39 @@ export const BoogleRoot = component$(({ data }: BoggleProps) => {
   useContextProvider(GameCtx, gameState);
   useContextProvider(AnswersCtx, answersState);
 
+  const workerState = useStore<WebWorkerState>({ mod: null });
+
   useOnWindow(
     'DOMContentLoaded',
     $(() => {
       if (window.Worker) {
         const worker = new BoggleWorker();
-        worker.postMessage({
-          language: gameState.language,
-          board: boardState.chars,
-        });
-        worker.onmessage = (event) => {
-          dictionaryState.dictionary = event.data.dictionary;
-          answersState.answers = event.data.answers;
-        };
+        workerState.mod = noSerialize(worker);
       }
     })
   );
 
+  useContextProvider(WorkerCtx, workerState);
+
+  useTask$(({ track }) => {
+    track(() => workerState.mod);
+    if (workerState.mod) {
+      workerState.mod.postMessage({
+        language: gameState.language,
+        board: boardState.chars,
+      });
+      workerState.mod.onmessage = (event) => {
+        dictionaryState.dictionary = event.data.dictionary;
+        answersState.answers = event.data.answers;
+      };
+    }
+  });
+
   useTask$(({ track }) => {
     track(() => gameState.selectedChars);
-    handleFoundWord(gameState, dictionaryState, answersState);
+    if (gameState.selectedChars.length) {
+      handleFoundWord(gameState, dictionaryState, answersState);
+    }
   });
 
   return (
