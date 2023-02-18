@@ -42,7 +42,7 @@ export const WordsList = component$(({ words, variant }: WordsListProps) => {
         {isAnswers ? 'Answers' : 'Found Words'}
       </button>
       <div
-        id={`words-list-${variant} no-scroll`}
+        id={`words-list-${variant}`}
         class={`flex flex-col items-center`}
         style={styles}
       >

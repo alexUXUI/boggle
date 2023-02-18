@@ -1,8 +1,18 @@
-import { $, component$, useContext, useStore } from '@builder.io/qwik';
+import {
+  $,
+  component$,
+  noSerialize,
+  useContext,
+  useOnWindow,
+  useStore,
+  useTask$,
+} from '@builder.io/qwik';
 import type { QwikChangeEvent } from '@builder.io/qwik';
 import { GameCtx, BoardCtx, AnswersCtx, DictionaryCtx } from '../context';
 import { solve } from '../logic/boggle';
 import { randomBoard } from '../logic/board';
+import BoggleWorker from '../worker?worker';
+import type { WebWorkerState } from '../models';
 
 export const Controls = component$(() => {
   const gameState = useContext(GameCtx);
@@ -10,23 +20,51 @@ export const Controls = component$(() => {
   const answersState = useContext(AnswersCtx);
   const dictionaryState = useContext(DictionaryCtx);
 
+  const workerState = useStore<WebWorkerState>({ mod: null });
+
+  useOnWindow(
+    'DOMContentLoaded',
+    $(async () => {
+      if (window.Worker) {
+        const worker = new BoggleWorker();
+        workerState.mod = noSerialize(worker);
+      }
+    })
+  );
+
+  useTask$(({ track }) => {
+    track(() => workerState.mod);
+    if (workerState.mod) {
+      workerState.mod.onmessage = (event) => {
+        console.log('workerState.mod.onmessage', event);
+        dictionaryState.dictionary = event.data.dictionary;
+        answersState.answers = [];
+        answersState.answers = event.data.answers;
+      };
+    }
+  });
+
   const handleBoardCustomization = $(
     async (e: QwikChangeEvent<HTMLInputElement>) => {
       boardState.chars = e.target.value.split('');
-      answersState.answers = solve(
-        dictionaryState.dictionary,
-        boardState.chars
-      );
+      workerState.mod?.postMessage({
+        language: gameState.language,
+        board: boardState.chars,
+      });
     }
   );
 
   // generate new board and solve it
-  const handleRandomizeBoard = $(async () => {
+  const handleRandomizeBoard = $(() => {
     boardState.chars = randomBoard(
       gameState.language,
       boardState.boardSize
     ).split('');
     answersState.answers = solve(dictionaryState.dictionary, boardState.chars);
+    // workerState.mod?.postMessage({
+    //   language: gameState.language,
+    //   board: boardState.chars,
+    // });
   });
 
   // chaneg the language, load the dict, create new board and solve it

@@ -2,6 +2,7 @@ import { Resource, component$ } from '@builder.io/qwik';
 import { useEndpoint } from '@builder.io/qwik-city';
 import type { DocumentHead, RequestHandler } from '@builder.io/qwik-city';
 import { BoogleRoot } from '~/components/boggle/BoggleRoot';
+import type { ServerData } from '~/components/boggle/logic/server';
 import { handleGet } from '~/components/boggle/logic/server';
 
 export const head: DocumentHead = {
@@ -13,14 +14,6 @@ export const head: DocumentHead = {
     },
   ],
 };
-
-export interface ServerData {
-  board: string[];
-  boardWidth: number;
-  boardSize: number;
-  language: string;
-  minCharLength: number;
-}
 
 export default component$(() => {
   const boggleData = useEndpoint<ServerData>();

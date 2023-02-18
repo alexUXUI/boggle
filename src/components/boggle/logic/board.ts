@@ -1,4 +1,4 @@
-import type { QwikTouchEvent } from '@builder.io/qwik';
+// import type { QwikTouchEvent } from '@builder.io/qwik';
 import { $ } from '@builder.io/qwik';
 import type {
   GameState,
@@ -24,6 +24,7 @@ export const isInPath = (
   selectedPath: { index: number; char: string }[],
   board: string[]
 ) => {
+  // console.log('selectedPath', selectedPath);
   return selectedPath.reduce(
     (acc: boolean, element: { index: number; char: string }) => {
       if (
@@ -38,20 +39,18 @@ export const isInPath = (
   );
 };
 
-export const bgColor = (
-  isInSelectedPath: boolean,
-  isWordFound: boolean
-): string => {
-  let bgColor = 'bg-white'; // if char is not part of the selected path, or a found word keep white bg
+export const bgColor = $(
+  (isInSelectedPath: boolean, isWordFound: boolean): string => {
+    let bgColor = 'bg-white'; // if char is not part of the selected path, or a found word keep white bg
 
-  if (isInSelectedPath && isWordFound) {
-    bgColor = 'bg-green-200'; // if word found, highlight the path in green
-  } else if (isInSelectedPath) {
-    bgColor = 'bg-blue-200'; // if char is part of the selected path, highlight it in blue
+    if (isInSelectedPath && isWordFound) {
+      bgColor = 'bg-green-200'; // if word found, highlight the path in green
+    } else if (isInSelectedPath) {
+      bgColor = 'bg-blue-200'; // if char is part of the selected path, highlight it in blue
+    }
+    return bgColor;
   }
-
-  return bgColor;
-};
+);
 
 export const addToSelectedChars = $(
   (currentIndex: number, gameState: GameState, boardState: BoardState) => {
@@ -65,14 +64,14 @@ export const addToSelectedChars = $(
   }
 );
 
-export const deselectCharAndAncestors = $(
-  (currentIndex: number, gameState: GameState) => {
-    const index = gameState.selectedChars.findIndex(
-      (element: any) => element.index === currentIndex
-    );
-    gameState.selectedChars = gameState.selectedChars.slice(0, index);
-  }
-);
+// export const deselectCharAndAncestors = $(
+//   (currentIndex: number, gameState: GameState) => {
+//     const index = gameState.selectedChars.findIndex(
+//       (element: any) => element.index === currentIndex
+//     );
+//     gameState.selectedChars = gameState.selectedChars.slice(0, index);
+//   }
+// );
 
 export const handleCellClick = $(
   (
@@ -105,65 +104,18 @@ export const handleCellClick = $(
     if (isEligible) {
       addToSelectedChars(currentIndex, gameState, boardState);
     } else if (isInSelectedChars) {
-      deselectCharAndAncestors(currentIndex, gameState);
+      // deselectCharAndAncestors(currentIndex, gameState);
     }
   }
 );
 
-export const handleTouchMove = $(
-  (
-    e: QwikTouchEvent<HTMLButtonElement>,
-    boardState: BoardState,
-    gameState: GameState
-  ) => {
-    const element = document.elementFromPoint(
-      e.targetTouches[0].clientX,
-      e.targetTouches[0].clientY
-    );
-    if (element) {
-      // get the data-cell-index from the button
-      const cellIndex = element.getAttribute('data-cell-index')!;
-      const cellChar = element.getAttribute('data-cell-char');
-      const cellIsInPath = element.getAttribute('data-cell-is-in-path');
-      // const currently selected path
-      const selectedPath = gameState.selectedChars;
-      const lastNodeInPath =
-        gameState.selectedChars[gameState.selectedChars.length - 1];
-      // neighors of the last node in the path
-      const neighbors = [
-        lastNodeInPath?.index - boardState.boardSize - 1,
-        lastNodeInPath?.index - boardState.boardSize,
-        lastNodeInPath?.index - boardState.boardSize + 1,
-        lastNodeInPath?.index - 1,
-        lastNodeInPath?.index + 1,
-        lastNodeInPath?.index + boardState.boardSize - 1,
-        lastNodeInPath?.index + boardState.boardSize,
-        lastNodeInPath?.index + boardState.boardSize + 1,
-      ];
-      // if the current node is not in the path, and it is a neighbor of the last node in the path
-      // add it to the path
-      if (cellIsInPath && cellIndex) {
-        // deselect the node and all the nodes after it
-        const index = selectedPath.findIndex(
-          (element) => element.index === Number.parseInt(cellIndex)
-        );
-        gameState.selectedChars = selectedPath.slice(0, index);
-        return;
-      } else if (
-        !lastNodeInPath ||
-        (lastNodeInPath && neighbors.includes(Number.parseInt(cellIndex)))
-      ) {
-        gameState.selectedChars = [
-          ...gameState.selectedChars,
-          {
-            index: Number.parseInt(cellIndex)!,
-            char: cellChar!,
-          },
-        ];
-      }
-    }
-  }
-);
+// export const handleTouchMove = $(
+//   (
+//     e: QwikTouchEvent<HTMLButtonElement>,
+//     boardState: BoardState,
+//     gameState: GameState
+//   ) => {}
+// );
 
 export const handleFoundWord = $(
   (
@@ -183,7 +135,7 @@ export const handleFoundWord = $(
       fireworks();
       setTimeout(() => {
         answersState.foundWords = [...answersState.foundWords, word];
-        gameState.selectedChars = [];
+        // gameState.selectedChars = [];
         gameState.isWordFound = false;
       }, 200);
     }

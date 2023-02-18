@@ -1,27 +1,26 @@
-import {
-  bgColor,
-  handleCellClick,
-  handleTouchMove,
-  isInPath,
-} from '../logic/board';
+import type { QwikTouchEvent } from '@builder.io/qwik';
+import { $ } from '@builder.io/qwik';
+
 import type { BoardState, GameState } from '../models';
 
-export interface Props {
+export interface LetterCubeProps {
   currentIndex: number;
   boardState: BoardState;
-  gameState: GameState;
   key: number;
+  gameState: GameState;
+  cellBgColor: string;
+  isInSelectedChars: boolean;
 }
 
-export const LetterCube = (props: Props) => {
-  const { currentIndex, boardState, gameState, key } = props;
+export const LetterCube = ({
+  currentIndex,
+  boardState,
+  key,
+  gameState,
+  cellBgColor,
+  isInSelectedChars,
+}: LetterCubeProps) => {
   const letter = boardState.chars[currentIndex].toLocaleUpperCase();
-  const isInSelectedChars = isInPath(
-    currentIndex,
-    gameState.selectedChars,
-    boardState.chars
-  );
-  const cellBgColor = bgColor(isInSelectedChars, gameState?.isWordFound);
   const baseStyle = {
     height: `${boardState.cellWidth}px` ?? 0,
     width: `${boardState.cellWidth}px` ?? 0,
@@ -64,17 +63,23 @@ export const LetterCube = (props: Props) => {
           <button
             data-cell-index={currentIndex}
             data-cell-char={letter}
-            data-cell-is-in-path={isInSelectedChars}
+            data-cell-is-in-path={false}
             class={`${cellBgColor} h-[90%] w-[90%] text-[30px] leading-[40px] p-0 m-0 rounded-sm`}
             onClick$={() => {
-              handleCellClick(
-                isInSelectedChars,
-                currentIndex,
+              handleClick({
                 boardState,
-                gameState
-              );
+                currentIndex,
+                gameState,
+                isInSelectedChars,
+              });
             }}
-            onTouchMove$={(e) => handleTouchMove(e, boardState, gameState)}
+            onTouchMove$={(e) => {
+              handleTouch({
+                boardState,
+                gameState,
+                e,
+              });
+            }}
           >
             {letter ? letter : ' '}
           </button>
@@ -82,4 +87,129 @@ export const LetterCube = (props: Props) => {
       </div>
     </td>
   );
+};
+
+export const handleClick = $(
+  ({
+    boardState,
+    currentIndex,
+    gameState,
+    isInSelectedChars,
+  }: {
+    boardState: BoardState;
+    currentIndex: number;
+    gameState: GameState;
+    isInSelectedChars: boolean;
+  }) => {
+    const { chars } = boardState;
+    const { selectedChars } = gameState;
+    const lastCharInPath = selectedChars[selectedChars.length - 1];
+    const currentChar = chars[currentIndex];
+
+    updatePath({
+      boardState,
+      currentIndex,
+      gameState,
+      isInSelectedChars,
+      lastCharInPath,
+      currentChar,
+    });
+  }
+);
+
+export const handleTouch = $(
+  ({
+    boardState,
+    gameState,
+    e,
+  }: {
+    boardState: BoardState;
+    gameState: GameState;
+    e: QwikTouchEvent<HTMLButtonElement>;
+  }) => {
+    const element = document.elementFromPoint(
+      e.targetTouches[0].clientX,
+      e.targetTouches[0].clientY
+    );
+    if (element) {
+      const currentIndex = Number.parseInt(
+        element.getAttribute('data-cell-index')!
+      );
+      const currentChar = element.getAttribute('data-cell-char')!;
+      const isInSelectedChars = Boolean(
+        element.getAttribute('data-cell-is-in-path')
+      );
+
+      const lastCharInPath =
+        gameState.selectedChars[gameState.selectedChars.length - 1];
+
+      updatePath({
+        boardState,
+        currentIndex,
+        gameState,
+        isInSelectedChars,
+        lastCharInPath,
+        currentChar,
+      });
+    }
+  }
+);
+
+export const updatePath = ({
+  boardState,
+  currentIndex,
+  gameState,
+  isInSelectedChars,
+  lastCharInPath,
+  currentChar,
+}: {
+  boardState: BoardState;
+  currentIndex: number;
+  gameState: GameState;
+  isInSelectedChars: boolean;
+  lastCharInPath: { index: number; char: string };
+  currentChar: string;
+}) => {
+  if (!lastCharInPath) {
+    gameState.selectedChars = [
+      ...gameState.selectedChars,
+      {
+        index: currentIndex,
+        char: currentChar,
+      },
+    ];
+    return;
+  } else if (lastCharInPath && !isInSelectedChars) {
+    const { index } = lastCharInPath;
+    const { boardSize } = boardState;
+    const neighbors = [
+      index - boardSize - 1,
+      index - boardSize,
+      index - boardSize + 1,
+      index - 1,
+      index + 1,
+      index + boardSize - 1,
+      index + boardSize,
+      index + boardSize + 1,
+    ];
+    const isNeighbor = Boolean(
+      neighbors.filter((idx: number) => idx === currentIndex).length
+    );
+    if (isNeighbor) {
+      gameState.selectedChars = [
+        ...gameState.selectedChars,
+        {
+          index: currentIndex,
+          char: currentChar,
+        },
+      ];
+      return;
+    }
+    return;
+  } else {
+    const index = gameState.selectedChars.findIndex(
+      ({ index }: { index: number }) => index === currentIndex
+    );
+    gameState.selectedChars = gameState.selectedChars.slice(0, index);
+  }
 };

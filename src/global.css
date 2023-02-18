@@ -92,10 +92,10 @@ a.mindblow:hover {
   transform: translateY(4px);
 }
 
-.stop-scrolling {
+/* .stop-scrolling {
   height: 100%;
   overflow: hidden;
-}
+} */
 
 .cell {
   width: 99.5%;

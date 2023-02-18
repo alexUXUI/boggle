@@ -1,6 +1,13 @@
 import { $, component$, useContext, useOnWindow } from '@builder.io/qwik';
 import { BoardCtx, GameCtx } from '../context';
 import { LetterCube } from './LetterCube';
+// import { bgColor, isInPath } from '../logic/board';
+
+export enum LetterCubeBgColor {
+  Unselected = 'bg-white',
+  Selected = 'bg-blue-200',
+  WordFound = 'bg-green-200',
+}
 
 export const BoggleBoard = component$(() => {
   const boardState = useContext(BoardCtx);
@@ -49,12 +56,29 @@ export const BoggleBoard = component$(() => {
             <tr class={`flex w-full justify-evenly`} key={i}>
               {Array.from({ length: boardState.boardSize }, (_jdx, j) => {
                 const currentIndex = i * boardState.boardSize + j;
+
+                const isCharSelected = Boolean(
+                  gameState.selectedChars.filter(
+                    ({ index }) => index === currentIndex
+                  ).length
+                );
+
+                let cellBgColor = LetterCubeBgColor.Unselected; // if char is not part of the selected path, or a found word keep white bg
+                const isWordFound = false;
+                if (isCharSelected && isWordFound) {
+                  cellBgColor = LetterCubeBgColor.WordFound; // if word found, highlight the path in green
+                } else if (isCharSelected) {
+                  cellBgColor = LetterCubeBgColor.Selected; // if char is part of the selected path, highlight it in blue
+                }
+
                 return (
                   <LetterCube
+                    gameState={gameState}
+                    cellBgColor={cellBgColor}
                     key={currentIndex}
                     currentIndex={currentIndex}
                     boardState={boardState}
-                    gameState={gameState}
+                    isInSelectedChars={isCharSelected}
                   />
                 );
               })}

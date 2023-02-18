@@ -1,3 +1,4 @@
+import type { NoSerialize } from '@builder.io/qwik';
 import type { Language } from '~/components/boggle/logic/api';
 
 export interface BoardState {
@@ -13,6 +14,17 @@ export interface AnswersState {
 
 export interface DictionaryState {
   dictionary: string[];
+}
+
+export interface WebWorkerState {
+  mod: NoSerialize<Worker> | null;
+}
+
+export interface WasmState {
+  mod: NoSerialize<
+    // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+    typeof import('/Users/alexbennett/Desktop/personal/boggle/src/components/boggle/boggle-solver/pkg/boggle_solver')
+  > | null;
 }
 
 export interface GameState {

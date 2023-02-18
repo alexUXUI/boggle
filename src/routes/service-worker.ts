@@ -13,9 +13,26 @@ import { setupServiceWorker } from '@builder.io/qwik-city/service-worker';
 // set up a fetch listener to handle all requests
 
 setupServiceWorker();
-
 addEventListener('install', () => {
   self.skipWaiting();
+});
+
+const cacheName = 'public-assets-cache';
+const filesToCache = ['engmix.txt'];
+self.addEventListener('install', function (event) {
+  console.log('installing');
+  event.waitUntil(
+    caches
+      .open(cacheName)
+      .then((Cache) => {
+        console.log('Opened cache');
+        console.log('filesToCache', filesToCache);
+        return Cache.addAll(filesToCache);
+      })
+      .then(function () {
+        return self.skipWaiting();
+      })
+  );
 });
 
 // Immediately claim any new clients. This is not needed to send messages, but
@@ -27,6 +44,8 @@ self.addEventListener('activate', function (event) {
 
 // Listen for messages from clients.
 self.addEventListener('message', function (event) {
+  console.log('service worker setup');
+
   // Get all the connected clients and forward the message along.
   const promise = self.clients.matchAll().then(function (clientList) {
     // event.source.id contains the ID of the sender of the message.

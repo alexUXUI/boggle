@@ -2,7 +2,14 @@ import type { RequestContext } from '@builder.io/qwik-city';
 import parser from 'ua-parser-js';
 import { Language } from './api';
 import { randomBoard } from './board';
-import type { ServerData } from '~/routes';
+
+export interface ServerData {
+  board: string[];
+  boardWidth: number;
+  boardSize: number;
+  language: string;
+  minCharLength: number;
+}
 
 type ReqArgs = {
   url: URL;
@@ -13,7 +20,7 @@ export const handleGet = ({ url, request }: ReqArgs): ServerData => {
   let language = Language.English;
   let board = randomBoard(language, 5).split('');
   let boardSize = 5;
-  let minCharLength = 3;
+  let minCharLength = 5;
 
   const boardWidth = boardWidthFromRequest(request);
   const paramsObject = Object.fromEntries(url.searchParams);

@@ -76,7 +76,7 @@ pub fn get_board_string(board: js_sys::Array) -> String {
 }
 
 #[wasm_bindgen]
-pub fn run_game(dictionary: js_sys::Array, board: js_sys::JsString) -> js_sys::Array {
+pub async fn run_game(dictionary: js_sys::Array, board: js_sys::JsString) -> js_sys::Array {
     // print the board  using format
     log(&format!("Board: {:?}", board));
 

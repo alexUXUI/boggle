@@ -133,6 +133,7 @@ export const solve = (words: string[], board: string[]): string[] => {
     // get the words from the board
     results = getWords(stringToMatrix, trie).sort();
   } catch (error) {
+    console.log('error', error);
     console.log(error);
   }
 

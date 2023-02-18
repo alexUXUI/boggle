@@ -1,7 +1,7 @@
 export const English_DICT_URL =
   'https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt';
 
-export const English_DICT_URL_2 = '/engmix.txt';
+export const English_DICT_URL_2 = 'https://boggle.pages.dev/engmix.txt';
 
 export const Russian_DICT_URL =
   'https://raw.githubusercontent.com/hingston/Russian/master/10000-Russian-words.txt';
