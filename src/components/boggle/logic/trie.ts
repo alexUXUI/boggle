@@ -1,12 +1,4 @@
-const englishCharArr = 'abcdefghijklmnopqrstuvwxyz'.split('');
-
-type Char = typeof englishCharArr[number];
-export interface TrieNode {
-  isWord?: boolean | undefined;
-  children: {
-    [key: Char]: TrieNode;
-  };
-}
+import type { TrieNode } from '../models';
 
 class TrieClass {
   root: TrieNode = {

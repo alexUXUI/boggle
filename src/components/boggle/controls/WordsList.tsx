@@ -1,14 +1,10 @@
 import { $, component$, useContext, useStore } from '@builder.io/qwik';
 import { GameCtx } from '../context';
+import { WordListType } from '../models';
 
 interface WordsListProps {
   words: string[];
-  variant: Variant;
-}
-
-export enum Variant {
-  Answers = 'answers',
-  Found = 'foundwords',
+  variant: WordListType;
 }
 
 export const WordsList = component$(({ words, variant }: WordsListProps) => {
@@ -30,7 +26,7 @@ export const WordsList = component$(({ words, variant }: WordsListProps) => {
     left: 0,
   };
 
-  const isAnswers = variant === Variant.Answers;
+  const isAnswers = variant === WordListType.Answers;
 
   return (
     <div class="">

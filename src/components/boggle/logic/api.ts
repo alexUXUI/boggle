@@ -1,3 +1,6 @@
+import type { LanguageType } from '../models';
+import { Language } from '../models';
+
 export const English_DICT_URL =
   'https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt';
 
@@ -6,13 +9,7 @@ export const English_DICT_URL_2 = 'https://boggle.pages.dev/engmix.txt';
 export const Russian_DICT_URL =
   'https://raw.githubusercontent.com/hingston/Russian/master/10000-Russian-words.txt';
 
-export enum Language {
-  English = 'English',
-  Russian = 'Russian',
-  Spanish = 'Spanish',
-}
-
-export const getDictionary = async (language: Language) => {
+export const getDictionary = async (language: LanguageType) => {
   const response = await fetch(
     language === Language.English ? English_DICT_URL_2 : Russian_DICT_URL
   );

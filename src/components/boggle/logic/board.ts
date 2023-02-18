@@ -1,128 +1,9 @@
-// import type { QwikTouchEvent } from '@builder.io/qwik';
-import { LetterCubeBgColor } from '../models';
-import { Language } from './api';
-
-// create random board from landguage and board size
-export const randomBoard = (language: Language, length: number): string => {
-  switch (language) {
-    case Language.English:
-      return generateRandomBoard(length, Language.English);
-    case Language.Spanish:
-      return generateRandomBoard(length, Language.Spanish);
-    case Language.Russian:
-      return generateRandomBoard(length, Language.Russian);
-    default:
-      return generateRandomBoard(length, Language.English);
-  }
-};
-
-export const bgColor = (
-  isCharSelected: boolean,
-  isWordFound: boolean
-): LetterCubeBgColor => {
-  let cellBgColor;
-  switch (true) {
-    case isCharSelected && isWordFound:
-      cellBgColor = LetterCubeBgColor.WordFound; // if word found, highlight the path in green
-      break;
-    case isCharSelected:
-      cellBgColor = LetterCubeBgColor.Selected; // if char is part of the selected path, highlight it in blue
-      break;
-    default:
-      cellBgColor = LetterCubeBgColor.Unselected;
-  }
-  return cellBgColor;
-};
-
-export const englishVowels = [
-  'e',
-  'e',
-  'e',
-  'e',
-  'e',
-  'a',
-  'a',
-  'a',
-  'i',
-  'i',
-  's',
-  's',
-];
-export const englishConsonants = [
-  'r',
-  'h',
-  'm',
-  't',
-  'd',
-  'c',
-  'l',
-  'b',
-  'f',
-  'g',
-  'n',
-  'p',
-  'w',
-];
-export const englishUnpopularConsonants = [
-  'j',
-  'k',
-  'k',
-  'q',
-  'v',
-  'x',
-  'y',
-  'y',
-  'y',
-  'z',
-];
-
-export const russianVowels = [
-  'а',
-  'а',
-  'а',
-  'о',
-  'е',
-  'е',
-  'е',
-  'и',
-  'и',
-  'и',
-  'н',
-];
-export const russianConsonants = [
-  'р',
-  'т',
-  'к',
-  'м',
-  'д',
-  'п',
-  'у',
-  'я',
-  'ы',
-  'ь',
-  'г',
-  'з',
-  'б',
-  'ч',
-  'й',
-  'х',
-  'ж',
-  'ш',
-  'ю',
-  'ц',
-  'щ',
-  'ф',
-  'э',
-  'с',
-  'в',
-  'л',
-];
-
-export const russianUnpopularConsonants = ['й', 'к'];
+import { Language, LetterCubeBgColor } from '../models';
+import type { LanguageType } from '../models';
 
 export const generateRandomBoard = (
   length: number,
-  language: Language
+  language: LanguageType
 ): string => {
   const lengthSquared = length * length;
 
@@ -190,6 +71,124 @@ export const generateRandomBoard = (
 
   return shuffledResults.join('');
 };
+
+export const randomBoard = (language: LanguageType, length: number): string => {
+  switch (language) {
+    case Language.English:
+      return generateRandomBoard(length, Language.English);
+    case Language.Spanish:
+      return generateRandomBoard(length, Language.Spanish);
+    case Language.Russian:
+      return generateRandomBoard(length, Language.Russian);
+    default:
+      return generateRandomBoard(length, Language.English);
+  }
+};
+
+export const bgColor = (
+  isCharSelected: boolean,
+  isWordFound: boolean
+): LetterCubeBgColor => {
+  let cellBgColor;
+  switch (true) {
+    case isCharSelected && isWordFound:
+      cellBgColor = LetterCubeBgColor.WordFound;
+      break;
+    case isCharSelected:
+      cellBgColor = LetterCubeBgColor.Selected;
+      break;
+    default:
+      cellBgColor = LetterCubeBgColor.Unselected;
+  }
+  return cellBgColor;
+};
+
+export const englishVowels = [
+  'e',
+  'e',
+  'e',
+  'e',
+  'e',
+  'a',
+  'a',
+  'a',
+  'i',
+  'i',
+  's',
+  's',
+];
+export const englishConsonants = [
+  'r',
+  'h',
+  'm',
+  't',
+  'd',
+  'c',
+  'l',
+  'b',
+  'f',
+  'g',
+  'n',
+  'p',
+  'w',
+];
+export const englishUnpopularConsonants = [
+  'j',
+  'k',
+  'k',
+  'q',
+  'v',
+  'x',
+  'y',
+  'y',
+  'y',
+  'z',
+];
+
+export const russianVowels = [
+  'а',
+  'а',
+  'а',
+  'о',
+  'е',
+  'е',
+  'е',
+  'и',
+  'и',
+  'и',
+  'н',
+];
+
+export const russianConsonants = [
+  'р',
+  'т',
+  'к',
+  'м',
+  'д',
+  'п',
+  'у',
+  'я',
+  'ы',
+  'ь',
+  'г',
+  'з',
+  'б',
+  'ч',
+  'й',
+  'х',
+  'ж',
+  'ш',
+  'ю',
+  'ц',
+  'щ',
+  'ф',
+  'э',
+  'с',
+  'в',
+  'л',
+];
+
+export const russianUnpopularConsonants = ['й', 'к'];
 
 export const calculateCellWidth = (boardWidth: number, boardSize: number) => {
   switch (boardSize) {

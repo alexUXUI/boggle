@@ -1,13 +1,14 @@
 import type { RequestContext } from '@builder.io/qwik-city';
 import parser from 'ua-parser-js';
-import { Language } from './api';
 import { randomBoard } from './board';
+import { Language } from '../models';
+import type { LanguageType } from '../models';
 
 export interface ServerData {
   board: string[];
   boardWidth: number;
   boardSize: number;
-  language: string;
+  language: LanguageType;
   minCharLength: number;
 }
 
