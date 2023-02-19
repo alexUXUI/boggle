@@ -17,10 +17,10 @@ onmessage = async (e: MessageEvent<MessageData>) => {
     dictionaryCache = dictionary;
   }
 
-  const answers = solve(dictionary, board);
+  const answers = solve(dictionaryCache, board);
 
   postMessage({
-    dictionary,
+    dictionary: dictionaryCache,
     answers,
   });
 };

@@ -71,6 +71,7 @@ export const Controls = component$(() => {
       gameState.language,
       boardState.boardSize
     ).split('');
+    answersState.answers = [];
     worker.mod?.postMessage({
       language: gameState.language,
       board: boardState.chars,
