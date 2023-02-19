@@ -36,7 +36,7 @@ export const Controls = component$(() => {
     $(() => {
       window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-          constrolsState.isOpen = !constrolsState.isOpen;
+          constrolsState.isOpen = false;
         }
       });
       window.addEventListener('click', (e) => {

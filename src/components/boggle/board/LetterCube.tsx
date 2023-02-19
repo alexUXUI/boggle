@@ -65,10 +65,11 @@ export const LetterCube = ({
         />
         <div class="face flex items-center justify-center">
           <button
+            id={currentIndex.toString()}
             data-cell-index={currentIndex}
             data-cell-char={letter}
             data-cell-is-in-path={false}
-            class={`${cellBgColor} h-[90%] w-[90%] text-[30px] leading-[40px] p-0 m-0 rounded-sm`}
+            class={`${cellBgColor} important h-[90%] w-[90%] text-[30px] leading-[40px] p-0 m-0 rounded-sm`}
             onTouchMove$={(e) => {
               handleTouch({
                 boardState,
@@ -100,6 +101,16 @@ export const LetterCube = ({
             }}
             onMouseUp$={() => {
               s.isMouseDown = false;
+            }}
+            onKeyDown$={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                handleClick({
+                  boardState,
+                  currentIndex,
+                  gameState,
+                  isInSelectedChars,
+                });
+              }
             }}
           >
             {letter ? letter : ' '}

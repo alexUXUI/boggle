@@ -1,6 +1,6 @@
-import { Resource, component$ } from '@builder.io/qwik';
-import { useEndpoint } from '@builder.io/qwik-city';
-import type { DocumentHead, RequestHandler } from '@builder.io/qwik-city';
+import { component$ } from '@builder.io/qwik';
+import { loader$ } from '@builder.io/qwik-city';
+import type { DocumentHead, Loader } from '@builder.io/qwik-city';
 import { BoogleRoot } from '~/components/boggle/BoggleRoot';
 import type { ServerData } from '~/components/boggle/logic/server';
 import { handleGet } from '~/components/boggle/logic/server';
@@ -16,18 +16,10 @@ export const head: DocumentHead = {
 };
 
 export default component$(() => {
-  const boggleData = useEndpoint<ServerData>();
-
-  return (
-    <Resource
-      value={boggleData}
-      onPending={() => <div>Loading...</div>}
-      onRejected={() => <div>Error</div>}
-      onResolved={(data) => <BoogleRoot data={data} />}
-    />
-  );
+  const boggleData = useBoggleData();
+  return <BoogleRoot data={boggleData.value} />;
 });
 
-export const onGet: RequestHandler<ServerData> = ({ url, request }) => {
-  return handleGet({ url, request });
-};
+export const useBoggleData: Loader<ServerData> = loader$(
+  ({ url, request }): ServerData => handleGet({ url, request })
+);

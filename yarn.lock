@@ -2,20 +2,21 @@
 # yarn lockfile v1
 
 
-"@builder.io/qwik-city@0.0.128":
-  version "0.0.128"
-  resolved "https://registry.npmjs.org/@builder.io/qwik-city/-/qwik-city-0.0.128.tgz"
-  integrity sha512-IgE2nZuoyRGRpsQ9HwbWV8IaaP9rWZGgi1hSzXJLCW2GrVfB49aNph3lQYDeoBOdvUSIucfGbUXFLn7215JOFA==
+"@builder.io/qwik-city@0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@builder.io/qwik-city/-/qwik-city-0.2.1.tgz#c57f481a75534ff54ddb0f38403acc66b5d02f41"
+  integrity sha512-g+ZC4Neo1XYQ/8uquUp6GKwr0eagpuCyQ3LkAtFhaIARaO67+cZfR6EFLJzf9wz5AVSt8/0QSD7wJEpni1i4IA==
   dependencies:
-    "@mdx-js/mdx" "2.1.5"
+    "@mdx-js/mdx" "2.3.0"
     "@types/mdx" "2.0.3"
     source-map "0.7.4"
-    vfile "5.3.6"
+    vfile "5.3.7"
+    zod "^3.20.6"
 
-"@builder.io/qwik@0.16.2":
-  version "0.16.2"
-  resolved "https://registry.npmjs.org/@builder.io/qwik/-/qwik-0.16.2.tgz"
-  integrity sha512-yq+WXx54PVDJkTse7C7zYcTVIn2g5qHD2buH/iy7nux+fVLd2Qpui7UK1nuioK2Kpf75JfEAH9ZSWIHQl32FKQ==
+"@builder.io/qwik@0.18.1":
+  version "0.18.1"
+  resolved "https://registry.yarnpkg.com/@builder.io/qwik/-/qwik-0.18.1.tgz#341d01c5749a07230c700a5e4df859b857654cd0"
+  integrity sha512-11qx5Wh6WRxgvHDJDppJORhykzkACUYuu9qRKEGdS3vTkBQ2Rr8NFDjYon2x6+8Wu9WukHk84ANywWnS91gS/w==
 
 "@cloudflare/kv-asset-handler@^0.2.0":
   version "0.2.0"
@@ -201,10 +202,10 @@
   resolved "https://registry.npmjs.org/@iarna/toml/-/toml-2.2.5.tgz"
   integrity sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg==
 
-"@mdx-js/mdx@2.1.5":
-  version "2.1.5"
-  resolved "https://registry.npmjs.org/@mdx-js/mdx/-/mdx-2.1.5.tgz"
-  integrity sha512-zEG0lt+Bl/r5U6e0TOS7qDbsXICtemfAPquxWFsMbdzrvlWaqMGemLl+sjVpqlyaaiCiGVQBSGdCk0t1qXjkQg==
+"@mdx-js/mdx@2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@mdx-js/mdx/-/mdx-2.3.0.tgz#d65d8c3c28f3f46bb0e7cb3bf7613b39980671a9"
+  integrity sha512-jLuwRlz8DQfQNiUCJR50Y09CGPq3fLtmtUQfVrj79E0JWu3dvsVcxVIcfhR5h0iXu+/z++zDrYeiJqifRynJkA==
   dependencies:
     "@types/estree-jsx" "^1.0.0"
     "@types/mdx" "^2.0.0"
@@ -3421,7 +3422,17 @@ vfile-message@^3.0.0:
     "@types/unist" "^2.0.0"
     unist-util-stringify-position "^3.0.0"
 
-vfile@5.3.6, vfile@^5.0.0:
+vfile@5.3.7:
+  version "5.3.7"
+  resolved "https://registry.yarnpkg.com/vfile/-/vfile-5.3.7.tgz#de0677e6683e3380fafc46544cfe603118826ab7"
+  integrity sha512-r7qlzkgErKjobAmyNIkkSpizsFPYiUPuJb5pNW1RB4JcYVZhs4lIbVqk8XPk033CV/1z8ss5pkax8SuhGpcG8g==
+  dependencies:
+    "@types/unist" "^2.0.0"
+    is-buffer "^2.0.0"
+    unist-util-stringify-position "^3.0.0"
+    vfile-message "^3.0.0"
+
+vfile@^5.0.0:
   version "5.3.6"
   resolved "https://registry.npmjs.org/vfile/-/vfile-5.3.6.tgz"
   integrity sha512-ADBsmerdGBs2WYckrLBEmuETSPyTD4TuLxTrw0DvjirxW1ra4ZwkbzG8ndsv3Q57smvHxo677MHaQrY9yxH8cA==
@@ -3580,6 +3591,11 @@ youch@^2.2.2:
     cookie "^0.4.1"
     mustache "^4.2.0"
     stack-trace "0.0.10"
+
+zod@^3.20.6:
+  version "3.20.6"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-3.20.6.tgz#2f2f08ff81291d47d99e86140fedb4e0db08361a"
+  integrity sha512-oyu0m54SGCtzh6EClBVqDDlAYRz4jrVtKwQ7ZnsEmMI9HnzuZFj8QFwAY1M5uniIYACdGvv0PBWPF2kO0aNofA==
 
 zwitch@^2.0.0:
   version "2.0.4"

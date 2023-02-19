@@ -93,11 +93,11 @@ export const BoogleRoot = component$(({ data }: BoggleProps) => {
     }
   });
 
-  useContextProvider(WorkerCtx, workerState);
   useContextProvider(DictionaryCtx, dictionaryState);
   useContextProvider(BoardCtx, boardState);
   useContextProvider(GameCtx, gameState);
   useContextProvider(AnswersCtx, answersState);
+  useContextProvider(WorkerCtx, workerState);
 
   return (
     <div class="h-[100%] dont-scroll">
