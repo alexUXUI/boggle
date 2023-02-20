@@ -106,7 +106,7 @@ export const BoogleRoot = component$(({ data }: BoggleProps) => {
   return (
     <div class="h-[100%] dont-scroll">
       <Controls />
-      <UserGameStats />
+      {/* <UserGameStats /> */}
       <BoggleBoard />
       <WordsPanel />
     </div>
