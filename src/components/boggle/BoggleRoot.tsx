@@ -29,7 +29,6 @@ import type {
   WebWorkerState,
   LanguageType,
 } from './models';
-import { UserGameStats } from './user/UserGameStats';
 
 export interface BoggleProps {
   data: {
