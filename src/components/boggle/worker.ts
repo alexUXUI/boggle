@@ -5,6 +5,7 @@ interface MessageData {
   language: string;
   board: string[];
   isDictionaryLoaded?: boolean;
+  minCharLength: number;
 }
 
 let dictionaryCache: string[] = [];
@@ -18,7 +19,9 @@ onmessage = async (e: MessageEvent<MessageData>) => {
     dictionaryCache = dictionary;
   }
 
-  const answers = solve(dictionaryCache, board);
+  const answers = solve(dictionaryCache, board).filter(
+    (answer) => answer.length >= e.data.minCharLength
+  );
 
   postMessage({
     dictionary: !isDictionaryLoaded ? dictionaryCache : [],

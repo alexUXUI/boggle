@@ -1,13 +1,31 @@
-import { component$ } from '@builder.io/qwik';
+import { component$, useContext } from '@builder.io/qwik';
+import { AnswersCtx } from '../context';
 
 export const UserGameStats = component$(() => {
+  const answersState = useContext(AnswersCtx);
+
+  const longestWord = answersState.foundWords.reduce((a, b): string => {
+    return a.length > b.length ? a : b;
+  }, '');
+
   return (
-    <div class="h-[100px] w-full bg-red-300">
-      <ul class="w-full sm:max-w-full lg:max-w-[500px] h-[100px] flex flex-wrap justify-between items-center m-auto">
-        <li class="flex justify-center w-[50%] h-[50px]">level: 0</li>
-        <li class="flex justify-center w-[50%] h-[50px]">Score: 0</li>
-        <li class="flex justify-center w-[50%] h-[50px]">Words Found: 0</li>
-        <li class="flex justify-center w-[50%] h-[50px]">Longest word: 0</li>
+    <div class="h-[60px] w-full flex flex-col items-center justify-center">
+      <ul class="w-full sm:max-w-full md:max-w-[500px] h-[100px] flex flex-wrap justify-between items-center m-auto">
+        <li class="flex justify-center w-fit h-[40px] items-center">
+          level: 0
+        </li>
+        <li class="flex justify-center w-fit h-[40px] items-center">
+          Score: 0
+        </li>
+        <li class="flex justify-center w-fit h-[40px] items-center">
+          Found:{' '}
+          {answersState.foundWords.length ? answersState.foundWords.length : 0}{' '}
+          / {answersState.answers.length}
+        </li>
+        <li class="flex justify-center w-fit h-[40px] items-center">
+          Longest: {longestWord.length}{' '}
+          {longestWord ? `(${longestWord})` : null}
+        </li>
       </ul>
     </div>
   );

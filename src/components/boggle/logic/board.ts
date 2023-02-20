@@ -1,10 +1,12 @@
-import { $, QwikTouchEvent } from '@builder.io/qwik';
-import { BoardState, Language, LetterCubeBgColor } from '../models';
+import type { QwikTouchEvent } from '@builder.io/qwik';
+import { $ } from '@builder.io/qwik';
+import { Language, LetterCubeBgColor } from '../models';
 import type {
   LanguageType,
   AnswersState,
   DictionaryState,
   GameState,
+  BoardState,
 } from '../models';
 import { fireworks } from './confetti';
 import * as Tone from 'tone';

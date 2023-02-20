@@ -54,6 +54,7 @@ export const Controls = component$(() => {
       worker.mod?.postMessage({
         language: gameState.language,
         board: boardState.chars,
+        minCharLength: gameState.minCharLength,
       });
     }
   );
@@ -67,6 +68,7 @@ export const Controls = component$(() => {
     worker.mod?.postMessage({
       language: gameState.language,
       board: boardState.chars,
+      minCharLength: gameState.minCharLength,
     });
   });
 
@@ -77,6 +79,7 @@ export const Controls = component$(() => {
     worker.mod?.postMessage({
       language: gameState.language,
       board: boardState.chars,
+      minCharLength: gameState.minCharLength,
     });
   });
 
@@ -87,6 +90,7 @@ export const Controls = component$(() => {
     worker.mod?.postMessage({
       language: gameState.language,
       board: boardState.chars,
+      minCharLength: gameState.minCharLength,
     });
   });
 

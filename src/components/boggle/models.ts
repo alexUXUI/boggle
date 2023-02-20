@@ -49,6 +49,8 @@ export interface GameState {
   selectedChars: { index: number; char: string }[];
   language: LanguageType;
   minCharLength: number;
+  currentLevel: number;
+  wordsUntilNextLevel: number;
 }
 
 export enum LetterCubeBgColor {

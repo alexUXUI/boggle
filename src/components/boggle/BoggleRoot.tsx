@@ -29,6 +29,7 @@ import type {
   WebWorkerState,
   LanguageType,
 } from './models';
+import { UserGameStats } from './user/UserGameStats';
 
 export interface BoggleProps {
   data: {
@@ -57,6 +58,8 @@ export const BoogleRoot = component$(({ data }: BoggleProps) => {
     selectedChars: [],
     language: language,
     minCharLength: minCharLength ?? 0,
+    currentLevel: 0,
+    wordsUntilNextLevel: 0,
   });
 
   const answersState = useStore<AnswersState>({
@@ -76,6 +79,7 @@ export const BoogleRoot = component$(({ data }: BoggleProps) => {
           workerState.mod.postMessage({
             language: gameState.language,
             board: boardState.chars,
+            minCharLength: gameState.minCharLength,
             isDictionaryLoaded: dictionaryState.dictionary.length,
           });
           workerState.mod.onmessage = (event) => {
@@ -96,6 +100,11 @@ export const BoogleRoot = component$(({ data }: BoggleProps) => {
     }
   });
 
+  useTask$(({ track }) => {
+    track(() => answersState.foundWords);
+    // when the user finds a word, update the level if necessary
+  });
+
   useContextProvider(DictionaryCtx, dictionaryState);
   useContextProvider(BoardCtx, boardState);
   useContextProvider(GameCtx, gameState);
@@ -105,7 +114,7 @@ export const BoogleRoot = component$(({ data }: BoggleProps) => {
   return (
     <div class="h-[100%] dont-scroll">
       <Controls />
-      {/* <UserGameStats /> */}
+      <UserGameStats />
       <BoggleBoard />
       <WordsPanel />
     </div>
