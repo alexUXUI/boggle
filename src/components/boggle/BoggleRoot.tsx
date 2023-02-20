@@ -76,9 +76,13 @@ export const BoogleRoot = component$(({ data }: BoggleProps) => {
           workerState.mod.postMessage({
             language: gameState.language,
             board: boardState.chars,
+            isDictionaryLoaded: dictionaryState.dictionary.length,
           });
           workerState.mod.onmessage = (event) => {
-            dictionaryState.dictionary = event.data.dictionary;
+            console.log('event.data', event.data);
+            if (!dictionaryState.dictionary.length) {
+              dictionaryState.dictionary = event.data.dictionary;
+            }
             answersState.answers = event.data.answers;
           };
         }

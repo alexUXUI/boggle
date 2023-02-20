@@ -4,12 +4,13 @@ import { solve } from './logic/boggle';
 interface MessageData {
   language: string;
   board: string[];
+  isDictionaryLoaded?: boolean;
 }
 
 let dictionaryCache: string[] = [];
 
 onmessage = async (e: MessageEvent<MessageData>) => {
-  const { language, board } = e.data;
+  const { language, board, isDictionaryLoaded } = e.data;
 
   let dictionary: string[] = [];
   if (!dictionaryCache.length) {
@@ -20,7 +21,7 @@ onmessage = async (e: MessageEvent<MessageData>) => {
   const answers = solve(dictionaryCache, board);
 
   postMessage({
-    dictionary: dictionaryCache,
+    dictionary: !isDictionaryLoaded ? dictionaryCache : [],
     answers,
   });
 };
