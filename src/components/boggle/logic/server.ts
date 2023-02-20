@@ -1,4 +1,3 @@
-import type { RequestContext } from '@builder.io/qwik-city';
 import parser from 'ua-parser-js';
 import { randomBoard } from './board';
 import { Language } from '../models';
@@ -14,14 +13,21 @@ export interface ServerData {
 
 type ReqArgs = {
   url: URL;
-  request: RequestContext;
+  request: Request;
+};
+
+export const gameConfig = {
+  boardSize: 5,
+  minCharLength: 3,
+  language: Language.English,
 };
 
 export const handleGet = ({ url, request }: ReqArgs): ServerData => {
-  let language = Language.English;
-  let board = randomBoard(language, 5).split('');
-  let boardSize = 5;
-  let minCharLength = 5;
+  let language = gameConfig.language;
+  let minCharLength = gameConfig.minCharLength;
+  let boardSize = gameConfig.boardSize;
+
+  let board = randomBoard(language, boardSize).split('');
 
   const boardWidth = boardWidthFromRequest(request);
   const paramsObject = Object.fromEntries(url.searchParams);
@@ -51,7 +57,7 @@ export const handleGet = ({ url, request }: ReqArgs): ServerData => {
   };
 };
 
-export const boardWidthFromRequest = (request: RequestContext) => {
+export const boardWidthFromRequest = (request: Request) => {
   const userAgent = parser(request.headers.get('user-agent') || '');
   const OS = userAgent.os;
   const isAndroid = OS.name === 'Android';
@@ -61,7 +67,7 @@ export const boardWidthFromRequest = (request: RequestContext) => {
   const isChromeOS = OS.name === 'Chrome OS';
 
   if (isAndroid || isIOS) {
-    return 375;
+    return 350;
   } else if (isMac || isWindows || isChromeOS) {
     return 400;
   }

@@ -6,21 +6,13 @@ import {
   useStore,
 } from '@builder.io/qwik';
 import type { QwikChangeEvent } from '@builder.io/qwik';
-import {
-  GameCtx,
-  BoardCtx,
-  AnswersCtx,
-  DictionaryCtx,
-  WorkerCtx,
-} from '../context';
-import { solve } from '../logic/boggle';
+import { GameCtx, BoardCtx, AnswersCtx, WorkerCtx } from '../context';
 import { randomBoard } from '../logic/board';
 
 export const Controls = component$(() => {
   const gameState = useContext(GameCtx);
   const boardState = useContext(BoardCtx);
   const answersState = useContext(AnswersCtx);
-  const dictionaryState = useContext(DictionaryCtx);
   const worker = useContext(WorkerCtx);
 
   const constrolsState = useStore({
@@ -92,7 +84,10 @@ export const Controls = component$(() => {
     const { valueAsNumber } = e.target;
     boardState.boardSize = valueAsNumber;
     boardState.chars = randomBoard(gameState.language, valueAsNumber).split('');
-    answersState.answers = solve(dictionaryState.dictionary, boardState.chars);
+    worker.mod?.postMessage({
+      language: gameState.language,
+      board: boardState.chars,
+    });
   });
 
   const handleChangeMinCharLength = $(
@@ -106,7 +101,7 @@ export const Controls = component$(() => {
   ).length;
 
   return (
-    <div class="fixed w-full top-0 z-50">
+    <div class="w-full top-0 z-50">
       <div class="glass h-[40px] flex items-center justify-center">
         <h1 class="text-center text-xl text-blue-900 font-medium m-0 py-2">
           Foggle
@@ -159,8 +154,6 @@ export const Controls = component$(() => {
                 value={gameState.language}
               >
                 <option value="English">English</option>
-                <option value="Spanish">Spanish</option>
-                <option value="Russian">Russian</option>
               </select>
             </div>
             <div class="flex flex-col my-[10px]">

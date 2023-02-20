@@ -29,6 +29,7 @@ import type {
   WebWorkerState,
   LanguageType,
 } from './models';
+import { UserGameStats } from './user/UserGameStats';
 
 export interface BoggleProps {
   data: {
@@ -79,7 +80,6 @@ export const BoogleRoot = component$(({ data }: BoggleProps) => {
             isDictionaryLoaded: dictionaryState.dictionary.length,
           });
           workerState.mod.onmessage = (event) => {
-            console.log('event.data', event.data);
             if (!dictionaryState.dictionary.length) {
               dictionaryState.dictionary = event.data.dictionary;
             }
@@ -106,6 +106,7 @@ export const BoogleRoot = component$(({ data }: BoggleProps) => {
   return (
     <div class="h-[100%] dont-scroll">
       <Controls />
+      <UserGameStats />
       <BoggleBoard />
       <WordsPanel />
     </div>

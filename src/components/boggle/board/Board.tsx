@@ -47,7 +47,7 @@ export const BoggleBoard = component$(() => {
   });
 
   return (
-    <div class="flex flex-col items-center mt-[120px]" id="no-scroll">
+    <div class="flex flex-col items-center" id="no-scroll">
       <table id="board" class={`bg-blue-800`}>
         <tbody
           style={{
