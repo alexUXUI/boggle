@@ -51,6 +51,7 @@ export interface GameState {
   minCharLength: number;
   currentLevel: number;
   wordsUntilNextLevel: number;
+  levelStepSize: number;
 }
 
 export enum LetterCubeBgColor {

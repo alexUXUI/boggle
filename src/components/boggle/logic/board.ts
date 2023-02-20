@@ -320,7 +320,11 @@ export const handleFoundWord = $(
       const wowAudioFile = '/wow.mp3';
 
       const audio = new Audio(wowAudioFile);
-      audio.play();
+
+      // check if audio is able to play
+      audio.oncanplaythrough = () => {
+        audio.play();
+      };
 
       setTimeout(() => {
         answersState.foundWords = [...answersState.foundWords, word];
