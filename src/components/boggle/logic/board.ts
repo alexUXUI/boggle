@@ -301,7 +301,8 @@ export const handleFoundWord = $(
   (
     gameState: GameState,
     dictionaryState: DictionaryState,
-    answersState: AnswersState
+    answersState: AnswersState,
+    audioState: any
   ) => {
     const word = gameState.selectedChars
       .map((element) => element.char)
@@ -317,14 +318,14 @@ export const handleFoundWord = $(
       gameState.isWordFound = true;
       fireworks();
 
-      const wowAudioFile = '/wow.mp3';
+      if (audioState.foundWord) {
+        if (!audioState.foundWord.paused) {
+          audioState.foundWord.pause();
+          audioState.foundWord.currentTime = 0;
+        }
+      }
 
-      const audio = new Audio(wowAudioFile);
-
-      // check if audio is able to play
-      audio.oncanplaythrough = () => {
-        audio.play();
-      };
+      audioState.foundWord.play();
 
       setTimeout(() => {
         answersState.foundWords = [...answersState.foundWords, word];

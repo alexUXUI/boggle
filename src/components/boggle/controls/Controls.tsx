@@ -112,7 +112,7 @@ export const Controls = component$(() => {
         </h1>
       </div>
       <div class="glass flex items-center h-[50px] w-full m-auto">
-        <div class="m-auto w-full flex max-w-[500px]">
+        <div class="m-auto w-full flex max-w-[420px]">
           <div class="w-[33.3%] flex justify-center">
             <button
               id="controls-btn"
@@ -146,7 +146,7 @@ export const Controls = component$(() => {
           id="controls"
           class="glass border-b-2 border-[#dfdfdf] fixed z-50 w-full m-auto px-2 flex justify-center"
         >
-          <fieldset class="w-full p-2 rounded-md border-blue-900 flex flex-wrap justify-evenly max-w-[700px]">
+          <fieldset class="w-full p-2 rounded-md border-blue-900 flex flex-wrap justify-evenly max-w-[420px]">
             <div class="flex flex-col my-[10px]">
               <label class="text-[14px]" for="language">
                 Language

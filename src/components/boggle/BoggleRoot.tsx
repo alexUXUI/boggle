@@ -70,6 +70,10 @@ export const BoogleRoot = component$(({ data }: BoggleProps) => {
 
   const workerState = useStore<WebWorkerState>({ mod: null });
 
+  const audioState = useStore<{ foundWord: HTMLAudioElement | null }>({
+    foundWord: null,
+  });
+
   useOnWindow(
     'DOMContentLoaded',
     $(() => {
@@ -91,20 +95,21 @@ export const BoogleRoot = component$(({ data }: BoggleProps) => {
           };
         }
       }
+      const wowAudioFile = '/wow.mp3';
+      const audio = new Audio(wowAudioFile);
+      audioState.foundWord = audio;
     })
   );
 
   useTask$(({ track }) => {
     track(() => gameState.selectedChars);
     if (gameState.selectedChars.length) {
-      handleFoundWord(gameState, dictionaryState, answersState);
+      handleFoundWord(gameState, dictionaryState, answersState, audioState);
     }
   });
 
   useTask$(({ track }) => {
     track(() => answersState.foundWords);
-    // when the user finds a word, update the level if necessary
-
     if (answersState.foundWords) {
       if (gameState.wordsUntilNextLevel === 0) {
         gameState.currentLevel = gameState.currentLevel + 1;
@@ -114,66 +119,6 @@ export const BoogleRoot = component$(({ data }: BoggleProps) => {
 
       gameState.wordsUntilNextLevel = gameState.wordsUntilNextLevel - 1;
     }
-
-    // function calculateLevel(numberofFoundWords: number): number {
-    //   let level: number = 1;
-    //   switch (numberofFoundWords) {
-    //     case 0:
-    //       level = 1;
-    //       break;
-    //     case 1:
-    //       level = 1;
-    //       break;
-    //     case 3:
-    //       level = 2;
-    //       break;
-    //     case 6:
-    //       level = 3;
-    //       break;
-    //     case 10:
-    //       level = 4;
-    //       break;
-    //     case 15:
-    //       level = 5;
-    //       break;
-    //     case 21:
-    //       level = 6;
-    //       break;
-    //     case 28:
-    //       level = 7;
-    //       break;
-    //     case 36:
-    //       level = 8;
-    //       break;
-    //     case 45:
-    //       level = 9;
-    //       break;
-    //     case 55:
-    //       level = 10;
-    //       break;
-    //     case 66:
-    //       level = 11;
-    //       break;
-    //     case 78:
-    //       level = 12;
-    //       break;
-    //     case 91:
-    //       level = 13;
-    //       break;
-    //     case 105:
-    //       level = 14;
-    //       break;
-    //   }
-    //   return level;
-    // }
-
-    // function calculateLevel(numberofFoundWords: number): number {
-    //   return Math.floor(
-    //     1 + (numberofFoundWords * (numberofFoundWords + 1)) / 2
-    //   );
-    // }
-
-    // gameState.currentLevel = calculateLevel(answersState.foundWords.length);
   });
 
   useContextProvider(DictionaryCtx, dictionaryState);
