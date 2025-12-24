@@ -4,9 +4,9 @@ import {
   useContext,
   useOnWindow,
   useStore,
-} from '@builder.io/qwik';
-import { GameCtx } from '../context';
-import { WordListType } from '../models';
+} from "@builder.io/qwik";
+import { GameCtx } from "../context";
+import { WordListType } from "../models";
 
 interface WordsListProps {
   words: string[];
@@ -33,23 +33,23 @@ export const WordsList = component$(
       height: `${state.isOpen ? 400 : 0}px`,
       zIndex: `${state.isOpen ? 50 : 0}`,
       bottom: `${state.isOpen ? 60 : 0}px`,
-      width: state.isOpen ? '100%' : '150px',
-      position: 'fixed',
-      margin: 'auto',
+      width: state.isOpen ? "100%" : "150px",
+      position: "fixed",
+      margin: "auto",
       left: 0,
     };
 
     const isAnswers = variant === WordListType.Answers;
 
     useOnWindow(
-      'DOMContentLoaded',
+      "DOMContentLoaded",
       $(() => {
-        window.addEventListener('keydown', (e) => {
-          if (e.key === 'Escape') {
+        window.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
             state.isOpen = false;
           }
         });
-        window.addEventListener('click', (e) => {
+        window.addEventListener("click", (e) => {
           if (state.isOpen) {
             const wordlistBtn = document.getElementById(
               `words-list-btn-${variant}`
@@ -75,8 +75,8 @@ export const WordsList = component$(
           class=" hover:bg-blue-100 leading-[20px] text-[14px] bg-white p-2 rounded-md border-2 border-blue-800 h-[40px] w-fit mx-4"
           onClick$={handleToggle}
         >
-          {state.isOpen ? 'Close ' : 'Open '}
-          {isAnswers ? 'Answers' : 'Found Words'}
+          {state.isOpen ? "Close " : "Open "}
+          {isAnswers ? "Answers" : "Found Words"}
         </button>
         <div
           id={`words-list-${variant}`}

@@ -4,10 +4,10 @@ import {
   useContext,
   useOnWindow,
   useStore,
-} from '@builder.io/qwik';
-import type { QwikChangeEvent } from '@builder.io/qwik';
-import { GameCtx, BoardCtx, AnswersCtx, WorkerCtx } from '../context';
-import { randomBoard } from '../logic/board';
+} from "@builder.io/qwik";
+import type { QwikChangeEvent } from "@builder.io/qwik";
+import { GameCtx, BoardCtx, AnswersCtx, WorkerCtx } from "../context";
+import { randomBoard } from "../logic/board";
 
 export const Controls = component$(() => {
   const gameState = useContext(GameCtx);
@@ -24,17 +24,17 @@ export const Controls = component$(() => {
   });
 
   useOnWindow(
-    'DOMContentLoaded',
+    "DOMContentLoaded",
     $(() => {
-      window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
           constrolsState.isOpen = false;
         }
       });
-      window.addEventListener('click', (e) => {
+      window.addEventListener("click", (e) => {
         if (constrolsState.isOpen) {
-          const controlFormNode = document.getElementById('controls');
-          const controlsButtonNode = document.getElementById('controls-btn');
+          const controlFormNode = document.getElementById("controls");
+          const controlsButtonNode = document.getElementById("controls-btn");
           if (controlFormNode) {
             if (
               !controlFormNode.contains(e.target as Node) &&
@@ -50,11 +50,11 @@ export const Controls = component$(() => {
 
   const handleBoardCustomization = $(
     async (e: QwikChangeEvent<HTMLInputElement>) => {
-      boardState.chars = e.target.value.split('');
+      boardState.chars = e.target.value.split("");
       worker.mod?.postMessage({
-        language: gameState.language,
-        board: boardState.chars,
-        minCharLength: gameState.minCharLength,
+        language: String(gameState.language),
+        board: Array.from(boardState.chars),
+        minCharLength: Number(gameState.minCharLength),
       });
     }
   );
@@ -63,30 +63,30 @@ export const Controls = component$(() => {
     boardState.chars = randomBoard(
       gameState.language,
       boardState.boardSize
-    ).split('');
+    ).split("");
     answersState.answers = [];
     worker.mod?.postMessage({
-      language: gameState.language,
-      board: boardState.chars,
-      minCharLength: gameState.minCharLength,
+      language: String(gameState.language),
+      board: Array.from(boardState.chars),
+      minCharLength: Number(gameState.minCharLength),
     });
   });
 
   const handleChangeLanguage = $((e: QwikChangeEvent<HTMLSelectElement>) => {
     const { value } = e.target;
     gameState.language = value;
-    boardState.chars = randomBoard(value, boardState.boardSize).split('');
+    boardState.chars = randomBoard(value, boardState.boardSize).split("");
     worker.mod?.postMessage({
-      language: gameState.language,
-      board: boardState.chars,
-      minCharLength: gameState.minCharLength,
+      language: String(gameState.language),
+      board: Array.from(boardState.chars),
+      minCharLength: Number(gameState.minCharLength),
     });
   });
 
   const handleChangeBoardSize = $((e: QwikChangeEvent<HTMLInputElement>) => {
     const { valueAsNumber } = e.target;
     boardState.boardSize = valueAsNumber;
-    boardState.chars = randomBoard(gameState.language, valueAsNumber).split('');
+    boardState.chars = randomBoard(gameState.language, valueAsNumber).split("");
     worker.mod?.postMessage({
       language: gameState.language,
       board: boardState.chars,
@@ -119,7 +119,7 @@ export const Controls = component$(() => {
               class="px-2 text-[14px] border-2 bg-white h-[40px] border-blue-800 hover:bg-blue-200 rounded-md "
               onClick$={toggleIsOpen}
             >
-              {constrolsState.isOpen ? 'Close' : 'Open'} Controls
+              {constrolsState.isOpen ? "Close" : "Open"} Controls
             </button>
           </div>
           <div class="w-[33.3%] flex justify-center">
@@ -133,9 +133,9 @@ export const Controls = component$(() => {
           </div>
           <div class="w-[33.3%] flex justify-center">
             <div class="text-[14px] rounded-md border-2 border-blue-900 bg-blue-50  h-[40px] w-[120px] flex items-center justify-start px-2">
-              Answers:{'  '}
+              Answers:{"  "}
               <span class="text-[14px] rounded-sm">
-                {answersLength > 0 ? ` ${answersLength}` : ''}
+                {answersLength > 0 ? ` ${answersLength}` : ""}
               </span>
             </div>
           </div>
@@ -193,7 +193,7 @@ export const Controls = component$(() => {
                 type="text"
                 class="w-[25ch] tracking-wide h-[40px] rounded-md text-center border-2 border-blue-900"
                 placeholder="customize board"
-                value={boardState.chars.join('')}
+                value={boardState.chars.join("")}
                 onChange$={handleBoardCustomization}
               />
             </div>

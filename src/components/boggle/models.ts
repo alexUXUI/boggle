@@ -1,14 +1,14 @@
-import type { NoSerialize } from '@builder.io/qwik';
+import type { NoSerialize } from "@builder.io/qwik";
 
 export const Language = {
-  English: 'English',
-  Russian: 'Russian',
-  Spanish: 'Spanish',
+  English: "English",
+  Russian: "Russian",
+  Spanish: "Spanish",
 };
 
 export type LanguageType = typeof Language[keyof typeof Language];
 
-const char = 'abcdefghijklmnopqrstuvwxyz'.split('');
+const char = "abcdefghijklmnopqrstuvwxyz".split("");
 
 type Char = typeof char[number];
 export interface TrieNode {
@@ -40,7 +40,7 @@ export interface WebWorkerState {
 export interface WasmState {
   mod: NoSerialize<
     // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-    typeof import('/Users/alexbennett/Desktop/personal/boggle/src/components/boggle/boggle-solver/pkg/boggle_solver')
+    typeof import("./boggle-solver/pkg/boggle_solver")
   > | null;
 }
 
@@ -55,12 +55,12 @@ export interface GameState {
 }
 
 export enum LetterCubeBgColor {
-  Unselected = 'bg-white',
-  Selected = 'bg-blue-200',
-  WordFound = 'bg-green-200',
+  Unselected = "bg-white",
+  Selected = "bg-blue-200",
+  WordFound = "bg-green-200",
 }
 
 export enum WordListType {
-  Answers = 'answers',
-  Found = 'foundwords',
+  Answers = "answers",
+  Found = "foundwords",
 }

@@ -6,20 +6,20 @@ import {
   useContextProvider,
   noSerialize,
   useTask$,
-} from '@builder.io/qwik';
+} from "@builder.io/qwik";
 
-import { Controls } from './controls/Controls';
-import { WordsPanel } from './controls/WordsPanel';
-import { BoggleBoard } from './board/Board';
-import { calculateCellWidth, handleFoundWord } from './logic/board';
+import { Controls } from "./controls/Controls";
+import { WordsPanel } from "./controls/WordsPanel";
+import { BoggleBoard } from "./board/Board";
+import { calculateCellWidth, handleFoundWord } from "./logic/board";
 import {
   DictionaryCtx,
   BoardCtx,
   GameCtx,
   AnswersCtx,
   WorkerCtx,
-} from './context';
-import BoggleWorker from './worker?worker';
+} from "./context";
+import BoggleWorker from "./worker?worker";
 
 import type {
   BoardState,
@@ -28,8 +28,8 @@ import type {
   DictionaryState,
   WebWorkerState,
   LanguageType,
-} from './models';
-import { UserGameStats } from './user/UserGameStats';
+} from "./models";
+import { UserGameStats } from "./user/UserGameStats";
 
 export interface BoggleProps {
   data: {
@@ -75,17 +75,17 @@ export const BoogleRoot = component$(({ data }: BoggleProps) => {
   });
 
   useOnWindow(
-    'DOMContentLoaded',
+    "DOMContentLoaded",
     $(() => {
       if (window.Worker) {
         const worker = new BoggleWorker();
         workerState.mod = noSerialize(worker);
         if (workerState.mod) {
           workerState.mod.postMessage({
-            language: gameState.language,
-            board: boardState.chars,
-            minCharLength: gameState.minCharLength,
-            isDictionaryLoaded: dictionaryState.dictionary.length,
+            language: String(gameState.language),
+            board: Array.from(boardState.chars),
+            minCharLength: Number(gameState.minCharLength),
+            isDictionaryLoaded: Number(dictionaryState.dictionary.length),
           });
           workerState.mod.onmessage = (event) => {
             if (!dictionaryState.dictionary.length) {
@@ -95,7 +95,7 @@ export const BoogleRoot = component$(({ data }: BoggleProps) => {
           };
         }
       }
-      const wowAudioFile = '/wow.mp3';
+      const wowAudioFile = "/wow.mp3";
       const audio = new Audio(wowAudioFile);
       audioState.foundWord = audio;
     })

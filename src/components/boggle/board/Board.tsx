@@ -4,41 +4,41 @@ import {
   useContext,
   useOnWindow,
   useStore,
-} from '@builder.io/qwik';
-import { BoardCtx, GameCtx } from '../context';
-import { LetterCube } from './LetterCube';
-import { bgColor } from '../logic/board';
+} from "@builder.io/qwik";
+import { BoardCtx, GameCtx } from "../context";
+import { LetterCube } from "./LetterCube";
+import { bgColor } from "../logic/board";
 
 export const BoggleBoard = component$(() => {
   const boardState = useContext(BoardCtx);
   const gameState = useContext(GameCtx);
 
   useOnWindow(
-    'DOMContentLoaded',
+    "DOMContentLoaded",
     $(() => {
       const clickHandler = (e: MouseEvent) => {
-        if (!document.getElementById('board')?.contains(e.target as Node)) {
+        if (!document.getElementById("board")?.contains(e.target as Node)) {
           gameState.selectedChars = [];
         }
       };
 
       const handleKeydown = (e: KeyboardEvent) => {
-        if (e.key === 'Backspace' || e.key === 'Escape') {
+        if (e.key === "Backspace" || e.key === "Escape") {
           gameState.selectedChars = [];
         }
       };
 
-      const noScroll = document.getElementById('no-scroll');
-      noScroll?.addEventListener('wheel', (e) => {
+      const noScroll = document.getElementById("no-scroll");
+      noScroll?.addEventListener("wheel", (e) => {
         e.preventDefault();
       });
 
-      noScroll?.addEventListener('touchmove', (e) => {
+      noScroll?.addEventListener("touchmove", (e) => {
         e.preventDefault();
       });
 
-      document.addEventListener('click', clickHandler);
-      document.addEventListener('keydown', handleKeydown);
+      document.addEventListener("click", clickHandler);
+      document.addEventListener("keydown", handleKeydown);
     })
   );
 
