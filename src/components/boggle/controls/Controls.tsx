@@ -88,9 +88,9 @@ export const Controls = component$(() => {
     boardState.boardSize = valueAsNumber;
     boardState.chars = randomBoard(gameState.language, valueAsNumber).split("");
     worker.mod?.postMessage({
-      language: gameState.language,
-      board: boardState.chars,
-      minCharLength: gameState.minCharLength,
+      language: String(gameState.language),
+      board: Array.from(boardState.chars),
+      minCharLength: Number(gameState.minCharLength),
     });
   });
 
