@@ -1,0 +1,62 @@
+sequenceDiagram
+    autonumber
+    participant User
+    participant Edge as Cloudflare Edge
+    participant SSR as SSR Handler
+    participant Browser
+    participant Qwik as Qwik Runtime
+    participant Worker as Web Worker
+    participant WASM
+    
+    Note over User,WASM: REQUEST PHASE
+    User->>Edge: Navigate to app URL
+    Edge->>SSR: Invoke SSR function
+    
+    Note over SSR: SERVER WORK PHASE
+    SSR->>SSR: Parse User-Agent<br/>(detect device type)
+    SSR->>SSR: Generate 5x5 board<br/>(weighted random)
+    SSR->>SSR: Calculate board width<br/>(350px mobile, 400px desktop)
+    SSR->>SSR: Render HTML with<br/>serialized state
+    
+    Note over Edge,Browser: RESPONSE PHASE
+    SSR->>Edge: Return rendered HTML<br/>(~20-30KB compressed)
+    Edge->>Browser: Deliver HTML + Assets<br/>(HTML + CSS ~10KB + Qwik ~5KB)
+    
+    Note over Browser,WASM: CLIENT WORK PHASE
+    Browser->>Browser: Parse HTML<br/>First Paint <100ms
+    Browser->>Qwik: Initialize Qwik Runtime
+    
+    Note over Browser: PAGE INTERACTIVE<br/>Time to Interactive <200ms
+    
+    Browser->>Worker: Initialize Web Worker<br/>(DOMContentLoaded)
+    
+    par Background Processing
+        Worker->>Worker: Fetch dictionary<br/>(~200KB, 200K words)
+        Worker->>Worker: Parse dictionary
+        Worker->>WASM: Load WASM module<br/>(~100KB)
+        Worker->>WASM: Pass dictionary
+        WASM->>WASM: Build Trie<br/>(in WASM memory)
+        WASM->>WASM: Run DFS solver<br/>(find all words)
+        WASM->>Worker: Return answers
+        Worker->>Browser: Send dictionary + answers
+    and User Interaction
+        User->>Browser: Click first letter
+        Browser->>Qwik: Lazy load click handler<br/>(~2KB, first click only)
+        Qwik->>Browser: Handler ready
+        Browser->>Browser: Update UI<br/>(highlight letter)
+    end
+    
+    Note over Browser: ANSWERS READY<br/>All solutions computed<br/>(~1 second total)
+    
+    Note over User,WASM: INTERACTIVITY PHASE
+    User->>Browser: Select word path
+    Browser->>Browser: Validate with Trie<br/>(O(m) lookup)
+    alt Valid Word
+        Browser->>Browser: Play audio feedback
+        Browser->>Browser: Trigger confetti
+        Browser->>Browser: Update found words
+        Browser->>Browser: Update score/level
+    else Invalid Word
+        Browser->>Browser: Continue selection
+    end
+

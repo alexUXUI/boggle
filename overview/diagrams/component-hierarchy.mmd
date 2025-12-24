@@ -1,0 +1,45 @@
+graph TD
+    Root[BoggleRoot<br/>Main Component] --> ContextProviders[Context Providers<br/>5 Contexts]
+    
+    ContextProviders --> DictionaryCtx[DictionaryCtx<br/>Word List]
+    ContextProviders --> BoardCtx[BoardCtx<br/>Grid State]
+    ContextProviders --> GameCtx[GameCtx<br/>Level, Score, Selection]
+    ContextProviders --> AnswersCtx[AnswersCtx<br/>All Solutions + Found]
+    ContextProviders --> WorkerCtx[WorkerCtx<br/>Worker Reference]
+    
+    Root --> Components[Child Components]
+    
+    Components --> Controls[Controls<br/>Game Controls]
+    Components --> UserStats[UserGameStats<br/>Level, Progress]
+    Components --> Board[BoggleBoard<br/>5x5 Grid]
+    Components --> WordsPanel[WordsPanel<br/>Found Words Display]
+    
+    Board --> LetterCube[LetterCube × 25<br/>Individual Cells]
+    
+    WordsPanel --> WordsList[WordsList<br/>Word Items]
+    
+    LetterCube --> Click[Click Handler<br/>Lazy Loaded]
+    Click --> SelectLogic[Selection Logic]
+    SelectLogic --> ValidateLogic[Validation Logic]
+    
+    ValidateLogic --> TrieClient[Trie TypeScript<br/>O m Lookup]
+    
+    GameCtx -.consumes.-> Controls
+    GameCtx -.consumes.-> UserStats
+    GameCtx -.consumes.-> LetterCube
+    
+    BoardCtx -.consumes.-> Board
+    BoardCtx -.consumes.-> LetterCube
+    
+    AnswersCtx -.consumes.-> WordsPanel
+    AnswersCtx -.consumes.-> WordsList
+    
+    DictionaryCtx -.consumes.-> ValidateLogic
+    
+    WorkerCtx -.consumes.-> Root
+    
+    style Root fill:#e1f5ff
+    style ContextProviders fill:#ffe1e1
+    style Components fill:#e1ffe1
+    style TrieClient fill:#fff4e1
+

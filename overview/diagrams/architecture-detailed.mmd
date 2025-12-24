@@ -1,0 +1,106 @@
+graph TB
+    subgraph "User Layer"
+        Browser[Browser Request]
+    end
+    
+    subgraph "Cloudflare Edge Network"
+        Edge[Cloudflare Edge<br/>300+ Locations]
+        Cache[Edge Cache<br/>Static Assets]
+    end
+    
+    subgraph "Server-Side Rendering"
+        SSR[SSR Handler]
+        UA[User-Agent Parser]
+        BoardGen[Board Generator<br/>Weighted Random]
+        Render[HTML Renderer<br/>Qwik SSR]
+    end
+    
+    subgraph "Client Runtime"
+        QwikLoader[Qwik Loader<br/>~5KB]
+        LazyLoad[Lazy Code Loading<br/>On-Demand Chunks]
+        ReactiveState[Reactive State<br/>useStore + useTask]
+    end
+    
+    subgraph "Web Worker Thread"
+        Worker[Web Worker]
+        DictFetch[Dictionary Fetch<br/>200K words]
+        DictParse[Dictionary Parse]
+    end
+    
+    subgraph "WebAssembly"
+        WASM[WASM Module<br/>Rust Compiled]
+        TrieBuild[Trie Builder]
+        DFS[DFS Solver<br/>Backtracking]
+    end
+    
+    subgraph "Data Structures"
+        TrieTS[Trie TypeScript<br/>Client Validation]
+        TrieRust[Trie Rust<br/>WASM Solver]
+    end
+    
+    subgraph "UI Components"
+        Board[Board Component<br/>5x5 Grid]
+        Letters[Letter Cells<br/>Interactive]
+        Controls[Controls<br/>Game State]
+        Words[Words Panel<br/>Found Words]
+    end
+    
+    subgraph "Context System"
+        BoardCtx[BoardCtx<br/>Grid State]
+        GameCtx[GameCtx<br/>Level, Score]
+        AnswersCtx[AnswersCtx<br/>All Solutions]
+        DictCtx[DictionaryCtx<br/>Word List]
+        WorkerCtx[WorkerCtx<br/>Worker Ref]
+    end
+    
+    %% Connections
+    Browser --> Edge
+    Edge --> Cache
+    Edge --> SSR
+    
+    SSR --> UA
+    SSR --> BoardGen
+    BoardGen --> Render
+    UA --> Render
+    
+    Render --> Browser
+    Browser --> QwikLoader
+    QwikLoader --> LazyLoad
+    LazyLoad --> ReactiveState
+    
+    ReactiveState --> Worker
+    Worker --> DictFetch
+    DictFetch --> DictParse
+    DictParse --> WASM
+    
+    WASM --> TrieBuild
+    TrieBuild --> TrieRust
+    TrieRust --> DFS
+    DFS --> Worker
+    Worker --> ReactiveState
+    
+    ReactiveState --> TrieTS
+    
+    ReactiveState --> BoardCtx
+    ReactiveState --> GameCtx
+    ReactiveState --> AnswersCtx
+    ReactiveState --> DictCtx
+    ReactiveState --> WorkerCtx
+    
+    BoardCtx --> Board
+    GameCtx --> Controls
+    AnswersCtx --> Words
+    Board --> Letters
+    
+    Letters --> TrieTS
+    TrieTS --> ReactiveState
+    
+    style Browser fill:#e1f5ff
+    style Edge fill:#fff4e1
+    style SSR fill:#ffe1e1
+    style QwikLoader fill:#e1ffe1
+    style Worker fill:#f0e1ff
+    style WASM fill:#ffe1f0
+    style TrieTS fill:#fff4e1
+    style TrieRust fill:#fff4e1
+

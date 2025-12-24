@@ -1,0 +1,58 @@
+graph LR
+    subgraph "Server-Side"
+        Request[HTTP Request] --> DeviceDetect[Device Detection]
+        DeviceDetect --> BoardWidth[Board Width<br/>350px / 400px]
+        Request --> BoardGen[Board Generation]
+        BoardGen --> RandomChars[Random Characters<br/>Weighted Distribution]
+        BoardWidth --> SerializedState[Serialized State]
+        RandomChars --> SerializedState
+        SerializedState --> HTML[Rendered HTML]
+    end
+    
+    subgraph "Client Initial Load"
+        HTML --> Browser[Browser Receives HTML]
+        Browser --> FirstPaint[First Paint<br/>Board Visible]
+        FirstPaint --> QwikInit[Qwik Initializes]
+        QwikInit --> Interactive[Interactive<br/>No Hydration Needed]
+    end
+    
+    subgraph "Background Computation"
+        Interactive --> WorkerStart[Web Worker Starts]
+        WorkerStart --> FetchDict[Fetch Dictionary]
+        FetchDict --> ParseDict[Parse 200K Words]
+        ParseDict --> BuildTrie[Build Trie in WASM]
+        BuildTrie --> DFSSolve[DFS Solver]
+        DFSSolve --> AllAnswers[All Valid Words]
+        AllAnswers --> ToMain[Send to Main Thread]
+    end
+    
+    subgraph "User Interaction"
+        Interactive --> UserClick[User Clicks Letter]
+        UserClick --> LazyLoad[Lazy Load Handler]
+        LazyLoad --> SelectLetter[Add to Selection]
+        SelectLetter --> ValidatePath[Validate with Trie]
+        ValidatePath --> IsWord{Is Valid Word?}
+        ToMain --> AnswersReady[Answers Available]
+        AnswersReady --> ValidatePath
+    end
+    
+    subgraph "Game State Updates"
+        IsWord -->|Yes| PlayAudio[Play Audio]
+        IsWord -->|Yes| Confetti[Trigger Confetti]
+        IsWord -->|Yes| AddFound[Add to Found Words]
+        AddFound --> UpdateScore[Update Score]
+        UpdateScore --> CheckLevel{Level Up?}
+        CheckLevel -->|Yes| IncrementLevel[Increment Level]
+        CheckLevel -->|No| Continue[Continue Game]
+        IncrementLevel --> Continue
+        IsWord -->|No| Continue
+        Continue --> UserClick
+    end
+    
+    style Request fill:#e1f5ff
+    style HTML fill:#ffe1e1
+    style Interactive fill:#e1ffe1
+    style AllAnswers fill:#f0e1ff
+    style IsWord fill:#fff4e1
+    style CheckLevel fill:#fff4e1
+
