@@ -48,7 +48,17 @@ export const BoggleBoard = component$(() => {
 
   return (
     <div class="flex flex-col items-center" id="no-scroll">
-      <table id="board" class={`bg-blue-800`}>
+      <table
+        id="board"
+        data-testid="board"
+        data-board-size={boardState.boardSize}
+        data-selected-path={gameState.selectedChars
+          .map((c) => c.char)
+          .join('')
+          .toUpperCase()}
+        data-is-word-found={gameState.isWordFound ? 'true' : 'false'}
+        class={`bg-blue-800`}
+      >
         <tbody
           style={{
             width: `${boardState.boardWidth}px`,

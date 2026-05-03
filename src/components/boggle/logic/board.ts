@@ -157,19 +157,17 @@ export const updatePath = ({
   } else if (lastCharInPath && !isInSelectedChars) {
     const { index } = lastCharInPath;
     const { boardSize } = boardState;
-    const neighbors = [
-      index - boardSize - 1,
-      index - boardSize,
-      index - boardSize + 1,
-      index - 1,
-      index + 1,
-      index + boardSize - 1,
-      index + boardSize,
-      index + boardSize + 1,
-    ];
-    const isNeighbor = Boolean(
-      neighbors.filter((idx: number) => idx === currentIndex).length
-    );
+    // 8-neighbor adjacency in (row, col) space — index arithmetic alone wraps
+    // at row boundaries (e.g. index+1 from a right-edge cell crosses into the
+    // next row's left edge), so check coordinates explicitly.
+    const lastRow = Math.floor(index / boardSize);
+    const lastCol = index % boardSize;
+    const currentRow = Math.floor(currentIndex / boardSize);
+    const currentCol = currentIndex % boardSize;
+    const isNeighbor =
+      Math.abs(lastRow - currentRow) <= 1 &&
+      Math.abs(lastCol - currentCol) <= 1 &&
+      !(lastRow === currentRow && lastCol === currentCol);
     if (isNeighbor) {
       gameState.selectedChars = [
         ...gameState.selectedChars,

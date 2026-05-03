@@ -64,9 +64,11 @@ export const LetterCube = ({
         <div class="face flex items-center justify-center">
           <button
             id={currentIndex.toString()}
+            data-testid={`cell-${currentIndex}`}
             data-cell-index={currentIndex}
             data-cell-char={letter}
-            data-cell-is-in-path={false}
+            data-cell-is-in-path={isInSelectedChars ? 'true' : 'false'}
+            data-cell-bg={cellBgColor}
             class={`${cellBgColor} important h-[90%] w-[90%] text-[30px] leading-[40px] p-0 m-0 rounded-sm`}
             onTouchMove$={(e) => {
               handleTouch({

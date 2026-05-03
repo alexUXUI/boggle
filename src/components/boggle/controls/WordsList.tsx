@@ -68,10 +68,16 @@ export const WordsList = component$(
       })
     );
 
+    const filteredWords = words.filter(
+      (word) => word.length >= gameState.minCharLength
+    );
+
     return (
-      <div>
+      <div data-testid={`words-list-section-${variant}`}>
         <button
           id={`words-list-btn-${variant}`}
+          data-testid={`words-list-toggle-${variant}`}
+          data-open={state.isOpen ? 'true' : 'false'}
           class=" hover:bg-blue-100 leading-[20px] text-[14px] bg-white p-2 rounded-md border-2 border-blue-800 h-[40px] w-fit mx-4"
           onClick$={handleToggle}
         >
@@ -80,22 +86,34 @@ export const WordsList = component$(
         </button>
         <div
           id={`words-list-${variant}`}
+          data-testid={`words-list-${variant}`}
+          data-words-count={filteredWords.length}
           class={`flex flex-col items-center`}
           style={styles}
         >
           {state.isOpen && words.length ? (
             <div class="overflow-scroll h-full w-full heavy-glass">
-              <ul class=" flex flex-wrap justify-start items-start w-full">
-                {words
-                  .filter((word) => word.length >= gameState.minCharLength)
-                  .map((word) => (
-                    <li class="w-[33%] text-center">{word}</li>
-                  ))}
+              <ul
+                data-testid={`words-list-items-${variant}`}
+                class=" flex flex-wrap justify-start items-start w-full"
+              >
+                {filteredWords.map((word) => (
+                  <li
+                    data-testid={`word-${variant}`}
+                    data-word={word}
+                    class="w-[33%] text-center"
+                  >
+                    {word}
+                  </li>
+                ))}
               </ul>
             </div>
           ) : (
             state.isOpen && (
-              <div class="h-full w-full items-center heavy-glass flex flex-wrap justify-center">
+              <div
+                data-testid={`words-list-empty-${variant}`}
+                class="h-full w-full items-center heavy-glass flex flex-wrap justify-center"
+              >
                 No data
               </div>
             )

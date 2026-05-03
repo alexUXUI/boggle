@@ -39,3 +39,10 @@ lerna-debug.log*
 
 # Cloudflare
 functions/**/*.js
+
+# Playwright
+/test-results
+/playwright-report
+/playwright/.cache
+/.playwright-mcp
+working-state-*.png

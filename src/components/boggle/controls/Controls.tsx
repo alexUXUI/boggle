@@ -107,7 +107,10 @@ export const Controls = component$(() => {
   return (
     <div class="w-full top-0 z-50">
       <div class="glass h-[40px] flex items-center justify-center">
-        <h1 class="text-center text-xl text-blue-900 font-medium m-0 py-2">
+        <h1
+          data-testid="app-title"
+          class="text-center text-xl text-blue-900 font-medium m-0 py-2"
+        >
           Foggle
         </h1>
       </div>
@@ -116,6 +119,8 @@ export const Controls = component$(() => {
           <div class="w-[33.3%] flex justify-center">
             <button
               id="controls-btn"
+              data-testid="controls-toggle"
+              data-controls-open={constrolsState.isOpen ? 'true' : 'false'}
               class="px-2 text-[14px] border-2 bg-white h-[40px] border-blue-800 hover:bg-blue-200 rounded-md "
               onClick$={toggleIsOpen}
             >
@@ -124,6 +129,7 @@ export const Controls = component$(() => {
           </div>
           <div class="w-[33.3%] flex justify-center">
             <button
+              data-testid="reset-board"
               class="px-2 text-[14px] border-2 bg-white h-[40px] border-blue-800 hover:bg-blue-200 rounded-md "
               onClick$={handleRandomizeBoard}
               type="button"
@@ -132,9 +138,13 @@ export const Controls = component$(() => {
             </button>
           </div>
           <div class="w-[33.3%] flex justify-center">
-            <div class="text-[14px] rounded-md border-2 border-blue-900 bg-blue-50  h-[40px] w-[120px] flex items-center justify-start px-2">
+            <div
+              data-testid="answers-count"
+              data-answers-count={answersLength}
+              class="text-[14px] rounded-md border-2 border-blue-900 bg-blue-50  h-[40px] w-[120px] flex items-center justify-start px-2"
+            >
               Answers:{'  '}
-              <span class="text-[14px] rounded-sm">
+              <span data-testid="answers-count-value" class="text-[14px] rounded-sm">
                 {answersLength > 0 ? ` ${answersLength}` : ''}
               </span>
             </div>
@@ -144,6 +154,7 @@ export const Controls = component$(() => {
       {constrolsState.isOpen ? (
         <form
           id="controls"
+          data-testid="controls-panel"
           class="glass border-b-2 border-[#dfdfdf] fixed z-50 w-full m-auto px-2 flex justify-center"
         >
           <fieldset class="w-full p-2 rounded-md border-blue-900 flex flex-wrap justify-evenly max-w-[420px]">
@@ -153,6 +164,7 @@ export const Controls = component$(() => {
               </label>
               <select
                 id="language"
+                data-testid="language-select"
                 class="pl-[2px] rounded-md w-[10ch] h-[40px] border-2 border-blue-900"
                 onChange$={handleChangeLanguage}
                 value={gameState.language}
@@ -166,6 +178,7 @@ export const Controls = component$(() => {
               </label>
               <input
                 id="min-char-length"
+                data-testid="word-size-input"
                 type="number"
                 onChange$={handleChangeMinCharLength}
                 value={gameState.minCharLength}
@@ -178,6 +191,7 @@ export const Controls = component$(() => {
               </label>
               <input
                 id="board-size"
+                data-testid="board-size-input"
                 type="number"
                 onChange$={handleChangeBoardSize}
                 value={boardState.boardSize}
@@ -190,6 +204,7 @@ export const Controls = component$(() => {
               </label>
               <input
                 id="customize"
+                data-testid="customize-input"
                 type="text"
                 class="w-[25ch] tracking-wide h-[40px] rounded-md text-center border-2 border-blue-900"
                 placeholder="customize board"

@@ -18,16 +18,31 @@ export const UserGameStats = component$(() => {
   console.log('percentage', percentage);
 
   return (
-    <div class="flex flex-col items-center justify-center my-[20px] w-fit m-auto min-w-[410px]">
+    <div
+      data-testid="stats-panel"
+      data-current-level={gameState.currentLevel}
+      data-found-count={answersState.foundWords.length}
+      data-answers-count={answersState.answers.length}
+      data-progress-percent={percentage}
+      class="flex flex-col items-center justify-center my-[20px] w-fit m-auto min-w-[410px]"
+    >
       <ul class="w-full h-fit px-3 flex flex-wrap justify-between items-center m-auto">
         <li class="flex justify-center w-full items-center h-[30px]">
           <div class="min-w-[80px]">
-            <p class="text-[14px] text-gray-600 h-fit p-0 m-0 leading-[30px]">
+            <p
+              data-testid="level-display"
+              class="text-[14px] text-gray-600 h-fit p-0 m-0 leading-[30px]"
+            >
               Level: {gameState.currentLevel}
             </p>
           </div>
           <div class="relative w-full">
-            <div class={`h-[30px] flex justify-between w-full bg-gray-100`}>
+            <div
+              data-testid="level-progress"
+              data-step-size={gameState.levelStepSize}
+              data-words-until-next={gameState.wordsUntilNextLevel}
+              class={`h-[30px] flex justify-between w-full bg-gray-100`}
+            >
               {Array.from({ length: gameState.levelStepSize })
                 .map((_, i) => {
                   return (
@@ -68,7 +83,10 @@ export const UserGameStats = component$(() => {
               </p>
             </div>
             <div class="absolute right-[6px]">
-              <p class="text-[12px] text-gray-600 h-fit p-0 m-0 leading-[30px]">
+              <p
+                data-testid="progress-text"
+                class="text-[12px] text-gray-600 h-fit p-0 m-0 leading-[30px]"
+              >
                 {answersState.foundWords.length
                   ? answersState.foundWords.length
                   : 0}{' '}
@@ -84,9 +102,11 @@ export const UserGameStats = component$(() => {
               </p>
             </div>
             <div
+              data-testid="progress-bar"
               class={`w-full h-[30px] border-[1px] border-gray-300 rounded-sm bg-gray-100`}
             >
               <div
+                data-testid="progress-bar-fill"
                 class={`bg-blue-300 h-[100%]`}
                 style={{
                   width: `${percentage}%`,
